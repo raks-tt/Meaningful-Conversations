@@ -4,12 +4,11 @@ import { User } from '../types';
 import { KeyIcon } from './icons/KeyIcon';
 import { DownloadIcon } from './icons/DownloadIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
-import { ShoppingBagIcon } from './icons/ShoppingBagIcon';
 import { UserIcon } from './icons/UserIcon';
 
 interface AccountManagementViewProps {
     currentUser: User;
-    onNavigate: (view: 'changePassword' | 'exportData' | 'redeemCode' | 'editProfile') => void;
+    onNavigate: (view: 'changePassword' | 'exportData' | 'editProfile') => void;
     onDeleteAccount: () => void;
 }
 
@@ -41,13 +40,6 @@ const AccountManagementView: React.FC<AccountManagementViewProps> = ({ currentUs
             description: t('account_export_data_desc'),
             onClick: () => onNavigate('exportData'),
             color: 'text-green-600 dark:text-green-400',
-        },
-        {
-            icon: ShoppingBagIcon,
-            title: t('menu_redeem_code'),
-            description: t('account_redeem_code_desc'),
-            onClick: () => onNavigate('redeemCode'),
-            color: 'text-purple-600 dark:text-purple-400',
         },
         {
             icon: DeleteIcon,

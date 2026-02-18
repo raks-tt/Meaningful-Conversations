@@ -15,7 +15,6 @@ import { BookOpenIcon } from './icons/BookOpenIcon';
 import { CodeIcon } from './icons/CodeIcon';
 import { GearIcon } from './icons/GearIcon';
 import { KeyIcon } from './icons/KeyIcon';
-import { ShoppingBagIcon } from './icons/ShoppingBagIcon';
 import { ClipboardCheckIcon } from './icons/ClipboardCheckIcon';
 
 interface BurgerMenuProps {
@@ -114,9 +113,6 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ isOpen, onClose, currentUser, o
                         <>
                             <MenuItem icon={UserIcon} text={t('menu_account_management')} onClick={() => onNavigate('accountManagement')} />
                             <MenuItem icon={ClipboardCheckIcon} text={t('menu_personality_profile')} onClick={() => onNavigate('personalityProfile')} />
-                            {!currentUser.isClient && !currentUser.isAdmin && (
-                                <MenuItem icon={ShoppingBagIcon} text={t('menu_upgrade')} onClick={() => onNavigate('upgrade')} />
-                            )}
                             <hr className="border-border-primary my-2" />
                         </>
                     )}

@@ -154,37 +154,22 @@ router.post('/chat/send-message', optionalAuthMiddleware, async (req, res) => {
     }
 
     // Server-side access control
+    // Guest bots: accessible to anyone
+    // All other bots: require authentication
     let hasAccess = false;
     let userRegionPreference = 'optimal'; // Default for guests
-    
-    if (bot.accessTier === 'guest') {
+
+    const isGuestBot = bot.id.includes('guest') || bot.id === 'gloria-life-context';
+
+    if (isGuestBot) {
         hasAccess = true;
     } else if (userId) {
         const user = await prisma.user.findUnique({ where: { id: userId } });
         if (user) {
             // Store user's AI region preference for later use
             userRegionPreference = user.aiRegionPreference || 'optimal';
-            
-            // Admins and Developers have full access to all bots
-            if (user.isAdmin) {
-                hasAccess = true;
-            } else if (bot.accessTier === 'registered') {
-                hasAccess = true; // Any registered user can access 'registered' bots
-            } else if (bot.accessTier === 'premium') {
-                // Premium users and clients get access to all premium bots.
-                // Others need to have it explicitly unlocked.
-                const unlockedCoaches = user.unlockedCoaches ? JSON.parse(user.unlockedCoaches) : [];
-                if (user.isPremium || user.isClient || unlockedCoaches.includes(bot.id)) {
-                    hasAccess = true;
-                }
-            } else if (bot.accessTier === 'client') {
-                // Client-only bots (e.g. Rob, Victor) require isClient flag.
-                // Also allow if individually unlocked via unlockedCoaches.
-                const unlockedCoaches = user.unlockedCoaches ? JSON.parse(user.unlockedCoaches) : [];
-                if (user.isClient || unlockedCoaches.includes(bot.id)) {
-                    hasAccess = true;
-                }
-            }
+            // All authenticated users have access to all non-guest bots
+            hasAccess = true;
         }
     }
 

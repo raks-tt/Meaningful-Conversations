@@ -154,7 +154,6 @@ const BOTS = [
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Erik&backgroundColor=d1d4f9&hairColor=86efac',
           style: 'Conversational, Structured, Helpful',
           style_de: 'Gesprächsorientiert, Strukturiert, Hilfsbereit',
-          accessTier: 'guest',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
 ${CRISIS_RESPONSE_EN}
     
@@ -219,7 +218,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Erik&backgroundColor=c0aede&hairColor=86efac',
           style: 'Structured, Inquisitive, Focused',
           style_de: 'Strukturiert, Fragend, Fokussiert',
-          accessTier: 'registered',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
 
 You are Gloria, a professional interviewer. Your purpose is to conduct structured interviews that help the user articulate and explore their ideas, projects, workflows, or any topic they choose. You are NOT a coach and you MUST NOT provide advice, opinions, or analysis. Your role is to ask excellent questions that draw out clear, well-structured answers.
@@ -304,7 +302,6 @@ Ihre erste Nachricht MUSS eine herzliche, professionelle Begrüßung sein. Dann 
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Alex&backgroundColor=d1d4f9,c0aede,b6e3f4&radius=50&mouth=smirk&shirtColor=ffffff',
           style: 'Efficient, Adaptive, Solution-Focused',
           style_de: 'Effizient, Anpassungsfähig, Lösungsorientiert',
-          accessTier: 'guest',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
 ${CRISIS_RESPONSE_EN}
     
@@ -519,7 +516,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Elara&backgroundColor=B8D4B8&radius=50&mouth=smile&shirtColor=ffffff',
           style: 'Motivational, Inquisitive, Reflective',
           style_de: 'Motivierend, Neugierig, Reflektierend',
-          accessTier: 'guest',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
     
     ${CRISIS_RESPONSE_EN}
@@ -690,7 +686,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Sophie&backgroundColor=d1d4f9,c0aede,b6e3f4&radius=50&mouth=smirk,smile&shirtColor=ffffff&hair=full&hairColor=cb682f',
           style: 'Strategic, Decisive, Organized',
           style_de: 'Strategisch, Entscheidend, Organisiert',
-          accessTier: 'guest',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
     
     ${CRISIS_RESPONSE_EN}
@@ -877,7 +872,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/9.x/micah/svg?seed=Kimberly&baseColor=f9c9b6&backgroundColor=FBE870&mouth=smirk',
           style: 'Composed, Philosophical, Wise',
           style_de: 'Besonnen, Philosophisch, Weise',
-          accessTier: 'premium',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
     
     ${CRISIS_RESPONSE_EN}
@@ -1126,7 +1120,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Chloe&backgroundColor=ffdfbf&radius=50&mouth=smile,smirk&shirtColor=ffffff',
           style: 'Practical, Structured, Transformative',
           style_de: 'Praktisch, Strukturiert, Transformativ',
-          accessTier: 'premium',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
     
     ${CRISIS_RESPONSE_EN}
@@ -1359,7 +1352,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Rob&backgroundColor=E8E8E8&radius=50&mouth=smile&shirtColor=ffffff',
           style: 'Mental Fitness, Empathetic, Mindful',
           style_de: 'Mentale Fitness, Empathisch, Achtsam',
-          accessTier: 'client',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
     
     ${CRISIS_RESPONSE_EN}
@@ -1568,7 +1560,6 @@ ${CRISIS_RESPONSE_DE}
           avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=VictorCoSerious&backgroundColor=ff9999&radius=50&mouth=smirk&shirtColor=ffffff',
           style: 'Systemic, Analytical, Neutral',
           style_de: 'Systemisch, Analytisch, Neutral',
-          accessTier: 'client',
           systemPrompt: `IMPORTANT RULE: Your entire response MUST be in English.
 
 ${CRISIS_RESPONSE_EN}

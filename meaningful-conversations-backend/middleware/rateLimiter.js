@@ -30,63 +30,6 @@ const loginLimiter = rateLimit({
 });
 
 /**
- * Registration rate limiter - Prevents spam account creation
- * 3 registrations per hour per IP
- */
-const registerLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 3, // 3 registrations
-    message: { 
-        error: 'Too many accounts created from this IP. Please try again later.',
-        errorCode: 'RATE_LIMIT_REGISTER'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    handler: (req, res, next, options) => {
-        console.warn(`🚫 Rate limit exceeded for registration from IP: ${req.ip}`);
-        res.status(429).json(options.message);
-    },
-});
-
-/**
- * Password reset rate limiter - Prevents email bombing
- * 3 requests per hour per IP
- */
-const forgotPasswordLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 3, // 3 requests
-    message: { 
-        error: 'Too many password reset requests. Please try again later.',
-        errorCode: 'RATE_LIMIT_FORGOT_PASSWORD'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    handler: (req, res, next, options) => {
-        console.warn(`🚫 Rate limit exceeded for password reset from IP: ${req.ip}`);
-        res.status(429).json(options.message);
-    },
-});
-
-/**
- * Email verification rate limiter - Higher limit for legitimate resends
- * 10 requests per 15 minutes per IP
- */
-const verifyEmailLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // 10 requests
-    message: { 
-        error: 'Too many verification attempts. Please try again later.',
-        errorCode: 'RATE_LIMIT_VERIFY_EMAIL'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    handler: (req, res, next, options) => {
-        console.warn(`🚫 Rate limit exceeded for email verification from IP: ${req.ip}`);
-        res.status(429).json(options.message);
-    },
-});
-
-/**
  * Gemini (LLM) rate limiter - Prevents API quota abuse
  * Authenticated users: 20 requests per minute (keyed by user ID)
  * Guests: 10 requests per minute (keyed by IP)
@@ -140,34 +83,8 @@ const audioTranscribeLimiter = rateLimit({
     },
 });
 
-/**
- * Purchase rate limiter - Prevents order-creation abuse
- * 10 requests per hour per user
- */
-const purchaseLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000,
-    max: 10,
-    keyGenerator: (req) => `purchase_${req.userId || req.ip}`,
-    message: { 
-        error: 'Too many purchase requests. Please try again later.',
-        errorCode: 'RATE_LIMIT_PURCHASE'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    validate: false,
-    handler: (req, res, next, options) => {
-        const identifier = req.userId ? `user ${req.userId}` : `IP ${req.ip}`;
-        console.warn(`🚫 Purchase rate limit exceeded for ${identifier}`);
-        res.status(429).json(options.message);
-    },
-});
-
-module.exports = { 
-    loginLimiter, 
-    registerLimiter, 
-    forgotPasswordLimiter,
-    verifyEmailLimiter,
+module.exports = {
+    loginLimiter,
     geminiLimiter,
-    audioTranscribeLimiter,
-    purchaseLimiter
+    audioTranscribeLimiter
 };

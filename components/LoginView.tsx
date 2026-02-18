@@ -14,16 +14,13 @@ import { isChristmasSeason, isSpringSeason, isSummerSeason, isAutumnSeason } fro
 
 interface LoginViewProps {
   onLoginSuccess: (user: User, key: CryptoKey) => void;
-  onAccessExpired: (email: string, user: User, key: CryptoKey) => void;
-  onSwitchToRegister: () => void;
   onBack: () => void;
-  onForgotPassword: () => void;
   reason?: string | null;
 }
 
 const REMEMBER_EMAIL_KEY = 'rememberedEmail';
 
-const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onAccessExpired, onSwitchToRegister, onBack, onForgotPassword, reason }) => {
+const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onBack, reason }) => {
   const { t } = useLocalization();
   
   // Load remembered email from localStorage on mount
@@ -58,7 +55,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onAccessExpired, 
     const trimmedPassword = password.trim();
 
     try {
-        const { user, token, accessExpired } = await userService.login(trimmedEmail, trimmedPassword);
+        const { user, token } = await userService.login(trimmedEmail, trimmedPassword);
         
         if (!user.encryptionSalt) {
             throw new Error("Encryption salt is missing for this user.");
@@ -76,12 +73,8 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onAccessExpired, 
         } catch (e) {
             console.warn('Could not save remember email preference:', e);
         }
-        
-        if (accessExpired) {
-            onAccessExpired(trimmedEmail, user, key);
-        } else {
-            onLoginSuccess(user, key);
-        }
+
+        onLoginSuccess(user, key);
 
     } catch (err: any) {
         console.error("Login failed:", err);
@@ -151,7 +144,7 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onAccessExpired, 
               autoCorrect="off"
               spellCheck="false"
             />
-            <div className="mt-2 flex justify-between items-center">
+            <div className="mt-2">
                 <label className="flex items-center cursor-pointer">
                     <input
                         type="checkbox"
@@ -162,9 +155,6 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onAccessExpired, 
                     />
                     <span className="ml-2 text-xs text-content-secondary">{t('login_remember_email') || 'E-Mail merken'}</span>
                 </label>
-                <button type="button" onClick={onForgotPassword} disabled={isLoading} className="text-xs text-accent-primary hover:underline disabled:opacity-50">
-                    {t('login_forgot_password')}
-                </button>
             </div>
           </div>
 
@@ -174,13 +164,6 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, onAccessExpired, 
             {t('login_button')}
           </Button>
         </form>
-
-        <p className="text-center text-sm text-content-secondary">
-          {t('login_no_account')}{' '}
-          <button onClick={onSwitchToRegister} disabled={isLoading} className="font-medium text-accent-primary hover:text-accent-primary-hover disabled:opacity-50">
-            {t('login_register_link')}
-          </button>
-        </p>
       </div>
     </div>
   );

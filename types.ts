@@ -6,12 +6,6 @@ export type NavView =
     | 'welcome'
     | 'auth'
     | 'login'
-    | 'register'
-    | 'registrationPending'
-    | 'verifyEmail'
-    | 'forgotPassword'
-    | 'resetPassword'
-    | 'unsubscribe'
     | 'landing'
     | 'piiWarning'
     | 'questionnaire'
@@ -19,7 +13,6 @@ export type NavView =
     | 'chat'
     | 'sessionReview'
     | 'contextChoice'
-    | 'paywall'
     | 'achievements'
     | 'userGuide'
     | 'formattingHelp'
@@ -29,8 +22,6 @@ export type NavView =
     | 'legal'
     | 'accountManagement'
     | 'editProfile'
-    | 'redeemCode'
-    | 'upgrade'
     | 'admin'
     | 'changePassword'
     | 'exportData'
@@ -68,8 +59,6 @@ export interface User {
     completedLenses?: string[];
 }
 
-export type BotAccessTier = 'guest' | 'registered' | 'premium' | 'client';
-
 export interface Bot {
     id: string;
     name: string;
@@ -78,7 +67,6 @@ export interface Bot {
     avatar: string;
     style: string;
     style_de: string;
-    accessTier: BotAccessTier;
 }
 
 export interface BotWithAvailability extends Bot {
@@ -134,16 +122,6 @@ export interface Achievement {
     isUnlocked: (state: GamificationState) => boolean;
 }
 
-export interface UpgradeCode {
-    id: string;
-    code: string;
-    botId: string;
-    referrer?: string;
-    isUsed: boolean;
-    createdAt: string;
-    usedBy?: { email: string };
-}
-
 export interface Ticket {
     id: string;
     type: 'PASSWORD_RESET';
@@ -186,7 +164,6 @@ export interface BotRecommendationEntry {
     botName: string;
     rationale: string;
     examplePrompt: string;
-    requiredTier: 'guest' | 'premium' | 'client';
 }
 
 export interface BotRecommendation {

@@ -37,20 +37,11 @@ import EditProfileView from './components/EditProfileView';
 import DataExportView from './components/DataExportView';
 import AuthView from './components/AuthView';
 import LoginView from './components/LoginView';
-import RegisterView from './components/RegisterView';
 import ContextChoiceView from './components/ContextChoiceView';
-import ForgotPasswordView from './components/ForgotPasswordView';
-import RedeemCodeView from './components/RedeemCodeView';
-import UpgradeView from './components/UpgradeView';
 import AdminView from './components/AdminView';
 import ChangePasswordView from './components/ChangePasswordView';
 import DeleteAccountModal from './components/DeleteAccountModal';
-import RegistrationPendingView from './components/RegistrationPendingView';
-import VerifyEmailView from './components/VerifyEmailView';
-import ResetPasswordView from './components/ResetPasswordView';
-import UnsubscribeView from './components/UnsubscribeView';
 import UpdateNotification from './components/UpdateNotification';
-import PaywallView from './components/PaywallView';
 import PersonalitySurvey, { SurveyResult } from './components/PersonalitySurvey';
 import PersonalityProfileView from './components/PersonalityProfileView';
 import LifeContextEditorView from './components/LifeContextEditorView';
@@ -114,7 +105,6 @@ const App: React.FC = () => {
     const [questionnaireAnswers, setQuestionnaireAnswers] = useState<Record<string, string>>({});
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [userMessageCount, setUserMessageCount] = useState(0);
-    const [paywallUserEmail, setPaywallUserEmail] = useState<string | null>(null);
     const [cameFromContextChoice, setCameFromContextChoice] = useState(false);
     const [isTestMode, setIsTestMode] = useState(false);
     const [testScenarioId, setTestScenarioId] = useState<string | null>(null);
@@ -380,26 +370,7 @@ const App: React.FC = () => {
     useEffect(() => {
         // This effect runs once on startup.
         const initializeApp = async () => {
-            // Check for URL-based routes first (email verification, password reset)
-            const urlParams = new URLSearchParams(window.location.search);
-            const route = urlParams.get('route');
-            
-            if (route) {
-                if (route === 'verify-email') {
-                    setView('verifyEmail');
-                    return;
-                }
-                if (route === 'reset-password') {
-                    setView('resetPassword');
-                    return; 
-                }
-                if (route === 'unsubscribe') {
-                    setView('unsubscribe');
-                    return;
-                }
-            }
-
-            // Standard initialization if no token routes are found
+            // Standard initialization
             const session = api.getSession();
             if (session) {
                 // If a session exists, we don't have the encryption key.
@@ -466,18 +437,6 @@ const App: React.FC = () => {
         }
     };
 
-    const handleAccessExpired = async (email: string, user: User, key: CryptoKey) => {
-        setAndProcessUser(user);
-        setEncryptionKey(key);
-        setPaywallUserEmail(email);
-        try {
-            const data = await userService.loadUserData(key);
-            setLifeContext(data.context || '');
-            setGamificationState(deserializeGamificationState(data.gamificationState));
-        } catch { /* data load failed — download button will be empty, but paywall still works */ }
-        setView('paywall');
-    };
-    
     const handleLogout = () => {
         api.clearSession();
         setAndProcessUser(null);
@@ -1264,38 +1223,8 @@ const App: React.FC = () => {
                     redirectReason={authRedirectReason}
                 />;
             }
-            case 'login': return <LoginView onLoginSuccess={handleLoginSuccess} onAccessExpired={handleAccessExpired} onSwitchToRegister={() => { setAuthRedirectReason(null); setView('register'); }} onBack={() => { setAuthRedirectReason(null); setView('auth'); }} onForgotPassword={() => { setAuthRedirectReason(null); setView('forgotPassword'); }} reason={authRedirectReason} />;
-            case 'register': return <RegisterView onShowPending={() => setView('registrationPending')} onSwitchToLogin={() => setView('login')} onBack={() => setView('auth')} />;
-            case 'registrationPending': return <RegistrationPendingView onGoToLogin={() => setView('login')} />;
-            case 'verifyEmail': return <VerifyEmailView onVerificationSuccess={handleLoginSuccess} />;
-            case 'forgotPassword': return <ForgotPasswordView onBack={() => setView('login')} />;
-            case 'resetPassword': return <ResetPasswordView onResetSuccess={() => setView('login')} />;
-            case 'unsubscribe': return <UnsubscribeView token={new URLSearchParams(window.location.search).get('token') || ''} onBack={() => setView('auth')} />;
+            case 'login': return <LoginView onLoginSuccess={handleLoginSuccess} onBack={() => { setAuthRedirectReason(null); setView('auth'); }} reason={authRedirectReason} />;
             case 'contextChoice': return <ContextChoiceView user={currentUser!} savedContext={lifeContext} gamificationState={gamificationState} onContinue={() => { setCameFromContextChoice(true); setView('botSelection'); }} onStartNew={() => { setCameFromContextChoice(false); setLifeContext(''); setView('landing'); }} />;
-            case 'paywall': return <PaywallView
-                userEmail={paywallUserEmail}
-                onRedeem={() => { setMenuView('redeemCode'); }}
-                onPurchaseSuccess={(user) => { setAndProcessUser(user); setPaywallUserEmail(null); setView(lifeContext ? 'contextChoice' : 'landing'); }}
-                onLogout={handleLogout}
-                onDownloadData={async () => {
-                    const parts: string[] = [];
-                    if (lifeContext) {
-                        parts.push('# Life Context\n\n' + lifeContext);
-                    }
-                    if (encryptionKey) {
-                        try {
-                            const profileData = await api.loadPersonalityProfile();
-                            if (profileData?.encryptedData) {
-                                const decrypted = await decryptPersonalityProfile(profileData.encryptedData, encryptionKey);
-                                parts.push('# Personality Profile\n\n' + JSON.stringify(decrypted, null, 2));
-                            }
-                        } catch { /* profile may not exist */ }
-                    }
-                    if (parts.length > 0) {
-                        await downloadTextFile(parts.join('\n\n---\n\n'), 'my-data-export.md', 'text/markdown;charset=utf-8');
-                    }
-                }}
-            />;
             case 'landing': return <LandingPage onSubmit={handleFileUpload} onStartQuestionnaire={() => setView('questionnaire')} onStartInterview={handleStartInterview} />;
             case 'piiWarning': return <PIIWarningView onConfirm={handlePiiConfirm} onCancel={() => setView('questionnaire')} />;
             case 'questionnaire': return <Questionnaire onSubmit={handleQuestionnaireSubmit} onBack={() => setView('landing')} answers={questionnaireAnswers} onAnswersChange={setQuestionnaireAnswers} />;
@@ -1441,24 +1370,6 @@ const App: React.FC = () => {
             case 'accountManagement': return <AccountManagementView currentUser={currentUser!} onNavigate={handleNavigateFromMenu} onDeleteAccount={() => setIsDeleteModalOpen(true)} />;
             case 'editProfile': return <EditProfileView currentUser={currentUser!} onBack={() => setMenuView('accountManagement')} onProfileUpdated={(user) => setAndProcessUser(user)} />;
             case 'exportData': return <DataExportView lifeContext={lifeContext} colorTheme={colorTheme} />;
-            case 'upgrade': return <UpgradeView
-                    currentUser={currentUser!}
-                    onPurchaseSuccess={(user) => { setAndProcessUser(user); setMenuView(null); }}
-                    onRedeem={() => setMenuView('redeemCode')}
-                />;
-            case 'redeemCode': return <RedeemCodeView
-                    onBack={view === 'paywall' ? () => setMenuView(null) : undefined}
-                    onRedeemSuccess={(user) => { 
-                    setAndProcessUser(user);
-                    setMenuView(null);
-                    if (paywallUserEmail) {
-                        setAuthRedirectReason("Your pass has been applied! Please log in again to continue.");
-                        setPaywallUserEmail(null);
-                        setView('login');
-                    } else {
-                        handleCloseSubMenu();
-                    }
-                }} />;
             case 'admin': return <AdminView currentUser={currentUser} encryptionKey={encryptionKey!} onRunTestSession={handleRunTestSession} onTestComfortCheck={handleTestComfortCheck} lifeContext={lifeContext} shouldOpenTestRunner={shouldOpenTestRunner} onTestRunnerOpened={() => setShouldOpenTestRunner(false)} />;
             case 'changePassword': return <ChangePasswordView currentUser={currentUser!} encryptionKey={encryptionKey!} lifeContext={lifeContext} />;
             default: return <WelcomeScreen />;
@@ -1466,7 +1377,7 @@ const App: React.FC = () => {
     };
     
     const isAnyModalOpen = useIsAnyModalOpen();
-    const showGamificationBar = !isAnyModalOpen && !['welcome', 'auth', 'login', 'register', 'forgotPassword', 'registrationPending', 'verifyEmail', 'resetPassword', 'paywall'].includes(view);
+    const showGamificationBar = !isAnyModalOpen && !['welcome', 'auth', 'login'].includes(view);
     const minimalBar = ['landing', 'questionnaire', 'piiWarning'].includes(view) && !menuView;
     const nativeBarHeight = minimalBar ? 48 : 60; // Must match Swift: barHeight in NativeGamificationBarView.updateLayout
     const previousViewRef = useRef<NavView>('welcome');
