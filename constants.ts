@@ -9,7 +9,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Erik&backgroundColor=d1d4f9&hairColor=86efac',
         style: 'Conversational, Structured, Helpful',
         style_de: 'Gesprächsorientiert, Strukturiert, Hilfsbereit',
-        accessTier: 'guest',
     },
     {
         id: 'gloria-interview',
@@ -19,7 +18,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Erik&backgroundColor=c0aede&hairColor=86efac',
         style: 'Structured, Inquisitive, Focused',
         style_de: 'Strukturiert, Fragend, Fokussiert',
-        accessTier: 'registered',
     },
     {
         id: 'max-ambitious',
@@ -29,7 +27,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Elara&backgroundColor=B8D4B8&radius=50&mouth=smile&shirtColor=ffffff',
         style: 'Motivational, Inquisitive, Reflective',
         style_de: 'Motivierend, Neugierig, Reflektierend',
-        accessTier: 'guest',
     },
     {
         id: 'ava-strategic',
@@ -39,7 +36,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Sophie&backgroundColor=d1d4f9,c0aede,b6e3f4&radius=50&mouth=smirk,smile&shirtColor=ffffff&hair=full&hairColor=cb682f',
         style: 'Strategic, Long-term, Analytical',
         style_de: 'Strategisch, Langfristig, Analytisch',
-        accessTier: 'guest',
     },
     {
         id: 'kenji-stoic',
@@ -49,7 +45,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/9.x/micah/svg?seed=Kimberly&baseColor=f9c9b6&backgroundColor=FBE870&mouth=smirk',
         style: 'Composed, Philosophical, Wise',
         style_de: 'Besonnen, Philosophisch, Weise',
-        accessTier: 'premium',
     },
     {
         id: 'chloe-cbt',
@@ -59,7 +54,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Chloe&backgroundColor=ffdfbf&radius=50&mouth=smile,smirk&shirtColor=ffffff',
         style: 'Reflective, Structured, Evidence-Based',
         style_de: 'Reflektierend, Strukturiert, Evidenzbasiert',
-        accessTier: 'premium',
         // coachingMode wird im Persönlichkeitsprofil eingestellt
     },
     {
@@ -70,7 +64,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Rob&backgroundColor=E8E8E8&radius=50&mouth=smile&shirtColor=ffffff',
         style: 'Mental Fitness, Empathetic, Mindful',
         style_de: 'Mentale Fitness, Empathisch, Achtsam',
-        accessTier: 'client',
     },
     {
         id: 'nexus-gps',
@@ -80,7 +73,6 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=Alex&backgroundColor=d1d4f9,c0aede,b6e3f4&radius=50&mouth=smirk&shirtColor=ffffff',
         style: 'Efficient, Adaptive, Solution-Focused',
         style_de: 'Effizient, Anpassungsfähig, Lösungsorientiert',
-        accessTier: 'guest',
     },
     {
         id: 'victor-bowen',
@@ -90,6 +82,5 @@ export const BOTS: Bot[] = [
         avatar: 'https://api.dicebear.com/8.x/micah/svg?seed=VictorCoSerious&backgroundColor=ff9999&radius=50&mouth=smirk&shirtColor=ffffff',
         style: 'Systemic, Analytical, Neutral',
         style_de: 'Systemisch, Analytisch, Neutral',
-        accessTier: 'client',
     }
 ];

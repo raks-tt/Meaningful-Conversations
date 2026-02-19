@@ -107,15 +107,7 @@ router.put('/user/coaching-mode', async (req, res) => {
     if (!validModes.includes(coachingMode)) {
         return res.status(400).json({ error: 'Invalid coaching mode. Must be one of: off, dpc, dpfl' });
     }
-    
-    // DPFL requires premium (isPremium), client (isClient), or admin access
-    if (coachingMode === 'dpfl') {
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (user && !user.isPremium && !user.isClient && !user.isAdmin) {
-            return res.status(403).json({ error: 'DPFL requires Premium access.' });
-        }
-    }
-    
+
     try {
         const updatedUser = await prisma.user.update({
             where: { id: userId },
@@ -197,107 +189,6 @@ router.put('/user/ai-region', async (req, res) => {
     } catch (error) {
         console.error('Error updating AI region preference:', error);
         res.status(500).json({ error: 'Failed to update AI region preference.' });
-    }
-});
-
-// POST /api/data/redeem-code
-router.post('/redeem-code', async (req, res) => {
-    const { code } = req.body;
-    const userId = req.userId;
-    try {
-        const upgradeCode = await prisma.upgradeCode.findUnique({ where: { code } });
-        if (!upgradeCode || upgradeCode.isUsed) {
-            return res.status(404).json({ error: 'Invalid or already used code.' });
-        }
-
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found.' });
-        }
-
-        const ACCESS_CODE_TYPES = [
-            'ACCESS_PASS_1Y', 'ACCESS_PASS_3M', 'ACCESS_PASS_1M',
-            'REGISTERED_LIFETIME', 'premium', 'client',
-        ];
-        const isAccessCode = ACCESS_CODE_TYPES.includes(upgradeCode.botId);
-
-        const premiumActive = user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date());
-        const hasPermanentAccess = user.isAdmin || premiumActive || user.isClient;
-        const accessExpired = !hasPermanentAccess &&
-            user.accessExpiresAt && new Date(user.accessExpiresAt) < new Date();
-
-        if (accessExpired && !isAccessCode) {
-            return res.status(403).json({
-                error: 'Your access has expired. Please redeem an access code or purchase access first.',
-                errorCode: 'ACCESS_EXPIRED_BOT_CODE',
-            });
-        }
-
-        let updateData = { updatedAt: new Date() };
-
-        if (upgradeCode.botId === 'ACCESS_PASS_1Y') {
-            // Premium 1-Year Pass: grant premium via premiumExpiresAt (preserves accessExpiresAt)
-            const now = new Date();
-            const baseDate = (user.premiumExpiresAt && new Date(user.premiumExpiresAt) > now)
-                ? new Date(user.premiumExpiresAt) : new Date();
-            baseDate.setFullYear(baseDate.getFullYear() + 1);
-            updateData.isPremium = true;
-            updateData.premiumExpiresAt = baseDate;
-        } else if (upgradeCode.botId === 'ACCESS_PASS_3M') {
-            // Premium 3-Month Pass
-            const now = new Date();
-            const baseDate = (user.premiumExpiresAt && new Date(user.premiumExpiresAt) > now)
-                ? new Date(user.premiumExpiresAt) : new Date();
-            baseDate.setMonth(baseDate.getMonth() + 3);
-            updateData.isPremium = true;
-            updateData.premiumExpiresAt = baseDate;
-        } else if (upgradeCode.botId === 'ACCESS_PASS_1M') {
-            // Premium 1-Month Pass
-            const now = new Date();
-            const baseDate = (user.premiumExpiresAt && new Date(user.premiumExpiresAt) > now)
-                ? new Date(user.premiumExpiresAt) : new Date();
-            baseDate.setMonth(baseDate.getMonth() + 1);
-            updateData.isPremium = true;
-            updateData.premiumExpiresAt = baseDate;
-        } else if (upgradeCode.botId === 'REGISTERED_LIFETIME') {
-            // Registered Lifetime: permanent registered access (no premium features)
-            updateData.accessExpiresAt = null;
-        } else if (upgradeCode.botId === 'premium') {
-             // Permanent Premium (admin-granted, no expiry)
-             updateData.isPremium = true;
-             updateData.premiumExpiresAt = null;
-        } else if (upgradeCode.botId === 'client') {
-             // Permanent Client (coach-granted, no expiry)
-             updateData.isClient = true;
-             updateData.accessExpiresAt = null;
-        } else {
-            const unlocked = user.unlockedCoaches ? JSON.parse(user.unlockedCoaches) : [];
-            if (!unlocked.includes(upgradeCode.botId)) {
-                unlocked.push(upgradeCode.botId);
-            }
-            updateData.unlockedCoaches = JSON.stringify(unlocked);
-        }
-
-        const [updatedUser] = await prisma.$transaction([
-            prisma.user.update({
-                where: { id: userId },
-                data: updateData,
-            }),
-            prisma.upgradeCode.update({
-                where: { id: upgradeCode.id },
-                data: {
-                    isUsed: true,
-                    usedById: userId,
-                },
-            }),
-        ]);
-
-        const { passwordHash, ...userPayload } = updatedUser;
-        res.status(200).json({ user: userPayload });
-
-    } catch (error) {
-        console.error("Error redeeming code:", error);
-        res.status(500).json({ error: 'An internal server error occurred.' });
     }
 });
 

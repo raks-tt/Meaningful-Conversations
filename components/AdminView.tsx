@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useModalOpen } from '../utils/modalUtils';
 import * as userService from '../services/userService';
-import { User, UpgradeCode, Ticket, Feedback } from '../types';
+import { User, Ticket, Feedback } from '../types';
 import { apiFetch, loadPersonalityProfile } from '../services/api';
 import { useLocalization } from '../context/LocalizationContext';
 import { ArrowLeftIcon } from './icons/ArrowLeftIcon';
@@ -43,8 +43,7 @@ interface AdminViewProps {
     onTestRunnerOpened?: () => void;
 }
 
-type AdminTab = 'users' | 'codes' | 'tickets' | 'feedback' | 'runner' | 'api-usage';
-type CodeSortKeys = 'unlocks' | 'createdAt' | 'usage';
+type AdminTab = 'users' | 'tickets' | 'feedback' | 'runner' | 'api-usage';
 type UserSortKeys = 'email' | 'createdAt' | 'roles' | 'profile' | 'loginCount' | 'xp' | 'lastLogin';
 
 interface GuestLoginStats {
@@ -241,29 +240,17 @@ const AdminView: React.FC<AdminViewProps> = ({ currentUser, encryptionKey, onRun
     const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
 
     const [users, setUsers] = useState<User[]>([]);
-    const [codes, setCodes] = useState<UpgradeCode[]>([]);
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [feedback, setFeedback] = useState<Feedback[]>([]);
     const [guestLoginStats, setGuestLoginStats] = useState<GuestLoginStats | null>(null);
     const [showGuestLoginDetails, setShowGuestLoginDetails] = useState(false);
 
-    const [sortConfig, setSortConfig] = useState<{ key: CodeSortKeys; direction: 'asc' | 'desc' } | null>({ key: 'createdAt', direction: 'desc' });
     const [userSortConfig, setUserSortConfig] = useState<{ key: UserSortKeys; direction: 'asc' | 'desc' } | null>({ key: 'createdAt', direction: 'desc' });
 
     const testScenarios = useMemo(() => getTestScenarios(t), [t]);
 
-    const botsForCodes = useMemo(() => {
-        return BOTS.filter(b => b.accessTier !== 'guest' && b.id !== 'nexus-gps');
-    }, []);
-
-    const [newCodeBotId, setNewCodeBotId] = useState('ACCESS_PASS_1M');
-    const [codeReferrer, setCodeReferrer] = useState('');
-    const [bulkQuantity, setBulkQuantity] = useState<number>(10);
-    const [generatedBulkCodes, setGeneratedBulkCodes] = useState<Array<{ code: string; botId: string; referrer?: string; createdAt: string }> | null>(null);
     const [userSearchQuery, setUserSearchQuery] = useState('');
     const [profileFilter, setProfileFilter] = useState<'all' | 'with' | 'without'>('all');
-    const [codeEmailFilter, setCodeEmailFilter] = useState('');
-    const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
     const [resetSuccessData, setResetSuccessData] = useState<{ email: string; newPass: string } | null>(null);
     const [userToReset, setUserToReset] = useState<User | null>(null);
     const [selectedBotFilter, setSelectedBotFilter] = useState<string | null>(null);
@@ -280,15 +267,13 @@ const AdminView: React.FC<AdminViewProps> = ({ currentUser, encryptionKey, onRun
         setIsLoading(true);
         setError('');
         try {
-            const [usersData, codesData, ticketsData, feedbackData, guestLoginData] = await Promise.all([
+            const [usersData, ticketsData, feedbackData, guestLoginData] = await Promise.all([
                 userService.getAdminUsers(),
-                userService.getUpgradeCodes(),
                 userService.getAdminTickets(),
                 userService.getAdminFeedback(),
                 apiFetch('/analytics/guest-logins/stats'),
             ]);
             setUsers(usersData.sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()));
-            setCodes(codesData); // Sorting is now handled in useMemo
             setTickets(ticketsData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
             setFeedback(feedbackData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
             setGuestLoginStats(guestLoginData);
@@ -632,7 +617,6 @@ const AdminView: React.FC<AdminViewProps> = ({ currentUser, encryptionKey, onRun
 
     const tabConfig: Record<AdminTab, { icon: React.FC<any>, key: string }> = {
         users: { icon: UsersIcon, key: 'admin_users_tab' },
-        codes: { icon: KeyIcon, key: 'admin_codes_tab' },
         tickets: { icon: InboxIcon, key: 'admin_tickets_tab' },
         feedback: { icon: StarIcon, key: 'admin_ratings_tab' },
         runner: { icon: ActivityIcon, key: 'admin_runner_tab' },
@@ -689,7 +673,7 @@ const AdminView: React.FC<AdminViewProps> = ({ currentUser, encryptionKey, onRun
 
     const renderTabs = () => (
         <div className="flex justify-around border-b border-gray-300 dark:border-gray-700">
-            {(['users', 'feedback', 'tickets', 'codes', ...(currentUser?.isDeveloper ? ['runner'] as AdminTab[] : []), 'api-usage'] as AdminTab[]).map(tab => {
+            {(['users', 'feedback', 'tickets', ...(currentUser?.isDeveloper ? ['runner'] as AdminTab[] : []), 'api-usage'] as AdminTab[]).map(tab => {
                 const { icon: Icon, key } = tabConfig[tab];
                 let textClass = 'whitespace-pre-line text-center leading-tight';
                 if (tab === 'runner' || tab === 'api-usage') {
@@ -889,15 +873,6 @@ const AdminView: React.FC<AdminViewProps> = ({ currentUser, encryptionKey, onRun
                                                         <UnlockIcon className="w-5 h-5" />
                                                     </button>
                                                 )}
-                                                <button onClick={() => handleAction(`toggle-premium-${user.id}`, () => userService.toggleUserPremium(user.id))} disabled={actionLoading[`toggle-premium-${user.id}`]} className="p-2 text-status-info-foreground rounded-full hover:bg-status-info-background disabled:opacity-50" title={t('admin_users_toggle_premium')}><StarIcon className="w-5 h-5" /></button>
-                                                <button 
-                                                    onClick={() => handleAction(`toggle-client-${user.id}`, () => userService.toggleUserClient(user.id))} 
-                                                    disabled={actionLoading[`toggle-client-${user.id}`]} 
-                                                    className="p-2 text-purple-600 dark:text-purple-400 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30 disabled:opacity-50" 
-                                                    title={t('admin_users_toggle_client')}
-                                                >
-                                                    <span className="text-xs font-bold">K</span>
-                                                </button>
                                                 <button 
                                                     onClick={() => handleAction(`toggle-admin-${user.id}`, () => userService.toggleUserAdmin(user.id))} 
                                                     disabled={actionLoading[`toggle-admin-${user.id}`] || isCurrentUser} 

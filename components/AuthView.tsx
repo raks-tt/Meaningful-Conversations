@@ -8,12 +8,11 @@ import Button from './shared/Button';
 
 interface AuthViewProps {
   onLogin: () => void;
-  onRegister: () => void;
   onGuest: () => void;
   redirectReason: string | null;
 }
 
-const AuthView: React.FC<AuthViewProps> = ({ onLogin, onRegister, onGuest, redirectReason }) => {
+const AuthView: React.FC<AuthViewProps> = ({ onLogin, onGuest, redirectReason }) => {
   const { t, language, setLanguage } = useLocalization();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -48,9 +47,6 @@ const AuthView: React.FC<AuthViewProps> = ({ onLogin, onRegister, onGuest, redir
         <div className="space-y-4 pt-4">
           <Button onClick={onLogin} disabled={isLoading} size="lg" fullWidth leftIcon={<LogInIcon className="w-6 h-6" />}>
             {t('auth_login')}
-          </Button>
-          <Button onClick={onRegister} disabled={isLoading} size="lg" fullWidth leftIcon={<UserIcon className="w-6 h-6" />} className="bg-accent-secondary hover:bg-accent-secondary-hover">
-            {t('auth_register')}
           </Button>
           <Button onClick={onGuest} disabled={isLoading} variant="outline" size="lg" fullWidth leftIcon={<UsersIcon className="w-6 h-6" />}>
             {t('auth_guest')}
