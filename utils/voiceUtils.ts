@@ -10,16 +10,16 @@ export const getVoiceGender = (voice: SpeechSynthesisVoice): 'male' | 'female' |
     if (excludedFemaleNames.some(part => name.includes(part))) {
         return 'unknown';
     }
-    
-    const maleKeywords = ['male', 'man', 'boy', 'männlich'];
-    const femaleKeywords = ['female', 'woman', 'girl', 'weiblich'];
-    
+
+    const maleKeywords = ['male', 'man', 'boy'];
+    const femaleKeywords = ['female', 'woman', 'girl'];
+
     const maleNames = ['alex', 'daniel', 'david', 'tom', 'oliver', 'jamie', 'max', 'rob', 'lee', 'ryan', 'aaron', 'nexus', 'markus', 'yannick', 'stefan', 'viktor', 'victor', 'kenji', 'martin', 'hans'];
     const femaleNames = ['samantha', 'zira', 'fiona', 'ava', 'chloe', 'susan', 'allison', 'cora', 'kathy', 'anna', 'hedda', 'serena', 'petra', 'helena', 'katja'];
 
     if (maleKeywords.some(kw => new RegExp(`\\b${kw}\\b`).test(name))) return 'male';
     if (femaleKeywords.some(kw => new RegExp(`\\b${kw}\\b`).test(name))) return 'female';
-    
+
     const nameParts = name.replace(/[^a-z\s]/gi, '').toLowerCase().split(/\s+/).filter(Boolean);
     if (nameParts.some(part => femaleNames.includes(part))) return 'female';
     if (nameParts.some(part => maleNames.includes(part))) return 'male';
@@ -40,9 +40,7 @@ export const selectVoice = (
 
   // --- Whitelist First Pass ---
   let allowedNames: string[] = [];
-  if (langPrefix === 'de') {
-      allowedNames = gender === 'female' ? ['petra', 'anna', 'helena', 'katja'] : ['markus', 'viktor', 'victor', 'martin', 'hans', 'yannick'];
-  } else if (langPrefix === 'en') {
+  if (langPrefix === 'en') {
       if (gender === 'female') {
           allowedNames = ['samantha', 'susan', 'serena', 'karen', 'moira', 'tessa'];
       } else {
@@ -74,7 +72,7 @@ export const selectVoice = (
           return scoredVoices[0].voice;
       }
   }
-  
+
   // --- Fallback to Broader Search if Whitelist Fails ---
   // First try: voices that match the gender
   let voicesToScore = voices.filter(v => {
@@ -106,7 +104,7 @@ export const selectVoice = (
   const score = (voice: SpeechSynthesisVoice): number => {
     let score = 0;
     const name = voice.name.toLowerCase();
-    
+
     // localService is now a preference, not a requirement
     // iOS enhanced voices may have localService: false
     if (voice.localService) score += 50;
@@ -132,3 +130,4 @@ export const cleanVoiceName = (name: string): string => {
     }
     return `${baseName}${qualitySuffix}`;
 };
+

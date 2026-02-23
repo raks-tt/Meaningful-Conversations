@@ -56,13 +56,11 @@ const EvaluationHistory: React.FC<EvaluationHistoryProps> = ({ onBack, currentUs
 
     const handleDelete = async (evalItem: TranscriptEvaluationSummary, e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent opening detail view
-        
-        const confirmMessage = language === 'de' 
-            ? 'Möchten Sie diese Auswertung wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'
-            : 'Are you sure you want to delete this evaluation? This action cannot be undone.';
-        
+
+        const confirmMessage = 'Are you sure you want to delete this evaluation? This action cannot be undone.';
+
         if (!confirm(confirmMessage)) return;
-        
+
         setDeletingId(evalItem.id);
         try {
             await deleteTranscriptEvaluation(evalItem.id);
@@ -70,9 +68,7 @@ const EvaluationHistory: React.FC<EvaluationHistoryProps> = ({ onBack, currentUs
             setEvaluations(prev => prev.filter(e => e.id !== evalItem.id));
         } catch (error) {
             console.error('Delete failed:', error);
-            const errorMessage = language === 'de'
-                ? 'Löschen fehlgeschlagen. Bitte versuchen Sie es erneut.'
-                : 'Delete failed. Please try again.';
+            const errorMessage = 'Delete failed. Please try again.';
             alert(errorMessage);
         } finally {
             setDeletingId(null);
@@ -143,8 +139,8 @@ const EvaluationHistory: React.FC<EvaluationHistoryProps> = ({ onBack, currentUs
                     {evaluations.map((evalItem) => {
                         const date = new Date(evalItem.createdAt);
                         const dateStr = date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-                        const scoreColor = evalItem.overallScore >= 7 ? 'text-green-600 dark:text-green-400' 
-                            : evalItem.overallScore >= 4 ? 'text-yellow-600 dark:text-yellow-400' 
+                        const scoreColor = evalItem.overallScore >= 7 ? 'text-green-600 dark:text-green-400'
+                            : evalItem.overallScore >= 4 ? 'text-yellow-600 dark:text-yellow-400'
                             : 'text-red-600 dark:text-red-400';
                         const isExpanded = expandedIds.has(evalItem.id);
 
@@ -198,7 +194,7 @@ const EvaluationHistory: React.FC<EvaluationHistoryProps> = ({ onBack, currentUs
                                     <div className="px-4 pb-4 pt-0 space-y-3">
                                         {/* Summary */}
                                         <p className="text-xs text-content-secondary">{evalItem.summary}</p>
-                                        
+
                                         {/* Vorreflexions-Details */}
                                         <div className="grid grid-cols-1 gap-2 pt-2 border-t border-gray-200 dark:border-gray-600">
                                             <p className="text-xs text-content-secondary">

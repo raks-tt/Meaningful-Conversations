@@ -1,9 +1,9 @@
 /**
  * PII (Personally Identifiable Information) Detection Utility
- * 
+ *
  * This utility scans text for potential full names (first name + last name)
  * to warn users before transmitting data to AI providers.
- * 
+ *
  * IMPORTANT: This is a heuristic-based detection and may produce false positives.
  * It is meant as a warning system, not a blocking mechanism.
  */
@@ -66,25 +66,25 @@ const COMMON_WORDS = new Set([
 /**
  * Detect potential full names (first name + last name) in a given text
  */
-export function detectPII(text: string, language: 'de' | 'en' = 'de'): PIIDetectionResult {
+export function detectPII(text: string, language: 'de' | 'en' = 'en'): PIIDetectionResult {
   const detectedTypes: string[] = [];
   const examples: string[] = [];
-  
+
   // Split text into words, preserving some context
   const words = text.split(/\s+/);
   const potentialNames: string[] = [];
-  
+
   for (let i = 0; i < words.length - 1; i++) {
     // Clean words for comparison
     const word1Clean = words[i].replace(/[^a-zA-ZäöüÄÖÜß]/g, '');
     const word2Clean = words[i + 1].replace(/[^a-zA-ZäöüÄÖÜß]/g, '');
-    
+
     // Skip if either word is too short
     if (word1Clean.length < 3 || word2Clean.length < 3) continue;
-    
+
     const word1Lower = word1Clean.toLowerCase();
     const word2Lower = word2Clean.toLowerCase();
-    
+
     // Check if first word is a known first name
     if (COMMON_FIRST_NAMES.has(word1Lower)) {
       // Check if second word looks like a surname:
@@ -92,10 +92,10 @@ export function detectPII(text: string, language: 'de' | 'en' = 'de'): PIIDetect
       // - At least 3 characters
       // - NOT a common word
       // - NOT also a first name (to avoid "Maria Anna" style combinations triggering)
-      const startsWithUppercase = word2Clean[0] === word2Clean[0].toUpperCase() && 
+      const startsWithUppercase = word2Clean[0] === word2Clean[0].toUpperCase() &&
                                    word2Clean[0] !== word2Clean[0].toLowerCase();
-      
-      if (startsWithUppercase && 
+
+      if (startsWithUppercase &&
           !COMMON_WORDS.has(word2Lower) &&
           !COMMON_FIRST_NAMES.has(word2Lower)) {
         // Additional check: surname should look like a proper name, not random text
@@ -106,17 +106,17 @@ export function detectPII(text: string, language: 'de' | 'en' = 'de'): PIIDetect
       }
     }
   }
-  
+
   // Only report if we found potential names
   if (potentialNames.length > 0) {
-    detectedTypes.push(language === 'de' ? 'Mögliche vollständige Namen' : 'Potential full names');
+    detectedTypes.push('Potential full names');
     // Show first example (deduplicated)
     const uniqueNames = [...new Set(potentialNames)];
     examples.push(uniqueNames[0]);
-    
+
     // If multiple names found, mention that
     if (uniqueNames.length > 1) {
-      examples[0] = `${uniqueNames[0]} (und ${uniqueNames.length - 1} weitere)`;
+      examples[0] = `${uniqueNames[0]} (and ${uniqueNames.length - 1} more)`;
     }
   }
 
@@ -126,3 +126,4 @@ export function detectPII(text: string, language: 'de' | 'en' = 'de'): PIIDetect
     examples,
   };
 }
+

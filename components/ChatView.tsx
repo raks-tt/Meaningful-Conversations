@@ -62,12 +62,12 @@ interface CoachInfoModalProps {
 }
 
 const CoachInfoModal: React.FC<CoachInfoModalProps> = ({ bot, isOpen, onClose, coachingMode }) => {
-    const { language, t } = useLocalization();
+    const { t } = useLocalization();
     useModalOpen(isOpen);
     if (!isOpen) return null;
 
-    const botDescription = language === 'de' ? bot.description_de : bot.description;
-    const botStyle = language === 'de' ? bot.style_de : bot.style;
+    const botDescription = bot.description;
+    const botStyle = bot.style;
 
   return createPortal(
     <div 
@@ -201,13 +201,13 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
   const [ttsMode, setTtsMode] = useState<TtsMode>(() => {
     if (!currentUser) return 'local'; // Guests: no server TTS
     const settings = getBotVoiceSettings(bot.id);
-    return settings[language].mode;
+    return settings.mode;
   });
-  
+
   // Track if user selected "auto" mode
   const [isAutoMode, setIsAutoMode] = useState<boolean>(() => {
     const settings = getBotVoiceSettings(bot.id);
-    return settings[language].isAuto;
+    return settings.isAuto;
   });
   
   // Audio element for server TTS playback
@@ -237,7 +237,7 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [selectedVoiceURI, setSelectedVoiceURI] = useState<string | null>(() => {
     const settings = getBotVoiceSettings(bot.id);
-    return settings[language].voiceId;
+    return settings.voiceId;
   });
   const [isCoachInfoOpen, setIsCoachInfoOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
@@ -276,14 +276,13 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
       }
   }, [bot.id]);
 
-  // Helper function to save language-specific voice settings
+  // Helper function to save voice settings
   const saveLanguageVoiceSettings = useCallback((mode: TtsMode, voiceId: string | null, isAuto: boolean) => {
-    console.log('[TTS Save] Saving voice settings:', { bot: bot.id, language, mode, voiceId, isAuto });
-    const allSettings = getBotVoiceSettings(bot.id);
-    allSettings[language] = { mode, voiceId, isAuto };
-    saveBotVoiceSettings(bot.id, allSettings);
-    console.log('[TTS Save] Settings after save:', allSettings);
-  }, [bot.id, language]);
+    console.log('[TTS Save] Saving voice settings:', { bot: bot.id, mode, voiceId, isAuto });
+    const settings = { mode, voiceId, isAuto };
+    saveBotVoiceSettings(bot.id, settings);
+    console.log('[TTS Save] Settings after save:', settings);
+  }, [bot.id]);
 
   // Reset voice settings when language changes
   // Derive coaching mode from user profile
@@ -317,11 +316,10 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
 
   useEffect(() => {
     const settings = getBotVoiceSettings(bot.id);
-    const langSettings = settings[language];
-    
-    setSelectedVoiceURI(langSettings.voiceId);
-    setTtsMode(langSettings.mode);
-    setIsAutoMode(langSettings.isAuto);
+
+    setSelectedVoiceURI(settings.voiceId);
+    setTtsMode(settings.mode);
+    setIsAutoMode(settings.isAuto);
   }, [language, bot.id]);
 
   // Initialize gong audio with fallback to programmatic sound
@@ -348,32 +346,20 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
       // The previous useEffect sets state from localStorage, but state updates are batched
       // so we'd see old values here if we used state directly.
       const settings = getBotVoiceSettings(bot.id);
-      const langSettings = settings[language];
-      const savedMode = langSettings.mode;
-      const savedVoiceId = langSettings.voiceId;
-      const savedIsAuto = langSettings.isAuto;
+      const savedMode = settings.mode;
+      const savedVoiceId = settings.voiceId;
+      const savedIsAuto = settings.isAuto;
       
       console.log('[TTS Init] Checking voice availability:', { savedMode, savedVoiceId, savedIsAuto, isNativeiOS });
       
       // Helper function to get best server voice for bot
       const getBestServerVoice = (botId: string, lang: string): string | null => {
-        let gender: 'male' | 'female' = 'female';
-        
-        if (lang === 'en') {
-          const maleBotsEN = ['max-ambitious', 'rob', 'kenji-stoic', 'nexus-gps'];
-          gender = maleBotsEN.includes(botId) ? 'male' : 'female';
-        } else if (lang === 'de') {
-          const femaleBotsDE = ['gloria-life-context', 'gloria-interview', 'ava-strategic', 'chloe-cbt'];
-          gender = femaleBotsDE.includes(botId) ? 'female' : 'male';
-        }
-        
-        // Map to voice IDs
-        // Note: No German female server voice available - will use local voice
-        if (lang === 'de') {
-          return gender === 'female' ? null : 'de-thorsten';
-        } else {
-          return gender === 'female' ? 'en-amy' : 'en-ryan';
-        }
+        // All bots use English voices
+        const maleBots = ['max-ambitious', 'rob', 'kenji-stoic', 'nexus-gps'];
+        const gender = maleBots.includes(botId) ? 'male' : 'female';
+
+        // Map to voice IDs (English only)
+        return gender === 'female' ? 'en-amy' : 'en-ryan';
       };
       
       try {
@@ -1027,36 +1013,9 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
     }
 
     if (!finalVoice) {
-        let gender: 'male' | 'female' = 'female';
-        
-        if (language === 'de') {
-            gender = botGender;
-        } else {
-            switch (bot.id) {
-                case 'gloria-life-context':
-                case 'gloria-interview':
-                case 'ava-strategic':
-                case 'chloe-cbt':
-                    gender = 'female';
-                    break;
-                case 'max-ambitious':
-                case 'rob':
-                    gender = 'male';
-                    utterance.rate = 1.05;
-                    utterance.pitch = 1.0;
-                    break;
-                case 'kenji-stoic':
-                    gender = 'male';
-                    break;
-                case 'nexus-gps':
-                    gender = 'male';
-                    break;
-                default:
-                    gender = 'male';
-                    break;
-            }
-        }
-        
+        // Use bot's native gender for all languages
+        const gender = botGender;
+
         finalVoice = selectVoice(voices, language, gender);
     }
 
@@ -1220,23 +1179,12 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
         if (healthData.status === 'ok' && healthData.piperAvailable) {
           // Server TTS available - select best voice for bot
           const getBestServerVoice = (botId: string, lang: string): string | null => {
-            let gender: 'male' | 'female' = 'female';
-            
-            if (lang === 'en') {
-              const maleBotsEN = ['max-ambitious', 'rob', 'kenji-stoic', 'nexus-gps', 'victor-bowen'];
-              gender = maleBotsEN.includes(botId) ? 'male' : 'female';
-            } else if (lang === 'de') {
-              const femaleBotsDE = ['gloria-life-context', 'gloria-interview', 'ava-strategic', 'chloe-cbt'];
-              gender = femaleBotsDE.includes(botId) ? 'female' : 'male';
-            }
-            
-            // Map to voice IDs
-            if (lang === 'de') {
-              // No female German server voice available - use local
-              return gender === 'male' ? 'de-thorsten' : null;
-            } else {
-              return gender === 'female' ? 'en-amy' : 'en-ryan';
-            }
+            // All bots use English voices
+            const maleBots = ['max-ambitious', 'rob', 'kenji-stoic', 'nexus-gps', 'victor-bowen'];
+            const gender = maleBots.includes(botId) ? 'male' : 'female';
+
+            // Map to voice IDs (English only)
+            return gender === 'female' ? 'en-amy' : 'en-ryan';
           };
           
           const bestVoice = getBestServerVoice(bot.id, language);
@@ -1713,8 +1661,8 @@ const ChatView: React.FC<ChatViewProps> = ({ bot, lifeContext, chatHistory, setC
           try {
             console.log('[Speech] Starting speech recognition');
             await speechService.start(
-              { 
-                language: language === 'de' ? 'de-DE' : 'en-US',
+              {
+                language: 'en-US',
                 interimResults: true,
                 debugLogBaseUrl: getApiBaseUrl()
               },

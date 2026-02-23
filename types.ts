@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type Language = 'en' | 'de';
+export type Language = 'en';
 
 export type NavView =
     | 'welcome'
@@ -63,10 +63,8 @@ export interface Bot {
     id: string;
     name: string;
     description: string;
-    description_de: string;
     avatar: string;
     style: string;
-    style_de: string;
 }
 
 export interface BotWithAvailability extends Bot {

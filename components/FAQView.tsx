@@ -7,39 +7,6 @@ import { useLocalization } from '../context/LocalizationContext';
 interface InfoViewProps {
 }
 
-const de_markdown = `
-## Allgemein
-
-### Was ist die "Lebenskontext"-Datei?
-Die Lebenskontext-Datei (.md) ist ein zentrales Dokument, das als Gedächtnis Ihres Coaches dient. Sie enthält Ihre Ziele, Herausforderungen, Routinen und wichtige Hintergrundinformationen. Nach jeder Sitzung analysiert die KI Ihr Gespräch und schlägt Aktualisierungen vor, um diese Datei auf dem neuesten Stand zu halten und ein kontinuierliches und kontextbezogenes Coaching zu ermöglichen. Sie haben die volle Kontrolle darüber, was gespeichert wird.
-
-### Kann ich die App kostenlos nutzen?
-Ja! Die App bietet einen Gastmodus mit Zugang zu einer Auswahl von Coaches. Im Gastmodus werden alle Ihre Daten, einschließlich Ihrer Lebenskontext-Datei, lokal in Ihrem Browser verarbeitet und niemals an unsere Server gesendet. Sie sind dafür verantwortlich, Ihre Datei für jede Sitzung zu speichern und zu laden. Registrierte Benutzer erhalten Zugang zu mehr Coaches und Funktionen wie verschlüsseltem Cloud-Speicher.
-
-### Was ist "Gamification"?
-Gamification-Elemente wie XP, Level und Serien sollen Sie motivieren, sich regelmäßig mit Selbstreflexion zu beschäftigen. Sie verdienen XP für die Teilnahme an Gesprächen und können spezielle Boni erhalten. Ein **50-XP-Bonus** wird für das Führen einer Sitzung zu einem natürlichen Abschluss vergeben, und ein **25-XP-Bonus** wird vergeben, wenn Sie berichten, ein bereits bestehendes Ziel erreicht zu haben. Das Abschließen von Sitzungen und das Erreichen von Meilensteinen schaltet Erfolge frei und belohnt Ihr Engagement für persönliches Wachstum.
-
----
-
-## Registrierte Benutzer
-
-### Wie werden meine Daten geschützt?
-Wir verwenden eine Ende-zu-Ende-Verschlüsselung (E2EE) für Ihre Lebenskontext-Datei. Bei der Registrierung wird aus Ihrem Passwort ein Verschlüsselungsschlüssel erstellt, den NUR Sie haben. Ihre Daten werden auf Ihrem Gerät verschlüsselt, bevor sie an unsere Server gesendet werden, und können nur auf Ihrem Gerät mit Ihrem Passwort entschlüsselt werden. **Wir können Ihre Daten nicht lesen und Ihr Passwort nicht wiederherstellen.**
-
-### Was passiert, wenn ich mein Passwort vergesse?
-Aufgrund unseres E2EE-Sicherheitsmodells ist **Ihre verschlüsselte Lebenskontext-Datei dauerhaft verloren, wenn Sie Ihr Passwort vergessen.** Wenn Sie Ihr Passwort zurücksetzen, wird ein neuer Verschlüsselungsschlüssel erstellt und Ihre alten, unlesbaren Daten werden von unseren Servern gelöscht. Wir empfehlen dringend, regelmäßig eine Sicherungskopie Ihrer Lebenskontext-Datei herunterzuladen.
-
----
-
-## Coaching & KI
-
-### Die Antwort des Coaches ist nicht hilfreich. Was kann ich tun?
-KI ist ein mächtiges Werkzeug, aber sie ist nicht perfekt. Wenn eine Antwort nicht hilfreich ist, versuchen Sie, Ihre Aussage umzuformulieren oder mehr Kontext zu geben. Sie können den Coach auch sanft wieder auf den richtigen Weg bringen, indem Sie etwas sagen wie: "Lassen Sie uns zurückkehren zu..." oder "Ich möchte mich auf... konzentrieren". Sie können bestimmte problematische Antworten direkt im Chat über das Flaggensymbol melden, das neben der Nachricht des Coaches erscheint. Zusätzlich können Sie nach der Sitzung das allgemeine Feedback- und Bewertungssystem nutzen, um Probleme zu melden, was uns hilft, das System zu verbessern.
-
-### Kann ich während einer Sitzung den Coach wechseln?
-Sie wählen zu Beginn jeder Sitzung einen Coach aus. Wenn Sie das Gefühl haben, dass der Stil eines anderen Coaches vorteilhafter wäre, können Sie die aktuelle Sitzung beenden. Nach der Sitzungsüberprüfung haben Sie die Möglichkeit, "Coach wechseln" auszuwählen, was Sie mit Ihrem aktualisierten Lebenskontext zurück zum Coach-Auswahlbildschirm bringt.
-`;
-
 const en_markdown = `
 ## General
 
@@ -74,42 +41,41 @@ You choose a coach at the start of each session. If you feel another coach's sty
 `;
 
 const FAQView: React.FC<InfoViewProps> = () => {
-    const { t, language } = useLocalization();
-    const markdownContent = language === 'de' ? de_markdown : en_markdown;
-    
+    const { t } = useLocalization();
+
     return (
         <div className="w-full max-w-3xl mx-auto p-8 space-y-6 bg-background-secondary dark:bg-transparent border border-border-secondary dark:border-border-primary mt-4 mb-10 animate-fadeIn rounded-lg shadow-lg">
             <div className="text-center">
                 <h1 className="text-3xl font-bold text-content-primary uppercase">{t('faq_title')}</h1>
             </div>
             <div className="prose dark:prose-invert max-w-none text-content-secondary space-y-4 leading-relaxed">
-                <ReactMarkdown 
+                <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
                         h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-content-primary mt-8 mb-4 not-prose" {...props} />,
                         h3: ({node, ...props}) => <h3 className="text-lg font-semibold text-content-primary mt-6 mb-2 not-prose" {...props} />,
                     }}
                 >
-                    {markdownContent}
+                    {en_markdown}
                 </ReactMarkdown>
-                
+
                 <div className="not-prose">
                     <h3 className="text-lg font-semibold text-content-primary mt-6 mb-2">
-                        {language === 'de' ? 'Warum funktioniert der Sprachmodus nicht oder warum ist die Sprachqualität schlecht?' : 'Why does voice mode not work or why is the voice quality poor?'}
+                        Why does voice mode not work or why is the voice quality poor?
                     </h3>
                      <p className="text-content-secondary leading-relaxed">
-                        {language === 'de' ? 'Der Sprachmodus stützt sich auf die integrierte Web Speech API Ihres Browsers. Unterstützung und Qualität können erheblich variieren:' : 'Voice mode relies on your browser’s built-in Web Speech API. Support and quality can vary significantly:'}
+                        Voice mode relies on your browser's built-in Web Speech API. Support and quality can vary significantly:
                     </p>
                     <div className="space-y-3 my-4">
                         <div className="bg-background-tertiary dark:bg-background-tertiary p-3 border border-border-primary dark:border-border-primary text-sm">
-                            <p className="text-content-secondary"><strong>{language === 'de' ? 'Browser:' : 'Browser:'}</strong> {language === 'de' ? 'Chrome und Edge haben im Allgemeinen die beste Unterstützung. Firefox und Safari können Einschränkungen oder Stimmen von geringerer Qualität aufweisen.' : 'Chrome and Edge generally have the best support. Firefox and Safari may have limitations or lower quality voices.'}</p>
+                            <p className="text-content-secondary"><strong>Browser:</strong> Chrome and Edge generally have the best support. Firefox and Safari may have limitations or lower quality voices.</p>
                         </div>
                         <div className="bg-background-tertiary dark:bg-background-tertiary p-3 border border-border-primary dark:border-border-primary text-sm">
-                             <p className="text-content-secondary"><strong>{language === 'de' ? 'Betriebssystem:' : 'Operating System:'}</strong> {language === 'de' ? "Ihr Betriebssystem stellt die Stimmen bereit. Einige Betriebssysteme bieten 'Premium'- oder 'erweiterte' Stimmen an, die Sie in Ihren Systemeinstellungen (Barrierefreiheit/Lesen & Sprechen) herunterladen müssen." : "Your operating system provides the voices. Some operating systems offer 'premium' or 'enhanced' voices that you may need to download in your system settings (Accessibility/Speech)."}</p>
+                             <p className="text-content-secondary"><strong>Operating System:</strong> Your operating system provides the voices. Some operating systems offer 'premium' or 'enhanced' voices that you may need to download in your system settings (Accessibility/Speech).</p>
                         </div>
                     </div>
                      <p className="text-content-secondary leading-relaxed">
-                        {language === 'de' ? 'Für die beste Erfahrung empfehlen wir die Verwendung eines modernen Chromium-basierten Browsers (wie Chrome oder Edge) auf einem Desktop-Betriebssystem.' : 'For the best experience, we recommend using a modern Chromium-based browser (like Chrome or Edge) on a desktop operating system.'}
+                        For the best experience, we recommend using a modern Chromium-based browser (like Chrome or Edge) on a desktop operating system.
                     </p>
                 </div>
             </div>

@@ -49,8 +49,8 @@ router.post('/synthesize', authMiddleware, async (req, res) => {
         return res.status(400).json({ error: 'Bot ID is required' });
     }
     
-    if (!lang || !['de', 'en'].includes(lang)) {
-        return res.status(400).json({ error: 'Valid language code is required (de or en)' });
+    if (!lang || lang !== 'en') {
+        return res.status(400).json({ error: 'Valid language code is required (en)' });
     }
     
     // Check text length (limit to prevent abuse)

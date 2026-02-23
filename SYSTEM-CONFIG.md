@@ -1,6 +1,6 @@
 # System Configuration Reference
 
-> **Diese Datei enthält die KORREKTEN System-Konfigurationen. IMMER hier nachschlagen!**
+> **This file contains the CORRECT system configurations. ALWAYS refer to this!**
 
 ## 🌐 Domains
 
@@ -16,10 +16,10 @@
 - **Protocol:** HTTPS
 - **SSL:** Let's Encrypt (automatisch)
 
-### ❌ NIEMALS VERWENDEN
+### ❌ NEVER USE
 - ~~manualmode.meaningful-conversations.de~~
 - ~~mc-app-staging.manualmode.at~~
-- Jegliche `.de` Domains
+- Any `.de` domains
 
 ---
 
@@ -34,7 +34,7 @@
 ### Hardware
 - **CPU:** 4 vCPUs (Intel Xeon Skylake)
 - **RAM:** 7.3 GiB
-- **Swap:** 4 GB (konfiguriert am 27.11.2025)
+- **Swap:** 4 GB (configured on 2025-11-27)
 - **Disk:** ~76 GB SSD
 
 ---
@@ -95,16 +95,16 @@
 ## 🔌 Ports
 
 ### Production
-- **Frontend:** 3000 (intern), 443 (extern via Nginx)
-- **Backend:** 8080 (intern), 443 (extern via Nginx auf `/api`)
-- **MariaDB:** 3306 (nur pod-intern)
-- **TTS:** 5002 (nur pod-intern)
+- **Frontend:** 3000 (internal), 443 (external via Nginx)
+- **Backend:** 8080 (internal), 443 (external via Nginx at `/api`)
+- **MariaDB:** 3306 (pod-internal only)
+- **TTS:** 5002 (pod-internal only)
 
 ### Staging
-- **Frontend:** 3000 (intern), 443 (extern via Nginx)
-- **Backend:** 8080 (intern), 443 (extern via Nginx auf `/api`)
-- **MariaDB:** 3306 (nur pod-intern)
-- **TTS:** 5002 (nur pod-intern)
+- **Frontend:** 3000 (internal), 443 (external via Nginx)
+- **Backend:** 8080 (internal), 443 (external via Nginx at `/api`)
+- **MariaDB:** 3306 (pod-internal only)
+- **TTS:** 5002 (pod-internal only)
 
 ---
 
@@ -112,17 +112,17 @@
 
 ### Production
 - **Database Name:** `meaningful_conversations_production`
-- **Host:** `mariadb` (im Pod-Netzwerk)
+- **Host:** `mariadb` (in pod network)
 - **Port:** 3306
-- **Root Password:** In `.env.production` als `MARIADB_ROOT_PASSWORD`
-- **User Count (27.11.2025):** 14 User
+- **Root Password:** In `.env.production` as `MARIADB_ROOT_PASSWORD`
+- **User Count (2025-11-27):** 14 users
 
 ### Staging
 - **Database Name:** `meaningful_conversations_staging`
-- **Host:** `mariadb` (im Pod-Netzwerk)
+- **Host:** `mariadb` (in pod network)
 - **Port:** 3306
-- **Root Password:** In `.env.staging` als `MARIADB_ROOT_PASSWORD`
-- **User Count (27.11.2025):** 1 User (Admin)
+- **Root Password:** In `.env.staging` as `MARIADB_ROOT_PASSWORD`
+- **User Count (2025-11-27):** 1 user (Admin)
 
 ---
 
@@ -231,15 +231,15 @@ podman inspect meaningful-conversations-frontend-production \
 
 ## 📝 Notes
 
-1. **NIEMALS** Production stoppen ohne explizite User-Anfrage
-2. **IMMER** Staging zuerst testen vor Production-Deployments
-3. **IMMER** `.at` Domains verwenden, NIEMALS `.de`
-4. **IMMER** User Count nach DB-Restore verifizieren (sollte 14 sein)
-5. **IMMER** Nginx IPs nach Container-Restart updaten
+1. **NEVER** stop Production without explicit user request
+2. **ALWAYS** test Staging first before Production deployments
+3. **ALWAYS** use `.at` domains, NEVER `.de`
+4. **ALWAYS** verify User Count after DB restore (should be 14)
+5. **ALWAYS** update Nginx IPs after container restart
 
 ---
 
-**Erstellt:** 27.11.2025  
-**Letzte Aktualisierung:** 27.11.2025  
+**Created:** 2025-11-27
+**Last Updated:** 2025-11-27
 **Version:** 1.0
 

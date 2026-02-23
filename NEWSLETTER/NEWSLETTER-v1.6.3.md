@@ -1,111 +1,111 @@
 # Newsletter: Meaningful Conversations v1.6.3 🎉
 
-Liebe Meaningful Conversations Community,
+Dear Meaningful Conversations Community,
 
-wir freuen uns, euch die neuesten Verbesserungen unserer App vorstellen zu dürfen! In den letzten Wochen haben wir fleißig an Features gearbeitet, die eure Coaching-Erfahrung noch angenehmer und persönlicher machen.
-
----
-
-## 🎯 Die Highlights
-
-### 🗣️ Smarte Sprachauswahl (v1.6.3)
-**Problem gelöst:** Einige von euch haben bemerkt, dass beim Wechsel der App-Sprache die falsche Stimme verwendet wurde – etwa eine deutsche Stimme, die versuchte, englische Texte vorzulesen.
-
-**Jetzt neu:** Die App merkt sich eure bevorzugte Stimme **für jede Sprache separat**! 
-- Deutsch mit Thorsten? ✓
-- Englisch mit Amy oder Ryan? ✓
-- Wechselt ihr die Sprache, wählt die App automatisch die passende Stimme
-
-Eure Vorlieben werden gespeichert und bleiben auch nach dem Schließen der App erhalten.
+We are pleased to present the latest improvements to our app! In recent weeks, we have been hard at work on features that make your coaching experience even more pleasant and personal.
 
 ---
 
-### 📖 Perfekte Aussprache (v1.6.1)
-Wir haben ein **phonetisches Wörterbuch** integriert, das dafür sorgt, dass Fachbegriffe und englische Wörter in deutschen Texten natürlicher klingen.
+## 🎯 The Highlights
 
-**Beispiele:**
-- "Coaching" → korrekte Aussprache statt "Ko-atsch-ing"
-- "Session" → natürliche Betonung
-- "Mindfulness" → authentische Aussprache
+### 🗣️ Smart Language Selection (v1.6.3)
+**Problem solved:** Some of you noticed that when switching the app language, the wrong voice was used – for example, a German voice trying to read English texts.
 
-Die App erkennt diese Begriffe automatisch und spricht sie für euch korrekt aus – für ein noch angenehmeres Hörerlebnis!
+**Now new:** The app remembers your preferred voice **for each language separately**!
+- German with Thorsten? ✓
+- English with Amy or Ryan? ✓
+- When you switch languages, the app automatically selects the appropriate voice
+
+Your preferences are saved and remain even after closing the app.
+
+---
+
+### 📖 Perfect Pronunciation (v1.6.1)
+We have integrated a **phonetic dictionary** that ensures technical terms and English words in German texts sound more natural.
+
+**Examples:**
+- "Coaching" → correct pronunciation instead of "Ko-atsch-ing"
+- "Session" → natural emphasis
+- "Mindfulness" → authentic pronunciation
+
+The app automatically recognizes these terms and pronounces them correctly for you – for an even more pleasant listening experience!
 
 ---
 
 ### 📧 Newsletter & Community (v1.6.2)
-Ihr möchtet auf dem Laufenden bleiben? Jetzt könnt ihr euch direkt in der App für unseren Newsletter anmelden!
+Want to stay up to date? Now you can subscribe to our newsletter directly in the app!
 
-**Was euch erwartet:**
-- Tipps für bessere Coaching-Gespräche
-- Updates zu neuen Features
-- Exklusive Einblicke in kommende Funktionen
-- Inspirierende Gedanken zu Achtsamkeit und persönlicher Entwicklung
+**What to expect:**
+- Tips for better coaching conversations
+- Updates on new features
+- Exclusive insights into upcoming functions
+- Inspiring thoughts on mindfulness and personal development
 
-➡️ **Anmeldung:** Einstellungen → Account → Newsletter abonnieren
+➡️ **Registration:** Settings → Account → Subscribe to newsletter
 
-*Natürlich könnt ihr euch jederzeit mit einem Klick wieder abmelden.*
-
----
-
-## ⚡ Unter der Haube
-
-Auch wenn ihr es nicht direkt seht, haben wir an der Performance gearbeitet:
-
-- **Schnellere Ladezeiten** durch optimierte Backend-Architektur
-- **Verbesserte Stabilität** der Sprachausgabe
-- **Reduzierter Speicherbedarf** der App
-- **Optimierte Datenbank-Abfragen** für flüssigere Navigation
+*Of course, you can unsubscribe at any time with one click.*
 
 ---
 
-## 🙏 Danke für euer Feedback!
+## ⚡ Under the Hood
 
-Viele dieser Verbesserungen basieren direkt auf **eurem Feedback**. Der Voice-Language Bug wurde beispielsweise von Nutzern gemeldet – danke, dass ihr uns geholfen habt, ihn zu finden und zu beheben!
+Even if you don't see it directly, we have worked on performance:
 
-Habt ihr weitere Ideen, Wünsche oder habt einen Bug entdeckt? Schreibt uns gerne:
-- 📧 **E-Mail:** [eure-support-email]
-- 💬 **In der App:** Einstellungen → Feedback senden
-
----
-
-## 🔮 Was kommt als Nächstes?
-
-Wir arbeiten bereits an weiteren spannenden Features:
-- Erweiterte Coaching-Modi
-- Personalisierte Gesprächsvorschläge
-- Noch mehr Stimmen und Sprachen
-- Verbesserte Visualisierungen eurer Fortschritte
+- **Faster loading times** through optimized backend architecture
+- **Improved stability** of voice output
+- **Reduced memory footprint** of the app
+- **Optimized database queries** for smoother navigation
 
 ---
 
-## 📱 Update durchführen
+## 🙏 Thank You for Your Feedback!
 
-Falls ihr die App noch nicht aktualisiert habt:
+Many of these improvements are based directly on **your feedback**. The voice-language bug, for example, was reported by users – thank you for helping us find and fix it!
 
-**Web-Version:** Einfach die Seite neu laden (Strg+Shift+R / Cmd+Shift+R)
-**Mobile App:** Update im App Store / Play Store
-
----
-
-Viel Freude mit den neuen Features und weiterhin inspirierende Gespräche!
-
-Euer Meaningful Conversations Team 💙
+Do you have more ideas, wishes, or have you discovered a bug? Feel free to write to us:
+- 📧 **Email:** [your-support-email]
+- 💬 **In the app:** Settings → Send Feedback
 
 ---
 
-*P.S.: Diese Updates sind für alle Nutzer verfügbar – kostenlos und ohne versteckte Kosten. Unser Ziel bleibt es, Coaching für alle zugänglich zu machen.*
+## 🔮 What's Coming Next?
+
+We are already working on more exciting features:
+- Extended coaching modes
+- Personalized conversation suggestions
+- Even more voices and languages
+- Improved visualizations of your progress
 
 ---
 
-## Technische Details (für Interessierte)
+## 📱 Perform Update
 
-**Version:** 1.6.3  
-**Release-Datum:** 24. November 2025  
+If you haven't updated the app yet:
+
+**Web version:** Simply reload the page (Ctrl+Shift+R / Cmd+Shift+R)
+**Mobile app:** Update in the App Store / Play Store
+
+---
+
+Enjoy the new features and continue having inspiring conversations!
+
+Your Meaningful Conversations Team 💙
+
+---
+
+*P.S.: These updates are available to all users – free and without hidden costs. Our goal remains to make coaching accessible to everyone.*
+
+---
+
+## Technical Details (for interested users)
+
+**Version:** 1.6.3
+**Release Date:** November 24, 2025
 **Changelog:**
-- v1.6.0: Basis-Version
-- v1.6.1: Phonetisches Wörterbuch, verbesserte Aussprache
-- v1.6.2: Newsletter-Integration, erweiterte Account-Verwaltung
-- v1.6.3: Sprachspezifische Voice-Einstellungen, Bug-Fixes
+- v1.6.0: Base version
+- v1.6.1: Phonetic dictionary, improved pronunciation
+- v1.6.2: Newsletter integration, extended account management
+- v1.6.3: Language-specific voice settings, bug fixes
 
-**Keine Breaking Changes** – alle eure Daten und Einstellungen bleiben erhalten!
+**No Breaking Changes** – all your data and settings are preserved!
 

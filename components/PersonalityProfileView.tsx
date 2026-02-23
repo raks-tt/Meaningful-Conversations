@@ -521,9 +521,7 @@ const PersonalityProfileView: React.FC<PersonalityProfileViewProps> = ({ encrypt
         && decryptedData.narrativeProfile.generatedLanguage !== language;
       
       if (narrativeLangMismatch) {
-        const confirmMsg = language === 'de'
-          ? 'Deine Signatur wurde auf Englisch generiert. Das PDF wird gemischte Sprachen enthalten.\n\nMöchtest du die Signatur erst aktualisieren (Abbrechen) oder das PDF trotzdem herunterladen (OK)?'
-          : 'Your signature was generated in German. The PDF will contain mixed languages.\n\nWould you like to update the signature first (Cancel) or download the PDF anyway (OK)?';
+        const confirmMsg = 'Your signature was generated in a different language. The PDF will contain mixed languages.\n\nWould you like to update the signature first (Cancel) or download the PDF anyway (OK)?';
         if (!window.confirm(confirmMsg)) {
           setShowNarrativeStoriesModal(true);
           return;
@@ -662,7 +660,7 @@ const PersonalityProfileView: React.FC<PersonalityProfileViewProps> = ({ encrypt
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

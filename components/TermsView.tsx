@@ -7,29 +7,6 @@ import { useLocalization } from '../context/LocalizationContext';
 interface InfoViewProps {
 }
 
-const de_markdown = `Diese Nutzungsbedingungen ("Bedingungen") regeln Ihre Nutzung der Anwendung "Sinnstiftende Gespräche" (der "Dienst"). Durch den Zugriff auf oder die Nutzung des Dienstes erklären Sie sich mit diesen Bedingungen einverstanden.
-
-## 1. Leistungsbeschreibung
-Der Dienst bietet Zugang zu KI-gesteuerten Coaching-Gesprächen, die zur Selbstreflexion und persönlichen Weiterentwicklung dienen. Benutzer können ihre Gespräche mithilfe einer "Lebenskontext"-Datei personalisieren. Der Dienst ist in zwei Modi verfügbar:
-
-- **Gastmodus:** Die Datenverarbeitung erfolgt ausschließlich lokal im Browser des Nutzers. Der Nutzer ist für das Speichern und Verwalten seiner Daten verantwortlich.
-- **Registrierter Modus:** Bietet zusätzliche Funktionen wie die automatische Speicherung des Lebenskontextes, der Ende-zu-Ende-verschlüsselt wird.
-
-## 2. Benutzerkonten und Datensicherheit
-**Registrierte Benutzer:** Sie sind für die Geheimhaltung Ihres Passworts verantwortlich. Aufgrund der Ende-zu-Ende-Verschlüsselung haben wir keinen Zugriff auf Ihr Passwort oder Ihre verschlüsselten "Lebenskontext"-Daten. **Wenn Sie Ihr Passwort verlieren oder zurücksetzen, gehen Ihre verschlüsselten Daten dauerhaft und unwiederbringlich verloren.** Es liegt in Ihrer Verantwortung, regelmäßig Sicherungskopien Ihrer Daten zu erstellen, indem Sie die Datei herunterladen.
-
-**Gastbenutzer:** Sie sind allein für das Sichern und Verwalten Ihrer "Lebenskontext"-Datei verantwortlich, da keine Daten auf unseren Servern gespeichert werden.
-
-## 3. Verantwortlichkeiten des Benutzers
-Sie stimmen zu, den Dienst nicht für rechtswidrige Zwecke zu nutzen. Sie sind während und außerhalb der Coaching-Einheiten in jeder Phase der Arbeit mit der Anwendung **eigenverantwortlich**. Sie sind für Ihre körperliche und geistige Gesundheit sowie Ihr Wohlbefinden in vollem Umfang selbst verantwortlich. Sämtliche Maßnahmen, die Sie aufgrund des Coachings durchführen, liegen in Ihrem alleinigen Verantwortungsbereich.
-
-## 4. Dienstverfügbarkeit und Änderungen
-Wir behalten uns das Recht vor, den Dienst oder einzelne Funktionen jederzeit ohne Vorankündigung zu ändern oder einzustellen. Die gesetzliche Gewährleistung für die **Funktionalität der Anwendung** (wie im Handbuch beschrieben) bleibt hiervon unberührt.
-
-## 5. Änderungen der Bedingungen
-Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern. Wir werden Sie über alle Änderungen informieren, indem wir die neuen Bedingungen innerhalb des Dienstes veröffentlichen.
-`;
-
 const en_markdown = `These Terms of Service ("Terms") govern your use of the "Meaningful Conversations" application (the "Service"). By accessing or using the Service, you agree to be bound by these Terms.
 
 ## 1. Description of Service
@@ -54,16 +31,16 @@ We reserve the right to modify these Terms at any time. We will notify you of an
 `;
 
 const TermsView: React.FC<InfoViewProps> = () => {
-    const { t, language } = useLocalization();
-    const markdownContent = language === 'de' ? de_markdown : en_markdown;
-    
+    const { t } = useLocalization();
+    const markdownContent = en_markdown;
+
     return (
         <div className="w-full max-w-3xl mx-auto p-8 space-y-6 bg-background-secondary dark:bg-transparent border border-border-secondary dark:border-border-primary mt-4 mb-10 animate-fadeIn rounded-lg shadow-lg">
             <div className="text-center">
                 <h1 className="text-2xl sm:text-3xl font-bold text-content-primary uppercase">{t('terms_title')}</h1>
             </div>
             <div className="prose dark:prose-invert max-w-none text-content-secondary space-y-4 leading-relaxed">
-                <ReactMarkdown 
+                <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
                         h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-content-primary mt-8 mb-4 not-prose" {...props} />,

@@ -17,12 +17,11 @@ interface BotSelectionProps {
 interface BotCardProps {
   bot: BotWithAvailability;
   onSelect: (bot: Bot) => void;
-  language: Language;
   hasPersonalityProfile?: boolean;
   coachingMode?: CoachingMode;
 }
 
-const BotCard: React.FC<BotCardProps> = ({ bot, onSelect, language, hasPersonalityProfile, coachingMode }) => {
+const BotCard: React.FC<BotCardProps> = ({ bot, onSelect, hasPersonalityProfile, coachingMode }) => {
     const { t } = useLocalization();
     const isLocked = false;
     const hasMeditation = bot.id === 'rob' || bot.id === 'kenji-stoic' || bot.id === 'chloe-cbt';
@@ -77,7 +76,7 @@ const BotCard: React.FC<BotCardProps> = ({ bot, onSelect, language, hasPersonali
                 
                 
                 <div className="flex flex-wrap justify-center gap-2 my-3">
-                    {(language === 'de' ? bot.style_de : bot.style).split(', ').map((tag, index) => {
+                    {bot.style.split(', ').map((tag, index) => {
                         const isFirstTag = index === 0;
                         const tagClass = isFirstTag
                             ? 'bg-accent-primary/20 text-accent-primary-hover'
@@ -92,7 +91,7 @@ const BotCard: React.FC<BotCardProps> = ({ bot, onSelect, language, hasPersonali
                 </div>
             </div>
             <p className="mt-1 text-content-secondary dark:text-content-secondary leading-relaxed text-base">
-                {language === 'de' ? bot.description_de : bot.description}
+                {bot.description}
             </p>
         </div>
       </div>
@@ -100,7 +99,7 @@ const BotCard: React.FC<BotCardProps> = ({ bot, onSelect, language, hasPersonali
 };
 
 const BotSelection: React.FC<BotSelectionProps> = ({ onSelect, onTranscriptEval, currentUser, hasPersonalityProfile, coachingMode }) => {
-  const { t, language } = useLocalization();
+  const { t } = useLocalization();
   const [bots, setBots] = useState<BotWithAvailability[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
@@ -163,7 +162,6 @@ const BotSelection: React.FC<BotSelectionProps> = ({ onSelect, onTranscriptEval,
               key={bot.id}
               bot={bot}
               onSelect={onSelect}
-              language={language}
               hasPersonalityProfile={hasPersonalityProfile}
               coachingMode={coachingMode}
             />

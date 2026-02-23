@@ -23,25 +23,23 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
 
   const handleRegionChange = async (newRegion: AIRegionPreference) => {
     if (newRegion === aiRegion) return;
-    
+
     setIsUpdatingRegion(true);
     setMessage(null);
-    
+
     try {
       const { user } = await userService.updateAIRegionPreference(newRegion);
       setAiRegion(newRegion);
       onProfileUpdated(user);
-      setMessage({ 
-        type: 'success', 
-        text: language === 'de' 
-          ? `Datenverarbeitung auf ${newRegion === 'eu' ? '🇪🇺 EU' : newRegion === 'us' ? '🇺🇸 US' : '🌐 Optimal'} umgestellt`
-          : `Data processing switched to ${newRegion === 'eu' ? '🇪🇺 EU' : newRegion === 'us' ? '🇺🇸 US' : '🌐 Optimal'}`
+      setMessage({
+        type: 'success',
+        text: `Data processing switched to ${newRegion === 'eu' ? '🇪🇺 EU' : newRegion === 'us' ? '🇺🇸 US' : '🌐 Optimal'}`
       });
     } catch (error) {
       console.error('Region update error:', error);
-      setMessage({ 
-        type: 'error', 
-        text: language === 'de' ? 'Fehler beim Ändern der Region' : 'Error changing region' 
+      setMessage({
+        type: 'error',
+        text: 'Error changing region'
       });
     } finally {
       setIsUpdatingRegion(false);
@@ -61,7 +59,7 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
       );
       setMessage({ type: 'success', text: t('profile_success') });
       onProfileUpdated(user);
-      
+
       // Auto-close after 2 seconds
       setTimeout(() => {
         onBack();
@@ -80,7 +78,7 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
         <div className="text-center">
           <h1 className="text-3xl font-bold text-content-primary uppercase">{t('profile_edit_title')}</h1>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="firstName" className="block text-sm font-bold text-content-secondary text-left">
@@ -135,12 +133,12 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
           {/* AI Region Preference */}
           <div className="pt-4 border-t border-border-secondary dark:border-border-primary">
             <label className="block text-sm font-bold text-content-secondary text-left mb-3">
-              {language === 'de' ? '🌍 KI-Datenverarbeitung' : '🌍 AI Data Processing'}
+              🌍 AI Data Processing
             </label>
             <div className="space-y-2">
               <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition-all ${
-                aiRegion === 'eu' 
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                aiRegion === 'eu'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                   : 'border-border-secondary dark:border-border-primary hover:bg-background-tertiary'
               } ${isUpdatingRegion ? 'opacity-50 cursor-wait' : ''}`}>
                 <input
@@ -155,16 +153,14 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
                 <div className="ml-3">
                   <span className="font-bold text-content-primary">🇪🇺 EU (Mistral AI)</span>
                   <p className="text-xs text-content-secondary">
-                    {language === 'de' 
-                      ? 'Verarbeitung in Paris, Frankreich. DSGVO-konform.'
-                      : 'Processing in Paris, France. GDPR compliant.'}
+                    Processing in Paris, France. GDPR compliant.
                   </p>
                 </div>
               </label>
 
               <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition-all ${
-                aiRegion === 'optimal' 
-                  ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
+                aiRegion === 'optimal'
+                  ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                   : 'border-border-secondary dark:border-border-primary hover:bg-background-tertiary'
               } ${isUpdatingRegion ? 'opacity-50 cursor-wait' : ''}`}>
                 <input
@@ -177,18 +173,16 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
                   className="mt-1 w-4 h-4 text-green-600"
                 />
                 <div className="ml-3">
-                  <span className="font-bold text-content-primary">🌐 {language === 'de' ? 'Optimal' : 'Optimal'}</span>
+                  <span className="font-bold text-content-primary">🌐 Optimal</span>
                   <p className="text-xs text-content-secondary">
-                    {language === 'de' 
-                      ? 'Beste Performance mit automatischem Fallback.'
-                      : 'Best performance with automatic fallback.'}
+                    Best performance with automatic fallback.
                   </p>
                 </div>
               </label>
 
               <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition-all ${
-                aiRegion === 'us' 
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' 
+                aiRegion === 'us'
+                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
                   : 'border-border-secondary dark:border-border-primary hover:bg-background-tertiary'
               } ${isUpdatingRegion ? 'opacity-50 cursor-wait' : ''}`}>
                 <input
@@ -203,9 +197,7 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
                 <div className="ml-3">
                   <span className="font-bold text-content-primary">🇺🇸 US (Google Gemini)</span>
                   <p className="text-xs text-content-secondary">
-                    {language === 'de' 
-                      ? 'Verarbeitung in den USA. Schnellste Antworten.'
-                      : 'Processing in USA. Fastest responses.'}
+                    Processing in USA. Fastest responses.
                   </p>
                 </div>
               </label>
@@ -233,4 +225,3 @@ const EditProfileView: React.FC<EditProfileViewProps> = ({ currentUser, onBack, 
 };
 
 export default EditProfileView;
-

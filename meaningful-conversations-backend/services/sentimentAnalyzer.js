@@ -1,13 +1,13 @@
 /**
  * Heuristic Sentiment Analyzer
- * 
+ *
  * Fast, lexicon-based sentiment analysis for keyword context interpretation.
  * Performance: ~20ms per message (no external dependencies, no ML model).
- * 
+ *
  * Capabilities:
  * - Sentiment polarity detection (-1.0 to +1.0)
- * - Negation recognition ("nicht spontan" → inverted)
- * - Intensity modifiers ("sehr", "extrem", "etwas")
+ * - Negation recognition ("not spontaneous" → inverted)
+ * - Intensity modifiers ("very", "extremely", "somewhat")
  * - Emotional context detection (desired/suffering/neutral)
  * - Caching for repeated messages
  */
@@ -17,13 +17,6 @@
 // ============================================
 
 const POSITIVE_INDICATORS = {
-  de: [
-    'genieße', 'liebe', 'schätze', 'mag', 'freue', 'erfüllt',
-    'begeistert', 'glücklich', 'dankbar', 'wunderbar', 'toll',
-    'positiv', 'angenehm', 'gut', 'super', 'großartig',
-    'gerne', 'leidenschaftlich', 'zufrieden', 'stolz',
-    'motiviert', 'inspiriert', 'bereichert', 'stärkt'
-  ],
   en: [
     'enjoy', 'love', 'appreciate', 'like', 'happy', 'fulfills',
     'excited', 'grateful', 'wonderful', 'great', 'amazing',
@@ -34,13 +27,6 @@ const POSITIVE_INDICATORS = {
 };
 
 const NEGATIVE_INDICATORS = {
-  de: [
-    'nervt', 'ärgert', 'belastet', 'stört', 'frustriert', 'verzweifelt',
-    'unglücklich', 'traurig', 'ängstlich', 'gestresst', 'überwältigt',
-    'leide', 'schmerz', 'problem', 'schwierig', 'schlecht',
-    'hasse', 'furchtbar', 'schrecklich', 'unerträglich',
-    'quält', 'plagt', 'erschöpft', 'überfordert'
-  ],
   en: [
     'annoys', 'bothers', 'burdens', 'disturbs', 'frustrates', 'desperate',
     'unhappy', 'sad', 'anxious', 'stressed', 'overwhelmed',
@@ -55,10 +41,6 @@ const NEGATIVE_INDICATORS = {
 // ============================================
 
 const INTENSIFIERS = {
-  de: {
-    high: ['sehr', 'extrem', 'total', 'absolut', 'wirklich', 'wahnsinnig', 'unglaublich', 'enorm'],
-    low: ['etwas', 'ein bisschen', 'manchmal', 'gelegentlich', 'leicht', 'eher', 'tendenziell']
-  },
   en: {
     high: ['very', 'extremely', 'totally', 'absolutely', 'really', 'incredibly', 'enormously'],
     low: ['somewhat', 'a bit', 'sometimes', 'occasionally', 'slightly', 'rather', 'tends to']
@@ -76,7 +58,6 @@ const INTENSITY_WEIGHTS = {
 // ============================================
 
 const NEGATION_WORDS = {
-  de: ['nicht', 'kein', 'keine', 'keinen', 'niemals', 'nie', 'kaum', 'wenig', 'selten', 'weder'],
   en: ['not', 'no', 'never', 'hardly', 'barely', 'rarely', 'seldom', 'neither']
 };
 
@@ -88,16 +69,11 @@ const NEGATION_WINDOW = 3;
 // ============================================
 
 const DESIRED_PATTERNS = {
-  de: [/\bgenieße\b/i, /\bliebe\b/i, /\bschätze\b/i, /\bbrauche\b/i, /\bwill\b/i,
-       /\bmöchte\b/i, /\bgerne\b/i, /\berfüllt mich\b/i, /\bmacht mir freude\b/i],
   en: [/\benjoy\b/i, /\blove\b/i, /\bappreciate\b/i, /\bneed\b/i, /\bwant\b/i,
        /\bwould like\b/i, /\bgladly\b/i, /\bfulfills me\b/i, /\bmakes me happy\b/i]
 };
 
 const SUFFERING_PATTERNS = {
-  de: [/\bfühle mich\b/i, /\bleide\b/i, /\bschmerz\b/i, /\bbelastet\b/i,
-       /\bgestresst\b/i, /\bplagt\b/i, /\bquält\b/i, /\bmacht mir sorgen\b/i,
-       /\büberfordert\b/i, /\berschöpft\b/i],
   en: [/\bfeel\b/i, /\bsuffer\b/i, /\bpain\b/i, /\bburdened\b/i,
        /\bstressed\b/i, /\bplagues\b/i, /\btorments\b/i, /\bworries me\b/i,
        /\boverwhelmed\b/i, /\bexhausted\b/i]
@@ -155,8 +131,8 @@ function clearCache() {
  * @param {string} lang - Language code
  * @returns {'high'|'neutral'|'low'}
  */
-function detectIntensity(words, position, lang = 'de') {
-  const intensifiers = INTENSIFIERS[lang] || INTENSIFIERS.de;
+function detectIntensity(words, position, lang = 'en') {
+  const intensifiers = INTENSIFIERS[lang] || INTENSIFIERS.en;
 
   // Check 2 words before position
   for (let i = Math.max(0, position - 2); i < position; i++) {
@@ -180,8 +156,8 @@ function detectIntensity(words, position, lang = 'de') {
  * @param {string} lang - Language code
  * @returns {boolean} true if negated
  */
-function isNegated(words, position, lang = 'de') {
-  const negations = NEGATION_WORDS[lang] || NEGATION_WORDS.de;
+function isNegated(words, position, lang = 'en') {
+  const negations = NEGATION_WORDS[lang] || NEGATION_WORDS.en;
 
   // Check NEGATION_WINDOW words before the keyword
   const startIdx = Math.max(0, position - NEGATION_WINDOW);
@@ -197,19 +173,19 @@ function isNegated(words, position, lang = 'de') {
 
 /**
  * Calculate sentiment polarity for a sentence.
- * 
+ *
  * @param {string} sentence - The sentence to analyze
  * @param {string} lang - Language code
  * @returns {number} Polarity from -1.0 (very negative) to +1.0 (very positive)
  */
-function calculateSentiment(sentence, lang = 'de') {
+function calculateSentiment(sentence, lang = 'en') {
   if (!sentence || sentence.trim().length === 0) {
     return 0;
   }
 
   const words = sentence.toLowerCase().split(/\s+/);
-  const positives = POSITIVE_INDICATORS[lang] || POSITIVE_INDICATORS.de;
-  const negatives = NEGATIVE_INDICATORS[lang] || NEGATIVE_INDICATORS.de;
+  const positives = POSITIVE_INDICATORS[lang] || POSITIVE_INDICATORS.en;
+  const negatives = NEGATIVE_INDICATORS[lang] || NEGATIVE_INDICATORS.en;
 
   let score = 0;
   let matchCount = 0;
@@ -250,17 +226,17 @@ function calculateSentiment(sentence, lang = 'de') {
 
 /**
  * Detect the emotional context of a sentence.
- * 
+ *
  * @param {string} sentence - The sentence
  * @param {number} sentimentScore - Pre-calculated sentiment polarity
  * @param {string} lang - Language code
  * @returns {string} One of: 'desired_positive', 'desired_negative', 'suffering', 'positive', 'negative', 'neutral'
  */
-function detectEmotionalContext(sentence, sentimentScore, lang = 'de') {
+function detectEmotionalContext(sentence, sentimentScore, lang = 'en') {
   if (!sentence) return 'neutral';
 
-  const desired = DESIRED_PATTERNS[lang] || DESIRED_PATTERNS.de;
-  const suffering = SUFFERING_PATTERNS[lang] || SUFFERING_PATTERNS.de;
+  const desired = DESIRED_PATTERNS[lang] || DESIRED_PATTERNS.en;
+  const suffering = SUFFERING_PATTERNS[lang] || SUFFERING_PATTERNS.en;
 
   const hasDesiredPattern = desired.some(pattern => pattern.test(sentence));
   const hasSufferingPattern = suffering.some(pattern => pattern.test(sentence));
@@ -291,14 +267,14 @@ function detectEmotionalContext(sentence, sentimentScore, lang = 'de') {
 /**
  * Analyze sentiment specifically around a keyword in a sentence.
  * This is used by the adaptive weighting engine to adjust keyword weights.
- * 
+ *
  * @param {string} keyword - The keyword that was found
  * @param {string} sentence - The sentence containing the keyword
  * @param {string} direction - 'high' or 'low' (the keyword's direction)
  * @param {string} lang - Language code
  * @returns {{ adjustedDirection: string, weightMultiplier: number, negated: boolean, intensity: string, emotionalContext: string }}
  */
-function analyzeKeywordSentiment(keyword, sentence, direction, lang = 'de') {
+function analyzeKeywordSentiment(keyword, sentence, direction, lang = 'en') {
   if (!sentence || !keyword) {
     return {
       adjustedDirection: direction,
@@ -354,15 +330,15 @@ function analyzeKeywordSentiment(keyword, sentence, direction, lang = 'de') {
   // Sentiment-based adjustments
   if (direction === 'high' && sentimentScore < -0.3 && emotionalContext === 'suffering') {
     // User mentions a "high" keyword negatively → they might be rejecting it
-    // Example: "Teams nerven mich" → 'team' is high for Nähe, but user rejects it
+    // Example: "Teams annoy me" → 'team' is high for Nähe, but user rejects it
     weightMultiplier *= 0.4; // Drastically reduce weight
   } else if (direction === 'high' && sentimentScore > 0.3 && emotionalContext === 'desired_positive') {
     // User explicitly enjoys/values this → boost
-    // Example: "Ich liebe Teamwork" → boost
+    // Example: "I love teamwork" → boost
     weightMultiplier *= 1.3;
   } else if (direction === 'low' && sentimentScore > 0.3 && emotionalContext === 'desired_positive') {
     // User mentions a "low" keyword positively → might be desired, not suffering
-    // Example: "Ich genieße es, allein zu sein" → 'allein' is low for Nähe, but positive
+    // Example: "I enjoy being alone" → 'alone' is low for Nähe, but positive
     // This means the user VALUES this low-state → adjust
     weightMultiplier *= 0.6; // Reduce, as it's not true "low" (suffering)
   }
@@ -386,12 +362,12 @@ function analyzeKeywordSentiment(keyword, sentence, direction, lang = 'de') {
 
 /**
  * Analyze sentiment of a full message (cached).
- * 
+ *
  * @param {string} message - The full user message
  * @param {string} lang - Language code
  * @returns {{ polarity: number, emotionalContext: string, confidence: number, isAmbiguous: boolean }}
  */
-function analyzeSentiment(message, lang = 'de') {
+function analyzeSentiment(message, lang = 'en') {
   if (!message || message.trim().length === 0) {
     return { polarity: 0, emotionalContext: 'neutral', confidence: 0, isAmbiguous: true };
   }

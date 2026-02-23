@@ -12,7 +12,7 @@ model User {
   email                     String        @unique
   firstName                 String?
   lastName                  String?
-  preferredLanguage         String        @default("de")
+  preferredLanguage         String        @default("en")
   newsletterConsent         Boolean       @default(false)
   newsletterConsentDate     DateTime?
   unsubscribeToken          String?       @unique
@@ -252,7 +252,7 @@ model TranscriptEvaluation {
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   preAnswers      String   @db.Text    // JSON: { goal, personalTarget, assumptions, satisfaction, difficult? }
   evaluationData  String   @db.Text    // JSON: structured AI evaluation result
-  lang            String   @default("de")
+  lang            String   @default("en")
   createdAt       DateTime @default(now())
   
   // User rating fields (NPS-style)

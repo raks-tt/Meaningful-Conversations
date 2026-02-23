@@ -10,14 +10,15 @@ interface LocalizationContextType {
 const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);
 
 export const LocalizationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [language, setLanguage] = useState<Language>(() => {
-        const savedLang = typeof localStorage !== 'undefined' ? localStorage.getItem('language') : null;
-        const browserLang: Language = (typeof navigator !== 'undefined' && navigator.language.startsWith('de')) ? 'de' : 'en';
-        return (savedLang === 'de' || savedLang === 'en') ? savedLang : browserLang;
-    });
+    // Language is now hardcoded to English
+    const language: Language = 'en';
+
+    // setLanguage is a no-op function to avoid breaking components that use it
+    const setLanguage = (_: Language) => {
+        // No-op: language is always English
+    };
 
     const [translations, setTranslations] = useState<Record<string, string>>({});
-    const [fallbackTranslations, setFallbackTranslations] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -26,50 +27,23 @@ export const LocalizationProvider: React.FC<{ children: ReactNode }> = ({ childr
             setIsLoading(true);
             setError(null);
             try {
-                const langResponse = await fetch(`/locales/${language}.json`);
-                if (!langResponse.ok) throw new Error(`Failed to load ${language}.json`);
-                const langData = await langResponse.json();
-                setTranslations(langData);
-
-                if (language !== 'en') {
-                    const fallbackResponse = await fetch(`/locales/en.json`);
-                     if (!fallbackResponse.ok) throw new Error('Failed to load fallback en.json');
-                    const fallbackData = await fallbackResponse.json();
-                    setFallbackTranslations(fallbackData);
-                } else {
-                    setFallbackTranslations(langData);
-                }
+                const response = await fetch('/locales/en.json');
+                if (!response.ok) throw new Error('Failed to load en.json');
+                const data = await response.json();
+                setTranslations(data);
             } catch (err: any) {
-                console.error("Error loading translation files:", err.message);
+                console.error("Error loading English translation file:", err.message);
                 setError(err.message);
-                try {
-                    const fallbackResponse = await fetch(`/locales/en.json`);
-                    if (!fallbackResponse.ok) {
-                         const errText = `Failed to load even the fallback English translations: ${fallbackResponse.statusText}`;
-                         console.error(errText);
-                         throw new Error(errText);
-                    }
-                    const fallbackData = await fallbackResponse.json();
-                    setTranslations(fallbackData);
-                    setFallbackTranslations(fallbackData);
-                    setLanguage('en');
-                    setError(null); // Clear error if fallback is successful
-                } catch (fallbackError: any) {
-                    console.error(fallbackError);
-                    const combinedError = `${err.message}\n${fallbackError.message}`;
-                    setError(combinedError);
-                }
             } finally {
                 setIsLoading(false);
             }
         };
 
         loadTranslations();
-        localStorage.setItem('language', language);
-    }, [language]);
+    }, []);
 
     const t = (key: string, replacements?: Record<string, string | number>): string => {
-        let text = translations[key] || fallbackTranslations[key] || key;
+        let text = translations[key] || key;
         if (replacements) {
             Object.entries(replacements).forEach(([placeholder, value]) => {
                 text = text.replace(new RegExp(`{{${placeholder}}}`, 'g'), String(value));

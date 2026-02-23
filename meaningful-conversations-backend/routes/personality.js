@@ -383,7 +383,7 @@ router.post('/generate-narrative', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
-    const lang = language === 'en' ? 'en' : 'de';
+    const lang = 'en';
     
     // Build the synthesis prompt
     const synthesisPrompt = NARRATIVE_SYNTHESIS_PROMPTS[lang]
@@ -400,9 +400,7 @@ router.post('/generate-narrative', authMiddleware, async (req, res) => {
         temperature: 0.8,
         maxOutputTokens: 4096,
         responseMimeType: 'application/json',
-        systemInstruction: lang === 'de' 
-          ? 'Antworte ausschließlich mit validem JSON gemäß dem angeforderten Schema. Keine Erklärungen außerhalb des JSON.'
-          : 'Respond only with valid JSON matching the requested schema. No explanations outside the JSON.'
+        systemInstruction: 'Respond only with valid JSON matching the requested schema. No explanations outside the JSON.'
       }
     });
     
@@ -464,7 +462,7 @@ router.post('/preview-refinement', authMiddleware, async (req, res) => {
     
     // Import behavior logger
     const behaviorLogger = require('../services/behaviorLogger.js');
-    const language = lang === 'en' ? 'en' : 'de';
+    const language = 'en';
     
     // Analyze conversation using appropriate keyword set based on profile type
     // New bidirectional format: each dimension has high/low counts and delta
@@ -574,47 +572,8 @@ router.post('/preview-refinement', authMiddleware, async (req, res) => {
   }
 });
 
-// Narrative Synthesis Prompts (Bilingual)
+// Narrative Synthesis Prompts
 const NARRATIVE_SYNTHESIS_PROMPTS = {
-  de: `Du bist ein psychologischer Profiler mit der sprachlichen Eleganz eines Romanautors. 
-Dein Ziel: Ein tiefgehendes Persönlichkeitsprofil, das quantitative Daten mit qualitativen Erzählungen verwebt.
-
-REGELN:
-1. Synthetisiere Paradoxien: Zeigen die Daten widersprüchliche Eigenschaften (z.B. Wunsch nach Freiheit UND Wunsch nach Struktur), nenne es ein "Betriebssystem". Erkläre, wie beide Pole zusammenarbeiten (z.B. "Du brauchst Struktur, um wild sein zu können").
-2. Kein Psychobabble und NUR deutsche Wörter: Keine englischen Fachbegriffe. Übersetze immer: openness→Offenheit, agreeableness→Verträglichkeit, conscientiousness→Gewissenhaftigkeit, extraversion→Extraversion, neuroticism→Emotionale Stabilität. Erfinde metaphorische Titel für Talente (z.B. "Prototypen-Alchemie" statt "Hohe Offenheit").
-3. Nutze die User-Story als MUSTER: Beschreibe das dahinterliegende Muster (z.B. "kreative Autonomie"), NICHT das konkrete Ereignis (z.B. "App-Entwicklung"). Keine Projektnamen, Personennamen oder spezifische Situationen.
-4. Tone: Empathisch, direkt, leicht poetisch, aber geerdet ("Du enthältst Multituden").
-5. Auf Deutsch schreiben. Verwende "Du" als Anrede.
-6. Zeitlosigkeit: Das Profil soll in 2 Jahren noch relevant klingen. Vermeide Referenzen auf aktuelle Ereignisse.
-7. Kein Markdown: Verwende KEINE Markdown-Formatierung wie *kursiv*, **fett** oder andere Sonderzeichen. Nur reinen Text.
-
-QUANTITATIVE DATEN (Testergebnisse):
-{{quantitativeData}}
-
-FLOW-ERLEBNIS (Was energetisiert diese Person):
-{{flowStory}}
-
-KONFLIKT-ERLEBNIS (Was kostet Energie):
-{{frictionStory}}
-
-Erstelle ein JSON mit exakt dieser Struktur:
-{
-  "operatingSystem": "1 packender Einleitungssatz + 1 Absatz über die Dynamik der Widersprüche. Maximal 100 Wörter. Keine konkreten Projekt- oder Personen-Referenzen.",
-  "superpowers": [
-    { "name": "Kreativer metaphorischer Titel auf Deutsch", "description": "Beschreibung des MUSTERS, das sich in der Flow-Story zeigt" },
-    { "name": "Zweiter Titel", "description": "Zweite Stärke" },
-    { "name": "Dritter Titel", "description": "Dritte Stärke" }
-  ],
-  "blindspots": [
-    { "name": "Metaphorischer deutscher Name", "description": "Geframed als Unwucht der Talente oder falsche Umgebung, NICHT als Schwäche. Beschreibe das Muster aus der Konflikt-Story." },
-    { "name": "Zweiter Blindspot", "description": "Zweites Risiko" }
-  ],
-  "growthOpportunities": [
-    { "title": "Konkrete Übung mit kreativem Namen", "recommendation": "Praktische Handlungsempfehlung, die direkt aus den Blindspots abgeleitet ist" },
-    { "title": "Zweite Übung", "recommendation": "Zweite Empfehlung" }
-  ]
-}`,
-
   en: `You are a psychological profiler with the linguistic elegance of a novelist.
 Your goal: A deep personality profile that weaves quantitative data with qualitative narratives.
 

@@ -91,7 +91,7 @@ function calculateAdjustedWeight(baseWeight, framework, context, sentimentResult
 // ============================================
 
 function processKeywordDetection(keyword, sentence, originalFramework, originalDimension, direction, context, lang) {
-  lang = lang || 'de';
+  lang = lang || 'en';
   var results = [];
   var sentimentResult = analyzeKeywordSentiment(keyword, sentence, direction, lang);
   var adjustedDirection = sentimentResult.adjustedDirection;
@@ -182,7 +182,7 @@ function processKeywordDetection(keyword, sentence, originalFramework, originalD
  * Call this once per message, then use getKeywordAdjustment for each keyword found.
  */
 function analyzeAdaptive(message, recentMessages, lang) {
-  lang = lang || 'de';
+  lang = lang || 'en';
   recentMessages = recentMessages || [];
   var overlappingKeywords = getOverlappingKeywords();
 
@@ -212,7 +212,7 @@ function analyzeAdaptive(message, recentMessages, lang) {
  * Called by behaviorLogger after it finds a keyword.
  */
 function getKeywordAdjustment(keyword, sentence, framework, dimension, direction, adaptiveResult, lang) {
-  lang = lang || 'de';
+  lang = lang || 'en';
   if (!adaptiveResult || !adaptiveResult._fullContext) {
     return { direction: direction, weight: 1.0, isPrimary: true, sentimentAdjusted: false };
   }

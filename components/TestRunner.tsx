@@ -346,62 +346,37 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
   }, [language]);
 
   // Fallback follow-up messages - these should sound like a COACHEE sharing their struggles
-  const fallbackFollowUps = useMemo(() => ({
-    de: [
-      'Ja, ich glaube es ist vor allem die Menge an verschiedenen Dingen gleichzeitig.',
-      'Das beschäftigt mich schon länger, ehrlich gesagt.',
-      'Ich weiß nicht genau, wo ich anfangen soll. Es fühlt sich alles so überwältigend an.',
-      'Manchmal habe ich das Gefühl, dass ich niemandem gerecht werde - weder mir selbst noch anderen.',
-      'Ich habe schon einiges versucht, aber nichts scheint wirklich zu helfen.',
-      'Das Schwierige ist, dass ich oft nicht nein sagen kann, wenn jemand etwas von mir braucht.',
-      'Ich merke, dass mich das emotional ziemlich mitnimmt.',
-    ],
-    en: [
-      'Yes, I think it\'s mainly the amount of different things happening at the same time.',
-      'This has been bothering me for a while, to be honest.',
-      'I don\'t really know where to start. It all feels so overwhelming.',
-      'Sometimes I feel like I\'m not doing justice to anyone - neither myself nor others.',
-      'I\'ve tried several things already, but nothing seems to really help.',
-      'The difficult part is that I often can\'t say no when someone needs something from me.',
-      'I notice that this is taking quite an emotional toll on me.',
-    ]
-  }), []);
+  const fallbackFollowUps = useMemo(() => [
+    'Yes, I think it\'s mainly the amount of different things happening at the same time.',
+    'This has been bothering me for a while, to be honest.',
+    'I don\'t really know where to start. It all feels so overwhelming.',
+    'Sometimes I feel like I\'m not doing justice to anyone - neither myself nor others.',
+    'I\'ve tried several things already, but nothing seems to really help.',
+    'The difficult part is that I often can\'t say no when someone needs something from me.',
+    'I notice that this is taking quite an emotional toll on me.',
+  ], []);
 
   // Get personality description for the coachee based on selected profile
   const getCoacheePersonalityDescription = useCallback((): string => {
     const parts: string[] = [];
-    
+
     if (selectedRiemann) {
       const r = selectedRiemann;
-      if (r.data.naehe > 60) parts.push(language === 'de' 
-        ? 'Du suchst Nähe und Verbundenheit, brauchst emotionale Unterstützung'
-        : 'You seek closeness and connection, need emotional support');
-      if (r.data.distanz > 60) parts.push(language === 'de'
-        ? 'Du brauchst Abstand und Unabhängigkeit, bist eher analytisch'
-        : 'You need distance and independence, tend to be analytical');
-      if (r.data.dauer > 60) parts.push(language === 'de'
-        ? 'Du brauchst Sicherheit und Struktur, magst keine Überraschungen'
-        : 'You need security and structure, don\'t like surprises');
-      if (r.data.wechsel > 60) parts.push(language === 'de'
-        ? 'Du liebst Veränderung und Abwechslung, bist spontan'
-        : 'You love change and variety, are spontaneous');
+      if (r.data.naehe > 60) parts.push('You seek closeness and connection, need emotional support');
+      if (r.data.distanz > 60) parts.push('You need distance and independence, tend to be analytical');
+      if (r.data.dauer > 60) parts.push('You need security and structure, don\'t like surprises');
+      if (r.data.wechsel > 60) parts.push('You love change and variety, are spontaneous');
     }
-    
+
     if (selectedOCEAN) {
       const o = selectedOCEAN;
-      if (o.data.neuroticism > 60) parts.push(language === 'de'
-        ? 'Du bist emotional sensibel und reagierst stark auf Stress'
-        : 'You are emotionally sensitive and react strongly to stress');
-      if (o.data.extraversion > 60) parts.push(language === 'de'
-        ? 'Du bist extrovertiert und teilst gerne deine Gedanken'
-        : 'You are extroverted and like to share your thoughts');
-      if (o.data.extraversion < 40) parts.push(language === 'de'
-        ? 'Du bist eher introvertiert und zurückhaltend'
-        : 'You are rather introverted and reserved');
+      if (o.data.neuroticism > 60) parts.push('You are emotionally sensitive and react strongly to stress');
+      if (o.data.extraversion > 60) parts.push('You are extroverted and like to share your thoughts');
+      if (o.data.extraversion < 40) parts.push('You are rather introverted and reserved');
     }
-    
+
     return parts.length > 0 ? parts.join('. ') + '.' : '';
-  }, [selectedRiemann, selectedOCEAN, language]);
+  }, [selectedRiemann, selectedOCEAN]);
 
   // Generate a dynamic follow-up message using dedicated coachee simulation endpoint
   const generateFollowUpMessage = useCallback(async (
@@ -453,11 +428,10 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
       console.warn('Coachee simulation failed:', err);
     }
 
-    // Fallback to varied follow-up messages
-    const fallbacks = language === 'de' ? fallbackFollowUps.de : fallbackFollowUps.en;
-    const fallbackIndex = (turnNumber - 1) % fallbacks.length;
-    return fallbacks[fallbackIndex];
-  }, [language, fallbackFollowUps, getCoacheePersonalityDescription]);
+    // Fallback to varied follow-up messages (English only)
+    const fallbackIndex = (turnNumber - 1) % fallbackFollowUps.length;
+    return fallbackFollowUps[fallbackIndex];
+  }, [fallbackFollowUps, getCoacheePersonalityDescription]);
 
   // Run the full test scenario
   const runTest = useCallback(async () => {
@@ -494,9 +468,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
       const initialGreeting: Message = {
         id: 'test-bot-greeting',
         role: 'bot',
-        text: language === 'de' 
-          ? 'Hallo! Schön, dass du da bist. Was beschäftigt dich heute?'
-          : 'Hello! Nice to see you. What\'s on your mind today?',
+        text: 'Hello! Nice to see you. What\'s on your mind today?',
         timestamp: new Date().toISOString(),
       };
       chatHistory.push(initialGreeting);
@@ -653,12 +625,8 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
             profileId: 'mock_profile',
             timestamp: new Date().toISOString(),
             responses: [{
-              userMessage: language === 'de' 
-                ? '🧪 Mock-Test: 2 simulierte Sessions mit hardcodierten Keywords'
-                : '🧪 Mock Test: 2 simulated sessions with hardcoded keywords',
-              botResponse: language === 'de'
-                ? 'Refinement-Vorschau wird mit Mock-Daten berechnet...'
-                : 'Refinement preview is being calculated with mock data...',
+              userMessage: '🧪 Mock Test: 2 simulated sessions with hardcoded keywords',
+              botResponse: 'Refinement preview is being calculated with mock data...',
               responseTime: 0
             }],
             telemetry: {
@@ -669,9 +637,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
               stressKeywordsDetected: false,
             },
             autoCheckResults: [], // No auto-checks for this special test
-            dpflKeywordsInfo: language === 'de'
-              ? '🧪 Mock-Keywords wurden verwendet (siehe Modal für Details)'
-              : '🧪 Mock keywords were used (see modal for details)',
+            dpflKeywordsInfo: '🧪 Mock keywords were used (see modal for details)',
             manualCheckResults: selectedScenario.manualChecks.map((check, idx) => ({
               checkId: `manual_${idx}`,
               passed: null,
@@ -976,7 +942,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
               >
                 <div className="font-medium text-content-primary">{bot.name}</div>
                 <div className="text-xs text-content-secondary truncate">
-                  {language === 'de' ? (bot.style_de || bot.style) : bot.style}
+                  {bot.style}
                 </div>
               </button>
             ))}
@@ -1178,7 +1144,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
     const predefinedCount = selectedScenario?.testMessages.length ?? 0;
     const isDynamicPhase = currentMessageIndex >= predefinedCount;
     const currentMessage = isDynamicPhase 
-      ? (language === 'de' ? '🤖 Generiere Follow-up...' : '🤖 Generating follow-up...')
+      ? '🤖 Generating follow-up...'
       : `"${selectedScenario?.testMessages[currentMessageIndex]?.text}"`;
 
     return (
@@ -1190,7 +1156,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
         </p>
         {isDynamicPhase && (
           <p className="text-accent-primary text-sm mt-1">
-            {language === 'de' ? '🔄 Dynamische Fortsetzung' : '🔄 Dynamic continuation'}
+            🔄 Dynamic continuation
           </p>
         )}
         <div className="mt-4 p-4 bg-background-tertiary rounded-lg text-left max-w-md mx-auto">
@@ -1349,7 +1315,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
         {/* Responses */}
         <div>
           <h4 className="font-semibold mb-2 text-content-primary">
-            📝 {t('test_runner_responses')} ({testResult.responses.length} {language === 'de' ? 'Austausche' : 'exchanges'})
+            📝 {t('test_runner_responses')} ({testResult.responses.length} exchanges)
           </h4>
           <div className="space-y-3 max-h-80 overflow-y-auto">
             {testResult.responses.map((r, idx) => (
@@ -1358,7 +1324,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
                   <span>{t('test_runner_user')}:</span>
                   {r.isDynamic && (
                     <span className="px-1.5 py-0.5 bg-accent-primary/20 text-accent-primary rounded text-xs">
-                      {language === 'de' ? '🤖 Dynamisch' : '🤖 Dynamic'}
+                      🤖 Dynamic
                     </span>
                   )}
                 </div>
@@ -2025,7 +1991,7 @@ const TestRunner: React.FC<TestRunnerProps> = ({ onClose, userProfile, encryptio
             className="py-2 px-6 bg-green-600 text-white rounded-lg
                        hover:bg-green-700 transition-colors flex items-center gap-2"
           >
-            📥 {language === 'de' ? 'Ergebnis exportieren' : 'Export Result'}
+            📥 Export Result
           </button>
           <button
             onClick={() => {

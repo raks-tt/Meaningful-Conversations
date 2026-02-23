@@ -1,68 +1,68 @@
-# Newsletter: Drei Wege zu dir selbst & Smarte Sicherheit (v1.8.0) 🛡️
+# Newsletter: Three Paths to Yourself & Smart Security (v1.8.0) 🛡️
 
-Liebe Meaningful Conversations Community,
+Dear Meaningful Conversations Community,
 
-mit Version **1.8.0** erweitern wir die Möglichkeiten der Selbsterkenntnis massiv und machen gleichzeitig die Plattform sicherer und robuster.
+With version **1.8.0**, we are massively expanding the possibilities for self-discovery while simultaneously making the platform more secure and robust.
 
-Hier sind die Highlights des Updates:
-
----
-
-## 🧬 Meilenstein: Drei Wege zu dir selbst
-
-Das Herzstück dieses Updates ist die Erweiterung der Persönlichkeitsanalyse. Ihr könnt jetzt **drei verschiedene Persönlichkeitsprofile** erstellen – einzeln oder alle gemeinsam, ganz wie ihr möchtet:
-
-1. **Riemann-Thomann:** Versteht eure Grundausrichtung zwischen Dauer, Wechsel, Nähe und Distanz.
-2. **Big Five (OCEAN):** Der wissenschaftliche Goldstandard der Persönlichkeitspsychologie.
-3. **Spiral Dynamics:** Entdeckt eure Wertesysteme und Weltbilder.
-
-Diese Profile helfen eurem KI-Coach, euch noch präziser und individueller zu begleiten.
+Here are the highlights of the update:
 
 ---
 
-## 💬 Noch natürlichere Gespräche
+## 🧬 Milestone: Three Paths to Yourself
 
-Wir haben intensiv an der "Persönlichkeit" unserer KI-Coaches (DPC - Dynamic Personality Coaching) gearbeitet.
+The centerpiece of this update is the expansion of personality analysis. You can now create **three different personality profiles** – individually or all together, just as you prefer:
 
-- **Weniger "KI", mehr "Du":** Die Coaches vermeiden jetzt typische KI-Floskeln und unnötige Wiederholungen.
-- **Konkrete Beispiele:** Statt abstrakter Ratschläge geben die Coaches jetzt häufiger greifbare Beispiele, um ihre Punkte zu verdeutlichen.
-- **Proaktive Herausforderungen:** Euer Coach ist nicht nur zum Zuhören da. Er wird euch jetzt öfter liebevoll herausfordern ("Challenging"), um euch wirklich weiterzubringen.
+1. **Riemann-Thomann:** Understand your basic orientation between duration, change, closeness, and distance.
+2. **Big Five (OCEAN):** The scientific gold standard of personality psychology.
+3. **Spiral Dynamics:** Discover your value systems and worldviews.
 
----
-
-## 🎨 Visueller Feinschliff
-
-- **Neue Icons:** Wir haben einige Icons (z.B. Trophäe, Palette) überarbeitet, damit sie sich noch harmonischer in das Design (iOS Style) einfügen.
+These profiles help your AI coach accompany you even more precisely and individually.
 
 ---
 
-## 🛡️ Sicherheit & Technik (Für Admins & Interessierte)
+## 💬 Even More Natural Conversations
 
-Sicherheit ist kein Feature, sondern eine Selbstverständlichkeit. In v1.8.0 haben wir die Schutzmaßnahmen deutlich erhöht:
+We have worked intensively on the "personality" of our AI coaches (DPC - Dynamic Personality Coaching).
 
-- **Rate Limiting 🚦:** Um eure Accounts vor Brute-Force-Angriffen zu schützen, haben wir eine "Geschwindigkeitsbegrenzung" für Login- und Registrierungsversuche eingeführt.
-- **Data Privacy 🔒:** Wir haben die Filterung in unseren System-Logs verbessert, um sicherzustellen, dass sensible Daten auch in Ausnahmefällen niemals dort landen, wo sie nicht hingehören.
-
----
-
-## 🧪 Qualitätssicherung: Der Persönlichkeits-Simulator
-
-Ein spannender Einblick in unsere Entwicklungsküche:
-Wie testen wir, ob ein Coach gut ist? Wir haben einen neuen **Test-Runner** entwickelt, der **simulierte Klienten** erzeugt.
-
-- Der Simulator beherrscht jetzt **alle drei Persönlichkeitsmodelle** (Riemann, Big5, Spiral Dynamics).
-- Wir lassen unsere Coaches gegen diese vielfältigen Persönlichkeitstypen antreten, um sicherzustellen, dass sie mit *jedem* von euch empathisch und zielführend kommunizieren können – egal welches Profil ihr nutzt.
+- **Less "AI", more "You":** The coaches now avoid typical AI phrases and unnecessary repetitions.
+- **Concrete Examples:** Instead of abstract advice, the coaches now more frequently give tangible examples to illustrate their points.
+- **Proactive Challenges:** Your coach is not just there to listen. They will now more often lovingly challenge you ("Challenging") to really help you move forward.
 
 ---
 
-## 🚀 Update durchführen
+## 🎨 Visual Polish
 
-Das Update wird wie gewohnt automatisch ausgerollt. Sollte euch etwas auffallen, nutzt gerne die Feedback-Funktion!
-
-Herzliche Grüße,
-
-Euer Meaningful Conversations Team 💙
+- **New Icons:** We have redesigned some icons (e.g., trophy, palette) so they integrate even more harmoniously into the design (iOS Style).
 
 ---
 
-*Technische Info: Dieser Newsletter deckt alle Änderungen bis Version 1.8.0 ab.*
+## 🛡️ Security & Technology (For Admins & Interested Users)
+
+Security is not a feature, but a given. In v1.8.0, we have significantly increased protective measures:
+
+- **Rate Limiting 🚦:** To protect your accounts from brute-force attacks, we have introduced a "speed limit" for login and registration attempts.
+- **Data Privacy 🔒:** We have improved filtering in our system logs to ensure that sensitive data never ends up where it doesn't belong, even in exceptional cases.
+
+---
+
+## 🧪 Quality Assurance: The Personality Simulator
+
+An exciting look into our development kitchen:
+How do we test whether a coach is good? We have developed a new **test runner** that generates **simulated clients**.
+
+- The simulator now masters **all three personality models** (Riemann, Big5, Spiral Dynamics).
+- We have our coaches compete against these diverse personality types to ensure they can communicate empathetically and purposefully with *each* of you – regardless of which profile you use.
+
+---
+
+## 🚀 Perform Update
+
+The update will be rolled out automatically as usual. If you notice anything, feel free to use the feedback function!
+
+Best regards,
+
+Your Meaningful Conversations Team 💙
+
+---
+
+*Technical Info: This newsletter covers all changes up to version 1.8.0.*

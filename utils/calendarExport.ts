@@ -21,9 +21,9 @@ export interface ParsedDeadlineResult {
 const parseDeadline = (deadlineStr: string): ParsedDeadlineResult => {
   // Remove common prefixes
   let cleaned = deadlineStr.replace(/^(Deadline:|bis:)\s*/i, '').trim();
-  
+
   const parsedDate = parseDeadlineUtil(cleaned);
-  
+
   return {
     success: parsedDate !== null,
     date: parsedDate,
@@ -68,17 +68,15 @@ export const generateCalendarEventWithDate = (
       resolve({ error: 'Invalid date provided' });
       return;
     }
-    
+
     // Create shortened title (3 words max)
     const shortTitle = truncateToThreeWords(action);
-    
-    const reminderText = language === 'de'
-      ? 'Erinnerung: Besuchen Sie die Meaningful Conversations App erneut, um Fortschritte zu verfolgen und Ihre Lebenskontext-Datei aktuell zu halten.'
-      : 'Reminder: Revisit the Meaningful Conversations app to track progress and keep your Life Context file current.';
-    
+
+    const reminderText = 'Reminder: Revisit the Meaningful Conversations app to track progress and keep your Life Context file current.';
+
     // Build description with full action + reminder + app link
     const eventDescription = `${action}\n\n${reminderText}\n\nhttps://mc-app.manualmode.at`;
-    
+
     // Set event to 9:00 AM on the deadline day
     const eventStart: [number, number, number, number, number] = [
       deadline.getFullYear(),
@@ -87,7 +85,7 @@ export const generateCalendarEventWithDate = (
       9,
       0
     ];
-    
+
     const eventAttributes: EventAttributes = {
       start: eventStart,
       duration: { minutes: 30 },
@@ -103,13 +101,13 @@ export const generateCalendarEventWithDate = (
         }
       ]
     };
-    
+
     createEvent(eventAttributes, (error, value) => {
       if (error) {
         resolve({ error: error.message });
         return;
       }
-      
+
       const filename = `meaningful-conversations-${generateSlug(action)}.ics`;
       resolve({ value, filename });
     });
@@ -126,27 +124,27 @@ export const generateCalendarEvent = (
 ): Promise<{ error?: string; value?: string; filename?: string; needsManualInput?: boolean }> => {
   return new Promise(async (resolve) => {
     const parseResult = parseDeadline(event.deadline);
-    
+
     if (parseResult.needsManualInput) {
-      resolve({ 
+      resolve({
         error: `Could not parse deadline: ${event.deadline}`,
         needsManualInput: true
       });
       return;
     }
-    
+
     if (!parseResult.date) {
       resolve({ error: 'Failed to parse deadline' });
       return;
     }
-    
+
     const result = await generateCalendarEventWithDate(
       event.action,
       parseResult.date,
       language,
       event.description
     );
-    
+
     resolve(result);
   });
 };
@@ -175,15 +173,15 @@ export const exportSingleEvent = async (
   language: 'en' | 'de' = 'en'
 ): Promise<{ success: boolean; error?: string; needsManualInput?: boolean }> => {
   const result = await generateCalendarEvent({ action, deadline }, language);
-  
+
   if (result.needsManualInput) {
     return { success: false, needsManualInput: true };
   }
-  
+
   if (result.error || !result.value || !result.filename) {
     return { success: false, error: result.error || 'Failed to generate calendar event' };
   }
-  
+
   downloadICSFile(result.value, result.filename);
   return { success: true };
 };
@@ -197,11 +195,11 @@ export const exportSingleEventWithDate = async (
   language: 'en' | 'de' = 'en'
 ): Promise<{ success: boolean; error?: string }> => {
   const result = await generateCalendarEventWithDate(action, deadline, language);
-  
+
   if (result.error || !result.value || !result.filename) {
     return { success: false, error: result.error || 'Failed to generate calendar event' };
   }
-  
+
   downloadICSFile(result.value, result.filename);
   return { success: true };
 };
@@ -215,7 +213,7 @@ export const exportAllEvents = async (
 ): Promise<{ success: boolean; count: number; errors: string[] }> => {
   const errors: string[] = [];
   let successCount = 0;
-  
+
   for (const step of nextSteps) {
     const result = await exportSingleEvent(step.action, step.deadline, language);
     if (result.success) {
@@ -223,11 +221,11 @@ export const exportAllEvents = async (
     } else {
       errors.push(`${step.action}: ${result.error}`);
     }
-    
+
     // Small delay between downloads to avoid browser blocking
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-  
+
   return {
     success: successCount > 0,
     count: successCount,

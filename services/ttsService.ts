@@ -5,7 +5,7 @@ export type TtsMode = 'local' | 'server';
 export interface ServerVoice {
     id: string;
     name: string;
-    language: 'de' | 'en';
+    language: 'en';
     gender: 'male' | 'female';
     model: string;
 }
@@ -14,20 +14,6 @@ export interface ServerVoice {
  * Available server voices from Piper TTS
  */
 export const SERVER_VOICES: ServerVoice[] = [
-    {
-        id: 'de-thorsten',
-        name: 'Thorsten (Deutsch, Männlich)',
-        language: 'de',
-        gender: 'male',
-        model: 'de_DE-thorsten-medium',
-    },
-    {
-        id: 'de-eva',
-        name: 'Eva (Deutsch, Weiblich)',
-        language: 'de',
-        gender: 'female',
-        model: 'de_DE-eva_k-x_low',
-    },
     {
         id: 'en-amy',
         name: 'Amy (English, Female)',
@@ -58,7 +44,7 @@ const getModelFromVoiceId = (voiceId: string): string | null => {
 export const synthesizeSpeech = async (
     text: string,
     botId: string,
-    lang: 'de' | 'en',
+    lang: 'en',
     isMeditation: boolean = false,
     voiceId?: string | null
 ): Promise<Blob> => {
@@ -77,7 +63,7 @@ export const synthesizeSpeech = async (
 
     const apiBaseUrl = getApiBaseUrl();
     const apiUrl = apiBaseUrl ? `${apiBaseUrl}/api/tts/synthesize` : '/api/tts/synthesize';
-    
+
     const rawResponse = await fetch(apiUrl, {
         method: 'POST',
         headers: getAuthHeaders(),
@@ -120,18 +106,17 @@ export interface LanguageVoiceSettings {
     isAuto: boolean;
 }
 
-export interface BotVoiceSettings {
-    de: LanguageVoiceSettings;
-    en: LanguageVoiceSettings;
-}
+// Simplified to English-only, maintaining backward compatibility
+export type BotVoiceSettings = LanguageVoiceSettings;
 
 /**
  * Get voice settings for a specific bot
  */
-export const getBotVoiceSettings = (botId: string): BotVoiceSettings => {
-    const defaultSettings: BotVoiceSettings = {
-        de: { mode: 'local', voiceId: null, isAuto: true },
-        en: { mode: 'local', voiceId: null, isAuto: true }
+export const getBotVoiceSettings = (botId: string): LanguageVoiceSettings => {
+    const defaultSettings: LanguageVoiceSettings = {
+        mode: 'local',
+        voiceId: null,
+        isAuto: true
     };
 
     if (typeof localStorage === 'undefined') {
@@ -145,17 +130,18 @@ export const getBotVoiceSettings = (botId: string): BotVoiceSettings => {
             const allSettings = JSON.parse(settingsStr);
             if (allSettings[botId]) {
                 const settings = allSettings[botId];
-                // Check if already in new format (with de/en keys)
-                if (settings.de && settings.en) {
+
+                // Check if old format with de/en keys - migrate to English only
+                if (settings.en) {
+                    const migratedSettings = settings.en;
+                    saveBotVoiceSettings(botId, migratedSettings);
+                    return migratedSettings;
+                }
+
+                // Already in new English-only format
+                if (settings.mode !== undefined) {
                     return settings;
                 }
-                // Old format detected - migrate to language-specific
-                const migratedSettings: BotVoiceSettings = {
-                    de: { ...settings },
-                    en: { mode: 'local', voiceId: null, isAuto: true }
-                };
-                saveBotVoiceSettings(botId, migratedSettings);
-                return migratedSettings;
             }
         }
 
@@ -176,15 +162,15 @@ export const getBotVoiceSettings = (botId: string): BotVoiceSettings => {
 /**
  * Save voice settings for a specific bot
  */
-export const saveBotVoiceSettings = (botId: string, settings: BotVoiceSettings): void => {
+export const saveBotVoiceSettings = (botId: string, settings: LanguageVoiceSettings): void => {
     if (typeof localStorage === 'undefined') return;
 
     try {
         const settingsStr = localStorage.getItem('botVoiceSettings');
         const allSettings = settingsStr ? JSON.parse(settingsStr) : {};
-        
+
         allSettings[botId] = settings;
-        
+
         localStorage.setItem('botVoiceSettings', JSON.stringify(allSettings));
     } catch (error) {
         console.error('[TTS] Failed to save bot voice settings:', error);
@@ -192,17 +178,17 @@ export const saveBotVoiceSettings = (botId: string, settings: BotVoiceSettings):
 };
 
 /**
- * Migrate legacy settings to new bot-specific, language-aware format
+ * Migrate legacy settings to new bot-specific, English-only format
  * Returns migrated settings or null if no legacy settings found
  */
-const migrateLegacySettings = (botId: string): BotVoiceSettings | null => {
+const migrateLegacySettings = (botId: string): LanguageVoiceSettings | null => {
     if (typeof localStorage === 'undefined') return null;
 
     try {
         // Check for legacy coachVoicePreferences
         const legacyPrefsStr = localStorage.getItem('coachVoicePreferences');
         const legacyPrefs = legacyPrefsStr ? JSON.parse(legacyPrefsStr) : null;
-        
+
         // Check for legacy global settings
         const legacyMode = localStorage.getItem('ttsMode') as TtsMode | null;
         const legacyAutoModeSetting = localStorage.getItem('ttsAutoMode');
@@ -214,19 +200,13 @@ const migrateLegacySettings = (botId: string): BotVoiceSettings | null => {
         if (legacyPrefs && legacyPrefs[botId]) {
             const voiceId = legacyPrefs[botId];
             const mode: TtsMode = legacyMode || 'local';
-            
-            const legacySettings: LanguageVoiceSettings = {
+
+            const settings: LanguageVoiceSettings = {
                 mode,
                 voiceId,
                 isAuto: legacyAutoMode
             };
-            
-            // Migrate to language-specific format (apply to DE, default for EN)
-            const settings: BotVoiceSettings = {
-                de: legacySettings,
-                en: { mode: 'local', voiceId: null, isAuto: true }
-            };
-            
+
             // Save to new format
             saveBotVoiceSettings(botId, settings);
             return settings;
@@ -236,19 +216,13 @@ const migrateLegacySettings = (botId: string): BotVoiceSettings | null => {
         if (legacyMode || legacyServerVoice || legacyLocalVoice) {
             const mode: TtsMode = legacyMode || 'local';
             const voiceId = mode === 'server' ? legacyServerVoice : legacyLocalVoice;
-            
-            const legacySettings: LanguageVoiceSettings = {
+
+            const settings: LanguageVoiceSettings = {
                 mode,
                 voiceId,
                 isAuto: legacyAutoMode
             };
-            
-            // Migrate to language-specific format
-            const settings: BotVoiceSettings = {
-                de: legacySettings,
-                en: { mode: 'local', voiceId: null, isAuto: true }
-            };
-            
+
             // Save to new format
             saveBotVoiceSettings(botId, settings);
             return settings;
@@ -280,7 +254,7 @@ export const getTtsPreferences = (): {
     try {
         const modeStr = localStorage.getItem('ttsMode');
         const mode = (modeStr === 'server' ? 'server' : 'local') as TtsMode;
-        
+
         // Get the appropriate voice URI based on mode
         let voiceURI: string | null = null;
         if (mode === 'server') {
@@ -288,7 +262,7 @@ export const getTtsPreferences = (): {
         } else {
             voiceURI = localStorage.getItem('selectedLocalVoiceURI');
         }
-        
+
         return { mode, selectedVoiceURI: voiceURI };
     } catch (error) {
         console.error('Failed to load TTS preferences:', error);
@@ -302,10 +276,10 @@ export const getTtsPreferences = (): {
  */
 export const saveTtsPreferences = (mode: TtsMode, selectedVoiceURI: string | null): void => {
     if (typeof localStorage === 'undefined') return;
-    
+
     try {
         localStorage.setItem('ttsMode', mode);
-        
+
         // Save voice to mode-specific key
         if (mode === 'server') {
             if (selectedVoiceURI !== null) {
@@ -324,4 +298,3 @@ export const saveTtsPreferences = (mode: TtsMode, selectedVoiceURI: string | nul
         console.error('Failed to save TTS preferences:', error);
     }
 };
-
