@@ -9,7 +9,7 @@ const { RIEMANN_STRATEGIES, BIG5_STRATEGIES, SD_STRATEGIES } = require('./dpcStr
  * Extracts dimensions from all personality models, detects conflicts, and merges strategies intelligently
  */
 class StrategyMerger {
-  constructor(profile, lang = 'de') {
+  constructor(profile, lang = 'en') {
     this.profile = profile;
     this.lang = lang;
     this.dimensions = []; // All weighted dimensions from all models
@@ -41,8 +41,8 @@ class StrategyMerger {
         if (score !== undefined && score !== null) {
           const isHigh = score > 50;
           const level = isHigh ? 'high' : 'low';
-          const strategy = RIEMANN_STRATEGIES[trait]?.[level]?.[this.lang] || 
-                          RIEMANN_STRATEGIES[trait]?.[level]?.['de'];
+          const strategy = RIEMANN_STRATEGIES[trait]?.[level]?.[this.lang] ||
+                          RIEMANN_STRATEGIES[trait]?.[level]?.['en'];
           
           if (strategy) {
             this.dimensions.push({
@@ -66,8 +66,8 @@ class StrategyMerger {
         if (score !== undefined && score !== null) {
           const isHigh = score >= 4;
           const level = isHigh ? 'high' : 'low';
-          const strategy = BIG5_STRATEGIES[trait]?.[level]?.[this.lang] || 
-                          BIG5_STRATEGIES[trait]?.[level]?.['de'];
+          const strategy = BIG5_STRATEGIES[trait]?.[level]?.[this.lang] ||
+                          BIG5_STRATEGIES[trait]?.[level]?.['en'];
           
           if (strategy) {
             this.dimensions.push({
@@ -98,8 +98,8 @@ class StrategyMerger {
       
       // Take top 2 dominant levels
       rankedLevels.slice(0, 2).forEach((levelData, index) => {
-        const strategy = SD_STRATEGIES[levelData.level]?.high?.[this.lang] || 
-                        SD_STRATEGIES[levelData.level]?.high?.['de'];
+        const strategy = SD_STRATEGIES[levelData.level]?.high?.[this.lang] ||
+                        SD_STRATEGIES[levelData.level]?.high?.['en'];
         
         if (strategy) {
           this.dimensions.push({
@@ -154,21 +154,21 @@ class StrategyMerger {
 
     // Define conflict pairs
     const conflictPairs = [
-      { 
-        keywords: ['strukturiert', 'structured', 'geplant', 'planned', 'organisiert'], 
-        opposite: ['spontan', 'flexibel', 'spontaneous', 'flexible', 'improvisier', 'improv'] 
+      {
+        keywords: ['structured', 'planned', 'organised'],
+        opposite: ['spontaneous', 'flexible', 'improv']
       },
-      { 
-        keywords: ['rational', 'objektiv', 'sachlich', 'objective', 'factual'], 
-        opposite: ['empathisch', 'warm', 'emotional', 'empathetic', 'warm', 'fürsorglich', 'caring'] 
+      {
+        keywords: ['rational', 'objective', 'factual'],
+        opposite: ['empathetic', 'warm', 'emotional', 'caring']
       },
-      { 
-        keywords: ['kurz', 'prägnant', 'knapp', 'brief', 'concise', 'short'], 
-        opposite: ['ausführlich', 'detailliert', 'elaborate', 'detailed', 'comprehensive'] 
+      {
+        keywords: ['brief', 'concise', 'short'],
+        opposite: ['elaborate', 'detailed', 'comprehensive']
       },
-      { 
-        keywords: ['zurückhaltend', 'ruhig', 'reserved', 'quiet', 'introspektiv', 'introspective'], 
-        opposite: ['gesellig', 'energiegeladen', 'expressiv', 'sociable', 'energetic', 'expressive'] 
+      {
+        keywords: ['reserved', 'quiet', 'introspective'],
+        opposite: ['sociable', 'energetic', 'expressive']
       }
     ];
 
@@ -322,7 +322,7 @@ class StrategyMerger {
       return `${primary.strategy[field]}; ${secondary.strategy[field]}`;
     } else {
       // Primary dominates, secondary as supplement
-      return `${primary.strategy[field]} (primär); ${secondary.strategy[field]} (ergänzend)`;
+      return `${primary.strategy[field]} (primary); ${secondary.strategy[field]} (supplementary)`;
     }
   }
 
@@ -340,8 +340,8 @@ class StrategyMerger {
       traits.forEach(trait => {
         const score = this.profile.riemann.selbst[trait];
         if (score < 30) {
-          const strategy = RIEMANN_STRATEGIES[trait]?.low?.[this.lang] || 
-                          RIEMANN_STRATEGIES[trait]?.low?.['de'];
+          const strategy = RIEMANN_STRATEGIES[trait]?.low?.[this.lang] ||
+                          RIEMANN_STRATEGIES[trait]?.low?.['en'];
           if (strategy) {
             blindspotDimensions.push({
               model: 'riemann',
@@ -363,8 +363,8 @@ class StrategyMerger {
         if (score < 2.5 || score > 4.5) {
           const isLow = score < 2.5;
           const level = isLow ? 'low' : 'high';
-          const strategy = BIG5_STRATEGIES[trait]?.[level]?.[this.lang] || 
-                          BIG5_STRATEGIES[trait]?.[level]?.['de'];
+          const strategy = BIG5_STRATEGIES[trait]?.[level]?.[this.lang] ||
+                          BIG5_STRATEGIES[trait]?.[level]?.['en'];
           if (strategy && strategy.blindspot) {
             blindspotDimensions.push({
               model: 'big5',
@@ -392,8 +392,8 @@ class StrategyMerger {
       
       // Get underdeveloped levels (rank 6-8)
       rankedLevels.slice(5, 8).forEach(levelData => {
-        const strategy = SD_STRATEGIES[levelData.level]?.low?.[this.lang] || 
-                        SD_STRATEGIES[levelData.level]?.low?.['de'];
+        const strategy = SD_STRATEGIES[levelData.level]?.low?.[this.lang] ||
+                        SD_STRATEGIES[levelData.level]?.low?.['en'];
         if (strategy) {
           blindspotDimensions.push({
             model: 'sd',
@@ -475,23 +475,23 @@ class StrategyMerger {
     // Define contradiction patterns
     const contradictions = [
       {
-        quantKeywords: ['rational', 'objektiv', 'sachlich', 'factual', 'objective'],
-        narrativeKeywords: ['empathisch', 'emotional', 'gefühl', 'empathetic', 'feeling', 'herzlich', 'warm'],
+        quantKeywords: ['rational', 'factual', 'objective'],
+        narrativeKeywords: ['empathetic', 'emotional', 'feeling', 'warm'],
         type: 'rational_vs_emotional'
       },
       {
-        quantKeywords: ['strukturiert', 'geplant', 'organisiert', 'structured', 'planned', 'organised'],
-        narrativeKeywords: ['spontan', 'flexibel', 'improvisier', 'spontaneous', 'flexible', 'adaptiv'],
+        quantKeywords: ['structured', 'planned', 'organised'],
+        narrativeKeywords: ['spontaneous', 'flexible', 'adaptiv'],
         type: 'structured_vs_spontaneous'
       },
       {
-        quantKeywords: ['introspektiv', 'zurückhaltend', 'ruhig', 'reserved', 'quiet', 'reflective'],
-        narrativeKeywords: ['extrovertiert', 'gesellig', 'energiegela', 'extroverted', 'sociable', 'outgoing'],
+        quantKeywords: ['reserved', 'quiet', 'reflective'],
+        narrativeKeywords: ['extroverted', 'sociable', 'outgoing'],
         type: 'introverted_vs_extroverted'
       },
       {
-        quantKeywords: ['kurz', 'prägnant', 'knapp', 'brief', 'concise'],
-        narrativeKeywords: ['ausführlich', 'detailliert', 'umfassend', 'elaborate', 'detailed', 'comprehensive'],
+        quantKeywords: ['brief', 'concise'],
+        narrativeKeywords: ['elaborate', 'detailed', 'comprehensive'],
         type: 'concise_vs_elaborate'
       }
     ];

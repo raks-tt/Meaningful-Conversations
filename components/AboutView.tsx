@@ -8,25 +8,6 @@ import { HowItWorks } from './HowItWorks';
 interface InfoViewProps {
 }
 
-const de_markdown_part1 = `Möchten Sie die Erkenntnisse aus Ihrem Coaching im Alltag vertiefen oder suchen Sie einen unkomplizierten Weg zur Selbstreflexion? "Sinnstiftende Gespräche" wurde genau dafür entwickelt. Die App ist Ihre intelligente Ergänzung zum professionellen Coaching und eine moderne Alternative zum Selbsthilfebuch – ein persönlicher Raum für Ihre Weiterentwicklung, der Ihnen jederzeit zur Verfügung steht.
-
-## Unsere Philosophie: Fragen statt Antworten
-
-Wir sind überzeugt: Die besten Antworten tragen Sie bereits in sich. Unsere Mission ist es, Ihnen zu helfen, diese durch einen klaren und fokussierten Dialog zu finden. Basierend auf der stärkenorientierten Haltung der Positiven Psychologie schaffen wir einen absolut privaten Raum für Ihre Erkenntnisse. Wir stellen die richtigen Fragen, damit Sie wachsen können.
-`;
-
-const de_centered_text = `Ganz im Sinne von: **Do it yourself, but not alone\\!**`;
-
-const de_markdown_part2 = `
-## Wie es funktioniert
-
-"Sinnstiftende Gespräche" verbindet Ihre persönlichen Notizen und Ziele mit der fortschrittlichen KI von Google (US) oder Mistral (EU). Stellen Sie sich einen privaten Coach mit einem großartigen Gedächtnis und vertraulichen Notizen vor: Die App arbeitet mit dem Kontext Ihrer bisherigen Gespräche. Das ermöglicht es Ihnen, Ziele zu verfolgen, Herausforderungen aus verschiedenen Blickwinkeln zu betrachten und Ihren Fortschritt nachhaltig zu reflektieren.
-`;
-
-const de_final_sentence = `Diese Anwendung ist ein Projekt, das aus Leidenschaft für persönliches Wachstum und Technologie entstanden ist. Wir hoffen, dass sie Ihnen auf Ihrem Weg eine wertvolle Unterstützung ist.`;
-
-const de_highlight = `Und wenn Sie den direkten Austausch wünschen, können Sie über [**manualmode.at**](http://manualmode.at) jederzeit einen zertifizierten Lebens- und Sozialberater kontaktieren.`;
-
 const en_markdown_part1 = `Do you want to deepen the insights from your coaching in your daily life or are you looking for a straightforward way to self-reflection? "Meaningful Conversations" was developed precisely for this purpose. The app is your intelligent complement to professional coaching and a modern alternative to a self-help book – a personal space for your development that is available to you at any time.
 
 ## Our philosophy: Questions instead of Answers
@@ -50,13 +31,8 @@ const en_highlight = `And if you want direct exchange, you can contact a certifi
 type AboutTab = 'about' | 'coach';
 
 const AboutView: React.FC<InfoViewProps> = () => {
-    const { t, language } = useLocalization();
+    const { t } = useLocalization();
     const [activeTab, setActiveTab] = useState<AboutTab>('coach');
-    const markdownPart1 = language === 'de' ? de_markdown_part1 : en_markdown_part1;
-    const centeredText = language === 'de' ? de_centered_text : en_centered_text;
-    const markdownPart2 = language === 'de' ? de_markdown_part2 : en_markdown_part2;
-    const finalSentence = language === 'de' ? de_final_sentence : en_final_sentence;
-    const highlightContent = language === 'de' ? de_highlight : en_highlight;
 
     return (
         <div className="flex flex-col items-center w-full space-y-8">
@@ -92,13 +68,13 @@ const AboutView: React.FC<InfoViewProps> = () => {
                 <div className="prose dark:prose-invert max-w-none text-content-secondary space-y-4 leading-relaxed">
                     {activeTab === 'about' && (
                         <>
-                            <ReactMarkdown 
+                            <ReactMarkdown
                                 remarkPlugins={[remarkGfm]}
                                 components={{
                                     h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-content-primary mt-8 mb-4 not-prose" {...props} />,
                                 }}
                             >
-                                {markdownPart1}
+                                {en_markdown_part1}
                             </ReactMarkdown>
 
                             <div className="not-prose my-10 py-6 px-8 text-center bg-background-tertiary/30 dark:bg-background-tertiary/10 border-y border-border-secondary dark:border-border-primary">
@@ -113,21 +89,21 @@ const AboutView: React.FC<InfoViewProps> = () => {
                                         p: ({node, ...props}) => <p className="mb-0 text-xl italic text-accent-tertiary dark:text-accent-tertiary" {...props} />,
                                     }}
                                 >
-                                    {centeredText}
+                                    {en_centered_text}
                                 </ReactMarkdown>
                             </div>
-                            
-                            <ReactMarkdown 
+
+                            <ReactMarkdown
                                 remarkPlugins={[remarkGfm]}
                                 components={{
                                     h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-content-primary mt-8 mb-4 not-prose" {...props} />,
                                 }}
                             >
-                                {markdownPart2}
+                                {en_markdown_part2}
                             </ReactMarkdown>
-                            
+
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {finalSentence}
+                                {en_final_sentence}
                             </ReactMarkdown>
                         </>
                     )}
@@ -140,14 +116,14 @@ const AboutView: React.FC<InfoViewProps> = () => {
                         <div className="flex items-start gap-3">
                             <div className="text-2xl mt-0.5">✅</div>
                             <div>
-                                <ReactMarkdown 
+                                <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
                                     components={{
                                         p: ({node, ...props}) => <p className="text-left text-content-secondary" {...props} />,
                                         a: ({node, ...props}) => <a className="font-semibold hover:underline text-accent-tertiary dark:text-accent-tertiary" target="_blank" rel="noopener noreferrer" {...props} />
                                     }}
                                 >
-                                    {highlightContent}
+                                    {en_highlight}
                                 </ReactMarkdown>
                             </div>
                         </div>

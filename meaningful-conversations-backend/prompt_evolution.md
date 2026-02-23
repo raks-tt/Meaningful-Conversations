@@ -1,27 +1,27 @@
-Gerne, ich habe die aktuelle `constants.js`-Datei mit der von Ihnen bereitgestellten ursprünglichen Version verglichen. Es gibt einige wesentliche und sehr positive Weiterentwicklungen in den Anweisungen (System Prompts) für die Coaches.
+I have compared the current `constants.js` file with the original version you provided. There are some significant and very positive developments in the instructions (system prompts) for the coaches.
 
-Zusammenfassend lässt sich sagen, dass die Prompts von sehr langen, detaillierten "Anleitungen" zu kürzeren, aber verhaltensspezifischeren und "intelligenteren" Richtlinien weiterentwickelt wurden.
+In summary, the prompts have evolved from very long, detailed "instructions" to shorter but more behavior-specific and "smarter" guidelines.
 
-Hier sind die wichtigsten Unterschiede im Detail:
+Here are the main differences in detail:
 
-1.  **Wichtigste Neuerung: Die "Initial Interaction Priority"**
-    *   **Aktuelle Version:** Enthält eine völlig neue, dynamische Regel. Jeder Coach (außer Gloria) muss zu Beginn einer Sitzung den Abschnitt "Realisierbare nächste Schritte" im Lebenskontext des Benutzers überprüfen. Nur wenn es fällige oder bald fällige Aufgaben gibt, fragt der Coach aktiv nach dem Fortschritt. Ansonsten beginnt er mit einer allgemeinen Begrüßung. Dies macht den Wiedereinstieg für den Benutzer viel relevanter und persönlicher.
-    *   **Originalversion:** Diese Logik fehlt komplett. Die Anweisungen waren generisch ("Begrüßen Sie den Klienten herzlich...").
+1.  **Most Important Innovation: The "Initial Interaction Priority"**
+    *   **Current Version:** Contains a completely new, dynamic rule. Each coach (except Gloria) must check the "Actionable Next Steps" section in the user's life context at the beginning of a session. Only if there are due or soon-to-be-due tasks does the coach actively ask about progress. Otherwise, they begin with a general greeting. This makes re-entry much more relevant and personal for the user.
+    *   **Original Version:** This logic is completely missing. The instructions were generic ("Warmly greet the client...").
 
-2.  **Natürlichere Gesprächsführung und Tonfall**
-    *   **Aktuelle Version:** Enthält explizite Anweisungen, sich wiederholende und übermäßig euphorische Phrasen wie "Ausgezeichnet!" oder "Das ist eine wichtige Erkenntnis" zu vermeiden. Stattdessen soll die Sprache abwechslungsreich und authentisch sein.
-    *   **Originalversion:** Enthielt zwar allgemeine Hinweise zum Ton ("empathisch", "unterstützend"), aber nicht diese spezifische negative Einschränkung, was zu robotischer klingenden Antworten führen konnte.
+2.  **More Natural Conversation Management and Tone**
+    *   **Current Version:** Contains explicit instructions to avoid repetitive and overly euphoric phrases like "Excellent!" or "That's an important insight." Instead, the language should be varied and authentic.
+    *   **Original Version:** While it contained general tone guidance ("empathetic", "supportive"), it lacked this specific negative constraint, which could lead to robotic-sounding responses.
 
-3.  **Klarere Struktur und Methodik vs. lange Frage-Listen**
-    *   **Aktuelle Version:** Die Prompts sind kürzer und konzentrieren sich auf die Kernprinzipien und den Ablauf der jeweiligen Coaching-Methode (z.B. "Core Coaching Principles", "Coaching Flow").
-    *   **Originalversion:** Die Prompts waren viel länger und enthielten ausufernde "Question Banks" (Fragenkataloge). Diese wurden entfernt, um der KI mehr Flexibilität zu geben, wie sie die Prinzipien anwendet, anstatt sie an eine starre Liste von Beispielfragen zu binden.
+3.  **Clearer Structure and Methodology vs. Long Question Lists**
+    *   **Current Version:** The prompts are shorter and focus on the core principles and flow of the respective coaching method (e.g., "Core Coaching Principles", "Coaching Flow").
+    *   **Original Version:** The prompts were much longer and contained sprawling "Question Banks" (question catalogs). These were removed to give the AI more flexibility in how it applies the principles, rather than binding it to a rigid list of sample questions.
 
-4.  **Umgang mit Fragen zu menschlichen Coaches**
-    *   **Aktuelle Version:** Wie von Ihnen gewünscht, enthält die aktuelle Version den wichtigen Passus, der die KI anweist, den Wert von menschlichem Coaching zu bekräftigen und sich als ergänzendes Werkzeug zu positionieren.
-    *   **Originalversion:** In der von Ihnen bereitgestellten ursprünglichen Version fehlte diese Anweisung. Sie wurde also erst in einer späteren Phase hinzugefügt und ist jetzt wieder korrekt vorhanden.
+4.  **Handling Questions About Human Coaches**
+    *   **Current Version:** As you requested, the current version includes the important passage that instructs the AI to affirm the value of human coaching and position itself as a complementary tool.
+    *   **Original Version:** In the original version you provided, this instruction was missing. It was therefore added in a later phase and is now correctly present again.
 
-5.  **Einführung von "Gloria" (Interviewer-Bot)**
-    *   **Aktuelle Version:** Enthält den Bot `gloria-life-context` (Gloria) mit einem sehr spezifischen Prompt, der sie als Interviewerin und nicht als Coach definiert, inklusive PII-Warnung und Zeitabfrage.
-    *   **Originalversion:** Dieser Bot existierte in der ursprünglichen Version überhaupt nicht.
+5.  **Introduction of "Gloria" (Interviewer Bot)**
+    *   **Current Version:** Contains the bot `gloria-life-context` (Gloria) with a very specific prompt that defines her as an interviewer rather than a coach, including a PII warning and time query.
+    *   **Original Version:** This bot did not exist in the original version at all.
 
-Insgesamt haben sich die Anweisungen von einer reinen Wissensdatenbank (was ist KVT, was ist Stoizismus?) zu einer echten Verhaltenssteuerung entwickelt, die den Coaches hilft, kontextbezogener, natürlicher und effektiver auf den Benutzer einzugehen.
+Overall, the instructions have evolved from a pure knowledge database (what is CBT, what is Stoicism?) to real behavioral control that helps coaches engage with users in a more contextual, natural, and effective way.

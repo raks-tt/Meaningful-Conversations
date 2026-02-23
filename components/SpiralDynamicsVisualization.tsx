@@ -25,21 +25,21 @@ const LEVEL_COLORS: Record<string, string> = {
 };
 
 // Descriptive keywords for each level (what it represents, not the color name)
-const LEVEL_KEYWORDS: Record<string, { de: string; en: string }> = {
-  beige: { de: 'Sicherheit', en: 'Safety' },
-  purple: { de: 'Zugehörigkeit', en: 'Belonging' },
-  red: { de: 'Macht', en: 'Power' },
-  blue: { de: 'Ordnung', en: 'Order' },
-  orange: { de: 'Erfolg', en: 'Achievement' },
-  green: { de: 'Harmonie', en: 'Harmony' },
-  yellow: { de: 'Integration', en: 'Integration' },
-  turquoise: { de: 'Ganzheit', en: 'Holism' },
+const LEVEL_KEYWORDS: Record<string, string> = {
+  beige: 'Safety',
+  purple: 'Belonging',
+  red: 'Power',
+  blue: 'Order',
+  orange: 'Achievement',
+  green: 'Harmony',
+  yellow: 'Integration',
+  turquoise: 'Holism',
 };
 
 const SpiralDynamicsVisualization: React.FC<SpiralDynamicsVisualizationProps> = ({
   result,
 }) => {
-  const { t, language } = useLocalization();
+  const { t } = useLocalization();
 
   // Get level value (1-5 scale from Likert)
   const getLevelValue = (levelId: string): number => {
@@ -50,7 +50,7 @@ const SpiralDynamicsVisualization: React.FC<SpiralDynamicsVisualizationProps> = 
   const renderLevelBar = (levelId: string) => {
     const value = getLevelValue(levelId);
     const color = LEVEL_COLORS[levelId];
-    const keyword = LEVEL_KEYWORDS[levelId][language === 'de' ? 'de' : 'en'];
+    const keyword = LEVEL_KEYWORDS[levelId];
     const percentage = (value / 5) * 100;
 
     return (

@@ -419,144 +419,79 @@ const styles = StyleSheet.create({
 // ============================================================================
 
 const translations = {
-  de: {
-    title: 'Persönlichkeitssignatur',
-    narrativeOS: 'Persönlichkeits-Signatur',
-    narrativeSuperpowers: 'Deine geheimen Superkräfte',
-    narrativeBlindspots: 'Potenzielle Blindspots',
-    narrativeGrowth: 'Wachstumsmöglichkeiten',
-    whatDrivesYou: 'Was dich antreibt',
-    howYouInteract: 'Wie du interagierst',
-    whatDefinesYou: 'Was dich ausmacht',
-    selfOriented: 'Ich-orientiert',
-    communityOriented: 'Wir-orientiert',
-    stressPattern: 'Dein Stress-Reaktionsmuster:',
-    radarLegend: 'Das Radar zeigt dein Verhalten in 3 Kontexten:',
-    work: 'Beruf',
-    private: 'Privat',
-    self: 'Selbstbild',
-    howToUse: 'So nutzt du dieses Profil',
-    reflect: '1. Reflektiere:',
-    reflectDesc: 'Erkennst du dich wieder? Was überrascht dich? Denke an konkrete Situationen.',
-    noJudgment: '2. Keine Wertung:',
-    noJudgmentDesc: 'Es gibt kein "gut" oder "schlecht" – nur Muster, die kontextabhängig wirken.',
-    dialogue: '3. Dialog suchen:',
-    dialogueDesc: 'Teile Erkenntnisse mit Vertrauenspersonen und frage nach ihrer Perspektive.',
-    grow: '4. Sanft wachsen:',
-    growDesc: 'Blindspots sind Einladungen, keine Fehler. Wachse in deinem Tempo.',
-    confidential: 'Diese Analyse ist vertraulich und nur für den persönlichen Gebrauch bestimmt.',
-    signatureNotCreated: 'Signatur noch nicht erstellt',
-    availableAfterSignature: 'Verfügbar nach Signatur-Erstellung',
-    spiralNotCompleted: 'Spiral Dynamics Test noch nicht abgeschlossen',
-    riemannNotCompleted: 'Riemann-Thomann Test noch nicht abgeschlossen',
-    oceanNotCompleted: 'OCEAN/Big Five Test noch nicht abgeschlossen',
-    blindspotsDesc: 'Bereiche, die dir möglicherweise nicht bewusst sind und die dein Wachstum einschränken könnten:',
-    growthDesc: 'Konkrete Schritte, die dir helfen können, dein volles Potenzial zu entfalten:',
-    high: 'Hoch',
-    medium: 'Mittel',
-    low: 'Niedrig',
-    axesExplanation: 'Horizontale Achse: Beständigkeit ↔ Spontanität (Struktur vs. Flexibilität). Vertikale Achse: Distanz ↔ Nähe (Autonomie vs. Verbundenheit). Die Position zeigt deine Tendenz im jeweiligen Kontext.',
-    differencesExplanation: 'Die Punkte zeigen deine Position in drei Kontexten. Große Abstände zwischen den Punkten deuten auf Flexibilität oder innere Spannung hin.',
-    openness: 'Offenheit',
-    conscientiousness: 'Gewissenhaftigkeit',
-    extraversion: 'Extraversion',
-    agreeableness: 'Verträglichkeit',
-    neuroticism: 'Emot. Stabilität',
-    pendingTests: 'Noch nicht abgeschlossen',
-    bfi2Citation: 'BFI-2 — Soto & John (2017). J. of Personality and Social Psychology, 113(1), 117–143.',
-    scaleLegend: 'Skala: 1 (niedrig) — 3 (mittel) — 5 (hoch)',
-    pvq21Citation: 'PVQ-21 — Schwartz, S. H. (2003/2021). European Social Survey. Lizenz: CC BY-NC-ND 3.0.',
-    sdCitation: 'Spiral Dynamics — Beck, D. E. & Cowan, C. C. (1996). Spiral Dynamics: Mastering Values, Leadership and Change. Blackwell. Basierend auf Graves, C. W. (1970).',
-    sdMappingNote: 'Die Darstellung nutzt das Spiral-Dynamics-Farbmodell als Visualisierung. Grundlage ist der PVQ-21 (Schwartz-Werte), dessen 10 Wertedimensionen auf SD-Ebenen abgebildet werden.',
-    riemannDisclaimer: 'Coaching-basierte Selbsteinschätzung nach dem Riemann-Thomann-Modell (Riemann, 1961; Thomann, 1988). Kein standardisiertes psychometrisches Instrument.',
-    riemannInlineHint: 'Selbsteinschätzung basierend auf dem Riemann-Thomann-Modell.',
-    oceanInlineHint: 'Erhoben mit dem Big Five Inventory-2 (BFI-2) Fragebogen.',
-    footnotesTitle: 'Quellen',
-    footnotesOnNextPage: 'Quellenverzeichnis siehe Seite 2.',
-  },
-  en: {
-    title: 'Personality Signature',
-    narrativeOS: 'Personality Signature',
-    narrativeSuperpowers: 'Your Secret Superpowers',
-    narrativeBlindspots: 'Potential Blindspots',
-    narrativeGrowth: 'Growth Opportunities',
-    whatDrivesYou: 'What Drives You',
-    howYouInteract: 'How You Interact',
-    whatDefinesYou: 'What Defines You',
-    selfOriented: 'Self-oriented',
-    communityOriented: 'Community-oriented',
-    stressPattern: 'Your Stress Reaction Pattern:',
-    radarLegend: 'The radar shows your behavior in 3 contexts:',
-    work: 'Work',
-    private: 'Private',
-    self: 'Self-image',
-    howToUse: 'How to Use This Profile',
-    reflect: '1. Reflect:',
-    reflectDesc: 'Do you recognize yourself? What surprises you? Think of concrete situations.',
-    noJudgment: '2. No judgment:',
-    noJudgmentDesc: 'There is no "good" or "bad" – just patterns that work differently in context.',
-    dialogue: '3. Seek dialogue:',
-    dialogueDesc: 'Share insights with trusted people and ask for their perspective.',
-    grow: '4. Grow gently:',
-    growDesc: 'Blindspots are invitations, not flaws. Grow at your own pace.',
-    confidential: 'This analysis is confidential and intended for personal use only.',
-    signatureNotCreated: 'Signature not yet created',
-    availableAfterSignature: 'Available after signature creation',
-    spiralNotCompleted: 'Spiral Dynamics test not yet completed',
-    riemannNotCompleted: 'Riemann-Thomann test not yet completed',
-    oceanNotCompleted: 'OCEAN/Big Five test not yet completed',
-    blindspotsDesc: 'Areas you may not be aware of that could limit your growth:',
-    growthDesc: 'Concrete steps that can help you reach your full potential:',
-    high: 'High',
-    medium: 'Med',
-    low: 'Low',
-    axesExplanation: 'Horizontal axis: Stability ↔ Spontaneity (structure vs. flexibility). Vertical axis: Distance ↔ Proximity (autonomy vs. connection). Your position shows your tendency in each context.',
-    differencesExplanation: 'The dots show your position in three contexts. Large distances between dots may indicate flexibility or inner tension.',
-    openness: 'Openness',
-    conscientiousness: 'Conscientiousness',
-    extraversion: 'Extraversion',
-    agreeableness: 'Agreeableness',
-    neuroticism: 'Emotional Stability',
-    pendingTests: 'Not yet completed',
-    bfi2Citation: 'BFI-2 — Soto & John (2017). J. of Personality and Social Psychology, 113(1), 117–143.',
-    scaleLegend: 'Scale: 1 (low) — 3 (average) — 5 (high)',
-    pvq21Citation: 'PVQ-21 — Schwartz, S. H. (2003/2021). European Social Survey. License: CC BY-NC-ND 3.0.',
-    sdCitation: 'Spiral Dynamics — Beck, D. E. & Cowan, C. C. (1996). Spiral Dynamics: Mastering Values, Leadership and Change. Blackwell. Based on Graves, C. W. (1970).',
-    sdMappingNote: 'This visualization uses the Spiral Dynamics color model. It is based on the PVQ-21 (Schwartz Values), whose 10 value dimensions are mapped to SD levels.',
-    riemannDisclaimer: 'Coaching-based self-assessment using the Riemann-Thomann model (Riemann, 1961; Thomann, 1988). Not a standardized psychometric instrument.',
-    riemannInlineHint: 'Self-assessment based on the Riemann-Thomann model.',
-    oceanInlineHint: 'Measured using the Big Five Inventory-2 (BFI-2) questionnaire.',
-    footnotesTitle: 'Sources',
-    footnotesOnNextPage: 'Sources listed on page 2.',
-  },
+  title: 'Personality Signature',
+  narrativeOS: 'Personality Signature',
+  narrativeSuperpowers: 'Your Secret Superpowers',
+  narrativeBlindspots: 'Potential Blindspots',
+  narrativeGrowth: 'Growth Opportunities',
+  whatDrivesYou: 'What Drives You',
+  howYouInteract: 'How You Interact',
+  whatDefinesYou: 'What Defines You',
+  selfOriented: 'Self-oriented',
+  communityOriented: 'Community-oriented',
+  stressPattern: 'Your Stress Reaction Pattern:',
+  radarLegend: 'The radar shows your behavior in 3 contexts:',
+  work: 'Work',
+  private: 'Private',
+  self: 'Self-image',
+  howToUse: 'How to Use This Profile',
+  reflect: '1. Reflect:',
+  reflectDesc: 'Do you recognize yourself? What surprises you? Think of concrete situations.',
+  noJudgment: '2. No judgment:',
+  noJudgmentDesc: 'There is no "good" or "bad" – just patterns that work differently in context.',
+  dialogue: '3. Seek dialogue:',
+  dialogueDesc: 'Share insights with trusted people and ask for their perspective.',
+  grow: '4. Grow gently:',
+  growDesc: 'Blindspots are invitations, not flaws. Grow at your own pace.',
+  confidential: 'This analysis is confidential and intended for personal use only.',
+  signatureNotCreated: 'Signature not yet created',
+  availableAfterSignature: 'Available after signature creation',
+  spiralNotCompleted: 'Spiral Dynamics test not yet completed',
+  riemannNotCompleted: 'Riemann-Thomann test not yet completed',
+  oceanNotCompleted: 'OCEAN/Big Five test not yet completed',
+  blindspotsDesc: 'Areas you may not be aware of that could limit your growth:',
+  growthDesc: 'Concrete steps that can help you reach your full potential:',
+  high: 'High',
+  medium: 'Med',
+  low: 'Low',
+  axesExplanation: 'Horizontal axis: Stability ↔ Spontaneity (structure vs. flexibility). Vertical axis: Distance ↔ Proximity (autonomy vs. connection). Your position shows your tendency in each context.',
+  differencesExplanation: 'The dots show your position in three contexts. Large distances between dots may indicate flexibility or inner tension.',
+  openness: 'Openness',
+  conscientiousness: 'Conscientiousness',
+  extraversion: 'Extraversion',
+  agreeableness: 'Agreeableness',
+  neuroticism: 'Emotional Stability',
+  pendingTests: 'Not yet completed',
+  bfi2Citation: 'BFI-2 — Soto & John (2017). J. of Personality and Social Psychology, 113(1), 117–143.',
+  scaleLegend: 'Scale: 1 (low) — 3 (average) — 5 (high)',
+  pvq21Citation: 'PVQ-21 — Schwartz, S. H. (2003/2021). European Social Survey. License: CC BY-NC-ND 3.0.',
+  sdCitation: 'Spiral Dynamics — Beck, D. E. & Cowan, C. C. (1996). Spiral Dynamics: Mastering Values, Leadership and Change. Blackwell. Based on Graves, C. W. (1970).',
+  sdMappingNote: 'This visualization uses the Spiral Dynamics color model. It is based on the PVQ-21 (Schwartz Values), whose 10 value dimensions are mapped to SD levels.',
+  riemannDisclaimer: 'Coaching-based self-assessment using the Riemann-Thomann model (Riemann, 1961; Thomann, 1988). Not a standardized psychometric instrument.',
+  riemannInlineHint: 'Self-assessment based on the Riemann-Thomann model.',
+  oceanInlineHint: 'Measured using the Big Five Inventory-2 (BFI-2) questionnaire.',
+  footnotesTitle: 'Sources',
+  footnotesOnNextPage: 'Sources listed on page 2.',
 };
 
 // Spiral Dynamics levels
-const sdLevels: Record<string, { color: string; keywordDe: string; keywordEn: string }> = {
-  yellow: { color: colors.yellow500, keywordDe: 'Integration', keywordEn: 'Integration' },
-  orange: { color: colors.orange500, keywordDe: 'Erfolg', keywordEn: 'Achievement' },
-  red: { color: colors.red500, keywordDe: 'Macht', keywordEn: 'Power' },
-  beige: { color: '#C4A66B', keywordDe: 'Sicherheit', keywordEn: 'Safety' },
-  turquoise: { color: colors.teal500, keywordDe: 'Ganzheit', keywordEn: 'Holism' },
-  green: { color: colors.green600, keywordDe: 'Harmonie', keywordEn: 'Harmony' },
-  blue: { color: colors.blue500, keywordDe: 'Ordnung', keywordEn: 'Order' },
-  purple: { color: colors.purple500, keywordDe: 'Zugehörigkeit', keywordEn: 'Belonging' },
+const sdLevels: Record<string, { color: string; keyword: string }> = {
+  yellow: { color: colors.yellow500, keyword: 'Integration' },
+  orange: { color: colors.orange500, keyword: 'Achievement' },
+  red: { color: colors.red500, keyword: 'Power' },
+  beige: { color: '#C4A66B', keyword: 'Safety' },
+  turquoise: { color: colors.teal500, keyword: 'Holism' },
+  green: { color: colors.green600, keyword: 'Harmony' },
+  blue: { color: colors.blue500, keyword: 'Order' },
+  purple: { color: colors.purple500, keyword: 'Belonging' },
 };
 
 // Stress labels
 const stressLabels = {
-  de: {
-    distanz: { label: 'Rückzug', desc: 'Tür zu, Probleme alleine lösen, Abstand gewinnen' },
-    naehe: { label: 'Anpassung', desc: 'Unterstützung suchen, Harmonie wiederherstellen' },
-    dauer: { label: 'Kontrolle', desc: 'Struktur schaffen, Regeln & Ordnung einführen' },
-    wechsel: { label: 'Aktionismus', desc: 'Viel anfangen, hektisch werden, Ablenkung suchen' },
-  },
-  en: {
-    distanz: { label: 'Withdrawal', desc: 'Close door, solve problems alone, gain distance' },
-    naehe: { label: 'Adaptation', desc: 'Seek support, restore harmony with others' },
-    dauer: { label: 'Control', desc: 'Create structure, establish rules & order' },
-    wechsel: { label: 'Actionism', desc: 'Start many things, become hectic, seek distraction' },
-  },
+  distanz: { label: 'Withdrawal', desc: 'Close door, solve problems alone, gain distance' },
+  naehe: { label: 'Adaptation', desc: 'Seek support, restore harmony with others' },
+  dauer: { label: 'Control', desc: 'Create structure, establish rules & order' },
+  wechsel: { label: 'Actionism', desc: 'Start many things, become hectic, seek distraction' },
 };
 
 // ============================================================================
@@ -631,17 +566,14 @@ const VerticalLabel = ({ text, color = colors.gray700 }: { text: string; color?:
 // Converts constant-sum data into 2 bipolar axes (classical Riemann-Kreuz):
 //   X-axis: Wechsel − Dauer  (right = Wechsel/Spontaneity)
 //   Y-axis: Distanz − Nähe   (up = Distanz/Distance)
-const RiemannCross = ({ data, language }: { 
+const RiemannCross = ({ data }: {
   data: { beruf: Record<string, number>; privat: Record<string, number>; selbst: Record<string, number> };
-  language: 'de' | 'en';
 }) => {
   const size = 150;
   const center = size / 2;
   const axisLen = (size / 2) - 20; // space for labels
 
-  const dimLabels = language === 'de'
-    ? { distanz: 'Distanz', wechsel: 'Spontanität', naehe: 'Nähe', dauer: 'Beständigkeit' }
-    : { distanz: 'Distance', wechsel: 'Spontaneity', naehe: 'Proximity', dauer: 'Stability' };
+  const dimLabels = { distanz: 'Distance', wechsel: 'Spontaneity', naehe: 'Proximity', dauer: 'Stability' };
 
   // Convert constant-sum to bipolar coordinates (classical Riemann-Kreuz)
   const toCoord = (ctx: Record<string, number>) => ({
@@ -776,13 +708,13 @@ const ProgressBar = ({ value, color, maxValue = 5 }: { value: number; color: str
 
 interface PersonalityPdfDocumentProps {
   result: SurveyResult;
-  language: 'de' | 'en';
+  language?: 'en';
   userEmail?: string;
 }
 
-const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result, language, userEmail }) => {
-  const t = translations[language];
-  const date = new Date().toLocaleDateString(language === 'de' ? 'de-DE' : 'en-US', {
+const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result, language = 'en', userEmail }) => {
+  const t = translations;
+  const date = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -792,9 +724,6 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
   const hasRiemann = !!result.riemann;
   const hasOcean = !!result.big5;
   const hasNarrative = !!result.narrativeProfile;
-  const narrativeLangMismatch = hasNarrative 
-    && result.narrativeProfile?.generatedLanguage 
-    && result.narrativeProfile.generatedLanguage !== language;
   
   // When all 3 tests are completed, use 2 pages
   const useTwoPages = hasSD && hasRiemann && hasOcean;
@@ -820,9 +749,7 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
   );
   
   // Reusable Footer component - fixed prop ensures it appears on every page
-  const footerLine1 = language === 'de'
-    ? `Erstellt für ${userEmail || 'Unbekannt'} • Persönlich und Vertraulich • ${date}`
-    : `Generated for ${userEmail || 'Unknown'} • Personal and Confidential • ${date}`;
+  const footerLine1 = `Generated for ${userEmail || 'Unknown'} • Personal and Confidential • ${date}`;
   const Footer = () => (
     <View style={styles.footerContainer} fixed>
       <View style={styles.footer}>
@@ -994,13 +921,6 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
         {hasNarrative && result.narrativeProfile && (
           <View style={[styles.box, styles.boxAccent, { marginBottom: 10 }]}>
             <Text style={styles.boxTitle}>{t.narrativeOS}</Text>
-            {narrativeLangMismatch && (
-              <Text style={{ fontSize: 8, color: colors.amber600, fontStyle: 'italic', marginBottom: 4 }}>
-                {language === 'de' 
-                  ? `⚠ Diese Signatur wurde auf ${result.narrativeProfile.generatedLanguage === 'en' ? 'Englisch' : 'Deutsch'} generiert.`
-                  : `⚠ This signature was generated in ${result.narrativeProfile.generatedLanguage === 'de' ? 'German' : 'English'}.`}
-              </Text>
-            )}
             <Text style={styles.signatureText}>
               {typeof result.narrativeProfile.operatingSystem === 'string' 
                 ? result.narrativeProfile.operatingSystem 
@@ -1038,7 +958,7 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
                     <View key={level} style={styles.barContainer}>
                       <View style={styles.barLabel}>
                         <View style={[styles.barDot, { backgroundColor: info.color }]} />
-                        <Text style={styles.barName}>{language === 'de' ? info.keywordDe : info.keywordEn}</Text>
+                        <Text style={styles.barName}>{info.keyword}</Text>
                       </View>
                       <ProgressBar value={value} color={info.color} />
                     </View>
@@ -1054,7 +974,7 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
                     <View key={level} style={styles.barContainer}>
                       <View style={styles.barLabel}>
                         <View style={[styles.barDot, { backgroundColor: info.color }]} />
-                        <Text style={styles.barName}>{language === 'de' ? info.keywordDe : info.keywordEn}</Text>
+                        <Text style={styles.barName}>{info.keyword}</Text>
                       </View>
                       <ProgressBar value={value} color={info.color} />
                     </View>
@@ -1074,7 +994,7 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
             <Text style={styles.boxTitle}>{t.howYouInteract}</Text>
             <View style={styles.riemannContainer}>
               <View style={{ alignItems: 'center' }}>
-                <RiemannCross data={result.riemann} language={language} />
+                <RiemannCross data={result.riemann} />
                 {/* Legend below diagram */}
                 <View style={[styles.legendContainer, { marginTop: 8 }]}>
                   <View style={styles.legendItem}>
@@ -1099,8 +1019,7 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
                     </Text>
                     <View style={styles.stressGrid}>
                       {result.riemann.stressRanking.map((id: string, i: number) => {
-                        const labels = stressLabels[language];
-                        const item = labels[id as keyof typeof labels];
+                        const item = stressLabels[id as keyof typeof stressLabels];
                         const isFirst = i === 0;
                         return (
                           <View key={id} style={[styles.stressItem, isFirst ? styles.stressItemFirst : {}]}>
@@ -1179,10 +1098,10 @@ const PersonalityPdfDocument: React.FC<PersonalityPdfDocumentProps> = ({ result,
  * Generates a PDF from survey results and triggers download
  * @param result - The survey result data
  * @param filename - The desired filename (without extension)
- * @param language - 'de' or 'en'
+ * @param language - 'en' (legacy parameter, always uses English)
  * @param userEmail - optional user email for footer
  */
-export async function generatePDF(result: SurveyResult, filename: string, language: 'de' | 'en' = 'de', userEmail?: string): Promise<void> {
+export async function generatePDF(result: SurveyResult, filename: string, language: 'en' = 'en', userEmail?: string): Promise<void> {
   try {
     const blob = await pdf(<PersonalityPdfDocument result={result} language={language} userEmail={userEmail} />).toBlob();
     
@@ -1236,13 +1155,13 @@ export async function generatePDF(result: SurveyResult, filename: string, langua
 /**
  * Generates filename for personality survey PDF
  * @param testType - 'RIEMANN' or 'BIG5' (kept for backwards compatibility)
- * @param language - 'de' or 'en'
+ * @param language - 'en' (legacy parameter, always uses English)
  */
-export function generateSurveyPdfFilename(testType: string, language: 'de' | 'en'): string {
+export function generateSurveyPdfFilename(testType: string, language: 'en' = 'en'): string {
   const dateStr = new Date().toISOString().split('T')[0];
   const type = testType === 'RIEMANN' ? 'riemann' : 'big5';
-  const label = language === 'de' ? 'persoenlichkeitsanalyse' : 'personality-analysis';
-  
+  const label = 'personality-analysis';
+
   return `${label}-${type}-${dateStr}`;
 }
 

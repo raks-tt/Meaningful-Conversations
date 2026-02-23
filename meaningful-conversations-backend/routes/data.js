@@ -193,17 +193,16 @@ router.put('/user/ai-region', async (req, res) => {
 });
 
 // Helper function to generate HTML export
-function generateHtmlExport(exportData, language = 'de') {
-    const isGerman = language === 'de';
+function generateHtmlExport(exportData, language = 'en') {
     const formatDate = (dateStr) => {
-        if (!dateStr) return isGerman ? 'Nicht verfügbar' : 'Not available';
+        if (!dateStr) return 'Not available';
         const date = new Date(dateStr);
         return date.toLocaleString(language, { dateStyle: 'long', timeStyle: 'short' });
     };
-    
+
     const formatBoolean = (value) => {
         if (value === null || value === undefined) return '-';
-        return value ? (isGerman ? 'Ja' : 'Yes') : (isGerman ? 'Nein' : 'No');
+        return value ? 'Yes' : 'No';
     };
 
     const html = `<!DOCTYPE html>
@@ -211,7 +210,7 @@ function generateHtmlExport(exportData, language = 'de') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${isGerman ? 'Datenexport' : 'Data Export'} - Meaningful Conversations</title>
+    <title>Data Export - Meaningful Conversations</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -369,47 +368,47 @@ function generateHtmlExport(exportData, language = 'de') {
 <body>
     <div class="container">
         <div class="header">
-            <div class="brand">manualmode.at ${isGerman ? 'präsentiert' : 'presents'}</div>
-            <h1>📊 ${isGerman ? 'Ihr Datenexport' : 'Your Data Export'}</h1>
-            <p>${isGerman ? 'Erstellt am' : 'Created on'}: ${formatDate(exportData.exportDate)}</p>
+            <div class="brand">manualmode.at presents</div>
+            <h1>📊 Your Data Export</h1>
+            <p>Created on: ${formatDate(exportData.exportDate)}</p>
             <p style="margin-top: 10px; font-size: 0.9em;">
-                ${isGerman ? 'Gemäß Art. 15 & 20 DSGVO' : 'According to Art. 15 & 20 GDPR'}
+                According to Art. 15 & 20 GDPR
             </p>
         </div>
 
         <div class="content">
             <!-- Account Information -->
             <div class="section">
-                <h2>👤 ${isGerman ? 'Account-Informationen' : 'Account Information'}</h2>
+                <h2>👤 Account Information</h2>
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'E-Mail-Adresse' : 'Email Address'}</div>
+                        <div class="info-label">Email Address</div>
                         <div class="info-value">${exportData.user.email}</div>
                     </div>
                     ${exportData.user.firstName ? `
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Vorname' : 'First Name'}</div>
+                        <div class="info-label">First Name</div>
                         <div class="info-value">${exportData.user.firstName}</div>
                     </div>` : ''}
                     ${exportData.user.lastName ? `
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Nachname' : 'Last Name'}</div>
+                        <div class="info-label">Last Name</div>
                         <div class="info-value">${exportData.user.lastName}</div>
                     </div>` : ''}
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Registriert seit' : 'Registered Since'}</div>
+                        <div class="info-label">Registered Since</div>
                         <div class="info-value">${formatDate(exportData.user.createdAt)}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Letzter Login' : 'Last Login'}</div>
+                        <div class="info-label">Last Login</div>
                         <div class="info-value">${formatDate(exportData.user.lastLogin)}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Login-Anzahl' : 'Login Count'}</div>
+                        <div class="info-label">Login Count</div>
                         <div class="info-value">${exportData.user.loginCount}</div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Account-Status' : 'Account Status'}</div>
+                        <div class="info-label">Account Status</div>
                         <div class="info-value">
                             <span class="badge ${exportData.user.status === 'ACTIVE' ? 'badge-success' : 'badge-warning'}">
                                 ${exportData.user.status}
@@ -417,12 +416,12 @@ function generateHtmlExport(exportData, language = 'de') {
                         </div>
                     </div>
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Newsletter-Einwilligung' : 'Newsletter Consent'}</div>
+                        <div class="info-label">Newsletter Consent</div>
                         <div class="info-value">${formatBoolean(exportData.user.newsletterConsent)}</div>
                     </div>
                     ${exportData.user.accessExpiresAt ? `
                     <div class="info-item">
-                        <div class="info-label">${isGerman ? 'Zugang gültig bis' : 'Access Valid Until'}</div>
+                        <div class="info-label">Access Valid Until</div>
                         <div class="info-value">${formatDate(exportData.user.accessExpiresAt)}</div>
                     </div>` : ''}
                 </div>
@@ -431,28 +430,28 @@ function generateHtmlExport(exportData, language = 'de') {
             <!-- Gamification Data -->
             ${exportData.gamificationData ? `
             <div class="section">
-                <h2>🎮 ${isGerman ? 'Gamification & Fortschritt' : 'Gamification & Progress'}</h2>
+                <h2>🎮 Gamification & Progress</h2>
                 <div class="stats">
                     <div class="stat-box">
                         <div class="stat-number">${exportData.gamificationData.level || 1}</div>
-                        <div class="stat-label">${isGerman ? 'Level' : 'Level'}</div>
+                        <div class="stat-label">Level</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">${exportData.gamificationData.xp || 0}</div>
-                        <div class="stat-label">${isGerman ? 'Erfahrungspunkte' : 'Experience Points'}</div>
+                        <div class="stat-label">Experience Points</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">${exportData.gamificationData.currentStreak || 0}</div>
-                        <div class="stat-label">${isGerman ? 'Aktuelle Serie' : 'Current Streak'}</div>
+                        <div class="stat-label">Current Streak</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-number">${exportData.gamificationData.longestStreak || 0}</div>
-                        <div class="stat-label">${isGerman ? 'Längste Serie' : 'Longest Streak'}</div>
+                        <div class="stat-label">Longest Streak</div>
                     </div>
                 </div>
                 ${exportData.gamificationData.unlockedAchievements && exportData.gamificationData.unlockedAchievements.length > 0 ? `
                 <div style="margin-top: 20px;">
-                    <h3 style="color: #16A34A; margin-bottom: 10px;">${isGerman ? '🏆 Erfolge' : '🏆 Achievements'}</h3>
+                    <h3 style="color: #16A34A; margin-bottom: 10px;">🏆 Achievements</h3>
                     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                         ${exportData.gamificationData.unlockedAchievements.map(a => `
                             <span class="badge badge-info">${a}</span>
@@ -463,63 +462,59 @@ function generateHtmlExport(exportData, language = 'de') {
 
             <!-- Life Context -->
             <div class="section">
-                <h2>📝 ${isGerman ? 'Lebenskontext' : 'Life Context'}</h2>
+                <h2>📝 Life Context</h2>
                 
                 ${exportData.lifeContext.decryptedData ? `
                 <!-- Decrypted Life Context (GDPR Compliant) -->
                 <div class="note" style="background: #d4edda; border-left-color: #28a745;">
-                    <strong>✅ ${isGerman ? 'DSGVO-konform entschlüsselt' : 'GDPR-compliant decrypted'}:</strong> 
-                    ${isGerman 
-                        ? 'Ihr Lebenskontext wurde für diesen Export entschlüsselt und ist lesbar.' 
-                        : 'Your Life Context has been decrypted for this export and is readable.'}
+                    <strong>✅ GDPR-compliant decrypted:</strong>
+                    Your Life Context has been decrypted for this export and is readable.
                 </div>
                 <div style="background: white; padding: 20px; margin-top: 15px; border-radius: 6px; border: 1px solid #e9ecef;">
                     <pre style="white-space: pre-wrap; word-wrap: break-word; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0;">${exportData.lifeContext.decryptedData}</pre>
                 </div>
                 <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
-                    ${isGerman ? 'Größe' : 'Size'}: ${(exportData.lifeContext.decryptedData.length / 1024).toFixed(2)} KB
+                    Size: ${(exportData.lifeContext.decryptedData.length / 1024).toFixed(2)} KB
                 </p>
                 ` : ''}
                 
                 ${!exportData.lifeContext.decryptedData && exportData.lifeContext.encryptedData ? `
                 <!-- Only Encrypted Version Available -->
                 <div class="note" style="background: #fff3cd; border-left-color: #ffc107;">
-                    <strong>⚠️ ${isGerman ? 'Hinweis' : 'Note'}:</strong> ${exportData.lifeContext.note}
+                    <strong>⚠️ Note:</strong> ${exportData.lifeContext.note}
                 </div>
                 <div>
-                    <p style="margin: 15px 0 10px 0;"><strong>${isGerman ? 'Verschlüsselte Daten' : 'Encrypted Data'}:</strong></p>
+                    <p style="margin: 15px 0 10px 0;"><strong>Encrypted Data:</strong></p>
                     <div class="encrypted">${exportData.lifeContext.encryptedData.substring(0, 500)}${exportData.lifeContext.encryptedData.length > 500 ? '...' : ''}</div>
                     <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
-                        ${isGerman ? 'Größe' : 'Size'}: ${(exportData.lifeContext.encryptedData.length / 1024).toFixed(2)} KB
+                        Size: ${(exportData.lifeContext.encryptedData.length / 1024).toFixed(2)} KB
                     </p>
                     <p style="margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 6px; border-left: 4px solid #2196f3;">
-                        <strong>${isGerman ? '💡 Tipp' : '💡 Tip'}:</strong> 
-                        ${isGerman 
-                            ? 'Sie können Ihren Lebenskontext auch direkt in der App als .md-Datei herunterladen (unverschlüsselt). Gehen Sie dazu in die App und wählen Sie "Lebenskontext herunterladen".' 
-                            : 'You can also download your Life Context directly in the app as a .md file (unencrypted). Go to the app and select "Download Life Context".'}
+                        <strong>💡 Tip:</strong>
+                        You can also download your Life Context directly in the app as a .md file (unencrypted). Go to the app and select "Download Life Context".
                     </p>
                 </div>` : ''}
                 
                 ${!exportData.lifeContext.decryptedData && !exportData.lifeContext.encryptedData ? `
-                <p>${isGerman ? 'Keine Lebenskontext-Daten vorhanden.' : 'No life context data available.'}</p>
+                <p>No life context data available.</p>
                 ` : ''}
             </div>
 
             <!-- Feedback -->
             ${exportData.feedback && exportData.feedback.length > 0 ? `
             <div class="section">
-                <h2>💬 ${isGerman ? 'Feedback' : 'Feedback'} (${exportData.feedback.length})</h2>
+                <h2>💬 Feedback (${exportData.feedback.length})</h2>
                 ${exportData.feedback.map(f => `
                     <div class="feedback-item">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <div>
-                                ${f.rating ? `<span class="badge badge-info">${isGerman ? 'Bewertung' : 'Rating'}: ${f.rating}/5</span>` : ''}
+                                ${f.rating ? `<span class="badge badge-info">Rating: ${f.rating}/5</span>` : ''}
                                 <span class="badge badge-info">${f.botId}</span>
                             </div>
                             <div style="font-size: 0.9em; color: #666;">${formatDate(f.createdAt)}</div>
                         </div>
-                        ${f.comments ? `<p><strong>${isGerman ? 'Kommentar' : 'Comment'}:</strong> ${f.comments}</p>` : ''}
-                        ${f.lastUserMessage ? `<p style="margin-top: 10px;"><strong>${isGerman ? 'Letzte Nachricht' : 'Last Message'}:</strong> ${f.lastUserMessage}</p>` : ''}
+                        ${f.comments ? `<p><strong>Comment:</strong> ${f.comments}</p>` : ''}
+                        ${f.lastUserMessage ? `<p style="margin-top: 10px;"><strong>Last Message:</strong> ${f.lastUserMessage}</p>` : ''}
                     </div>
                 `).join('')}
             </div>` : ''}
@@ -527,14 +522,14 @@ function generateHtmlExport(exportData, language = 'de') {
             <!-- Upgrade Codes -->
             ${exportData.upgradeCodes && exportData.upgradeCodes.length > 0 ? `
             <div class="section">
-                <h2>🎫 ${isGerman ? 'Upgrade-Codes' : 'Upgrade Codes'} (${exportData.upgradeCodes.length})</h2>
+                <h2>🎫 Upgrade Codes (${exportData.upgradeCodes.length})</h2>
                 ${exportData.upgradeCodes.map(c => `
                     <div class="code-item">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <strong>${c.code}</strong>
                                 <span class="badge badge-info" style="margin-left: 10px;">${c.botId}</span>
-                                ${c.isUsed ? `<span class="badge badge-success" style="margin-left: 5px;">${isGerman ? 'Eingelöst' : 'Redeemed'}</span>` : ''}
+                                ${c.isUsed ? `<span class="badge badge-success" style="margin-left: 5px;">Redeemed</span>` : ''}
                             </div>
                             <div style="font-size: 0.9em; color: #666;">${formatDate(c.createdAt)}</div>
                         </div>
@@ -545,16 +540,16 @@ function generateHtmlExport(exportData, language = 'de') {
             <!-- API Usage -->
             ${exportData.apiUsage && exportData.apiUsage.length > 0 ? `
             <div class="section">
-                <h2>📊 ${isGerman ? 'API-Nutzungsstatistiken' : 'API Usage Statistics'}</h2>
-                <p style="margin-bottom: 15px;">${isGerman ? 'Letzte 12 Monate' : 'Last 12 months'} - ${isGerman ? 'Gesamt' : 'Total'}: ${exportData.apiUsage.length} ${isGerman ? 'Anfragen' : 'requests'}</p>
+                <h2>📊 API Usage Statistics</h2>
+                <p style="margin-bottom: 15px;">Last 12 months - Total: ${exportData.apiUsage.length} requests</p>
                 <table>
                     <thead>
                         <tr>
-                            <th>${isGerman ? 'Datum' : 'Date'}</th>
-                            <th>${isGerman ? 'Endpunkt' : 'Endpoint'}</th>
-                            <th>${isGerman ? 'Modell' : 'Model'}</th>
-                            <th>${isGerman ? 'Tokens In' : 'Tokens In'}</th>
-                            <th>${isGerman ? 'Tokens Out' : 'Tokens Out'}</th>
+                            <th>Date</th>
+                            <th>Endpoint</th>
+                            <th>Model</th>
+                            <th>Tokens In</th>
+                            <th>Tokens Out</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -571,7 +566,7 @@ function generateHtmlExport(exportData, language = 'de') {
                 </table>
                 ${exportData.apiUsage.length > 50 ? `
                     <p style="margin-top: 15px; color: #666; font-style: italic;">
-                        ${isGerman ? `... und ${exportData.apiUsage.length - 50} weitere Einträge` : `... and ${exportData.apiUsage.length - 50} more entries`}
+                        ... and ${exportData.apiUsage.length - 50} more entries
                     </p>
                 ` : ''}
             </div>` : ''}
@@ -579,35 +574,35 @@ function generateHtmlExport(exportData, language = 'de') {
             <!-- Personality Profile -->
             ${exportData.personalityProfile ? `
             <div class="section">
-                <h2>🧠 ${isGerman ? 'Persönlichkeitsprofil' : 'Personality Profile'}</h2>
+                <h2>🧠 Personality Profile</h2>
                 <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                     <div>
-                        <div class="info-label">${isGerman ? 'Testtyp' : 'Test Type'}</div>
+                        <div class="info-label">Test Type</div>
                         <div class="info-value">${exportData.personalityProfile.testType}</div>
                     </div>
                     <div>
-                        <div class="info-label">${isGerman ? 'Abgeschlossene Perspektiven' : 'Completed Lenses'}</div>
+                        <div class="info-label">Completed Lenses</div>
                         <div class="info-value">${exportData.personalityProfile.completedLenses}</div>
                     </div>
                     <div>
-                        <div class="info-label">${isGerman ? 'Anpassungsmodus' : 'Adaptation Mode'}</div>
+                        <div class="info-label">Adaptation Mode</div>
                         <div class="info-value">${exportData.personalityProfile.adaptationMode}</div>
                     </div>
                     <div>
-                        <div class="info-label">${isGerman ? 'Sitzungsanzahl' : 'Session Count'}</div>
+                        <div class="info-label">Session Count</div>
                         <div class="info-value">${exportData.personalityProfile.sessionCount}</div>
                     </div>
                     <div>
-                        <div class="info-label">${isGerman ? 'Erstellt' : 'Created'}</div>
+                        <div class="info-label">Created</div>
                         <div class="info-value">${formatDate(exportData.personalityProfile.createdAt)}</div>
                     </div>
                     <div>
-                        <div class="info-label">${isGerman ? 'Aktualisiert' : 'Updated'}</div>
+                        <div class="info-label">Updated</div>
                         <div class="info-value">${formatDate(exportData.personalityProfile.updatedAt)}</div>
                     </div>
                 </div>
                 <div class="encrypted" style="padding: 15px; border-radius: 8px; margin-top: 10px;">
-                    <strong>🔐 ${isGerman ? 'Verschlüsselte Profildaten' : 'Encrypted Profile Data'}:</strong><br>
+                    <strong>🔐 Encrypted Profile Data:</strong><br>
                     <small>${exportData.personalityProfile.note}</small><br><br>
                     <code style="word-break: break-all; font-size: 0.8em;">${exportData.personalityProfile.encryptedData ? exportData.personalityProfile.encryptedData.substring(0, 500) + (exportData.personalityProfile.encryptedData.length > 500 ? '...' : '') : 'N/A'}</code>
                 </div>
@@ -616,15 +611,15 @@ function generateHtmlExport(exportData, language = 'de') {
             <!-- Session Behavior Logs -->
             ${exportData.sessionBehaviorLogs && exportData.sessionBehaviorLogs.length > 0 ? `
             <div class="section">
-                <h2>📈 ${isGerman ? 'Sitzungsverhaltens-Protokolle' : 'Session Behavior Logs'} (${exportData.sessionBehaviorLogs.length})</h2>
-                <p style="margin-bottom: 15px;">${isGerman ? 'Anonymisierte Häufigkeitszähler aus Coaching-Sitzungen (keine Transkripte gespeichert).' : 'Anonymized frequency counters from coaching sessions (no transcripts stored).'}</p>
+                <h2>📈 Session Behavior Logs (${exportData.sessionBehaviorLogs.length})</h2>
+                <p style="margin-bottom: 15px;">Anonymized frequency counters from coaching sessions (no transcripts stored).</p>
                 <table>
                     <thead>
                         <tr>
-                            <th>${isGerman ? 'Datum' : 'Date'}</th>
+                            <th>Date</th>
                             <th>Riemann (D/W/N/Di)</th>
                             <th>Big5 (O/C/E/A/N)</th>
-                            <th>${isGerman ? 'Komfort' : 'Comfort'}</th>
+                            <th>Comfort</th>
                             <th>Opt-Out</th>
                         </tr>
                     </thead>
@@ -642,7 +637,7 @@ function generateHtmlExport(exportData, language = 'de') {
                 </table>
                 ${exportData.sessionBehaviorLogs.length > 50 ? `
                     <p style="margin-top: 15px; color: #666; font-style: italic;">
-                        ${isGerman ? `... und ${exportData.sessionBehaviorLogs.length - 50} weitere Einträge` : `... and ${exportData.sessionBehaviorLogs.length - 50} more entries`}
+                        ... and ${exportData.sessionBehaviorLogs.length - 50} more entries
                     </p>
                 ` : ''}
             </div>` : ''}
@@ -650,12 +645,12 @@ function generateHtmlExport(exportData, language = 'de') {
             <!-- User Events -->
             ${exportData.userEvents && exportData.userEvents.length > 0 ? `
             <div class="section">
-                <h2>📋 ${isGerman ? 'Benutzer-Ereignisse' : 'User Events'} (${exportData.userEvents.length})</h2>
+                <h2>📋 User Events (${exportData.userEvents.length})</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>${isGerman ? 'Datum' : 'Date'}</th>
-                            <th>${isGerman ? 'Ereignistyp' : 'Event Type'}</th>
+                            <th>Date</th>
+                            <th>Event Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -669,7 +664,7 @@ function generateHtmlExport(exportData, language = 'de') {
                 </table>
                 ${exportData.userEvents.length > 100 ? `
                     <p style="margin-top: 15px; color: #666; font-style: italic;">
-                        ${isGerman ? `... und ${exportData.userEvents.length - 100} weitere Einträge` : `... and ${exportData.userEvents.length - 100} more entries`}
+                        ... and ${exportData.userEvents.length - 100} more entries
                     </p>
                 ` : ''}
             </div>` : ''}
@@ -677,8 +672,8 @@ function generateHtmlExport(exportData, language = 'de') {
 
         <div class="footer">
             <p style="font-size: 1.2em; font-weight: 600; margin-bottom: 5px;">Meaningful Conversations</p>
-            <p style="font-size: 0.9em; color: #16A34A; margin-bottom: 20px;">${isGerman ? 'von' : 'by'} manualmode.at</p>
-            <p style="margin-bottom: 15px;">${isGerman ? 'Dieser Datenexport entspricht Ihren Rechten gemäß Art. 15 (Auskunftsrecht) und Art. 20 (Recht auf Datenübertragbarkeit) der DSGVO.' : 'This data export complies with your rights under Art. 15 (Right of Access) and Art. 20 (Right to Data Portability) of the GDPR.'}</p>
+            <p style="font-size: 0.9em; color: #16A34A; margin-bottom: 20px;">by manualmode.at</p>
+            <p style="margin-bottom: 15px;">This data export complies with your rights under Art. 15 (Right of Access) and Art. 20 (Right to Data Portability) of the GDPR.</p>
             <p>
                 <a href="https://manualmode.at" style="color: #16A34A; text-decoration: none; font-weight: 500;">www.manualmode.at</a>
             </p>
@@ -697,7 +692,7 @@ const handleExport = async (req, res) => {
     try {
         const userId = req.userId;
         const format = req.query.format || 'json'; // Default to JSON
-        const language = req.query.lang || 'de'; // Default to German
+        const language = req.query.lang || 'en'; // Default to English
         const decryptedLifeContext = req.body?.decryptedLifeContext || null; // From POST request
 
         // Fetch all user-related data
@@ -824,9 +819,7 @@ const handleExport = async (req, res) => {
             },
             gamificationData: user.gamificationState ? JSON.parse(user.gamificationState) : null,
             lifeContext: {
-                note: language === 'de' 
-                    ? "Ihr Lebenskontext ist Ende-zu-Ende-verschlüsselt. Sie können ihn nur mit Ihrem Passwort entschlüsseln."
-                    : "Your Life Context is end-to-end encrypted. Only you can decrypt it with your password.",
+                note: "Your Life Context is end-to-end encrypted. Only you can decrypt it with your password.",
                 encryptedData: user.lifeContext || null,
                 decryptedData: decryptedLifeContext || null, // Include decrypted version if provided (GDPR compliance)
             },
@@ -852,9 +845,7 @@ const handleExport = async (req, res) => {
                 adaptationMode: personalityProfile.adaptationMode,
                 sessionCount: personalityProfile.sessionCount,
                 encryptedData: personalityProfile.encryptedData,
-                note: language === 'de'
-                    ? "Ihr Persönlichkeitsprofil ist Ende-zu-Ende-verschlüsselt. Nur Sie können es mit Ihrem Passwort entschlüsseln."
-                    : "Your personality profile is end-to-end encrypted. Only you can decrypt it with your password.",
+                note: "Your personality profile is end-to-end encrypted. Only you can decrypt it with your password.",
                 createdAt: personalityProfile.createdAt,
                 updatedAt: personalityProfile.updatedAt,
             } : null,

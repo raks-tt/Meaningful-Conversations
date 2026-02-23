@@ -1,12 +1,12 @@
 /**
  * Context Analyzer Service
- * 
+ *
  * Analyzes conversational context to improve keyword weighting accuracy.
  * Detects:
  * - Topic (work, relationships, values, personal growth)
  * - Linguistic patterns ("ich bin", "ich schätze", "ich brauche")
  * - Co-occurring keywords within the same sentence
- * 
+ *
  * Performance: ~10ms per message
  */
 
@@ -16,33 +16,21 @@
 
 const TOPIC_PATTERNS = {
   work: {
-    de: ['arbeit', 'job', 'karriere', 'beruf', 'projekt', 'kollege', 'chef', 'unternehmen',
-         'büro', 'meeting', 'deadline', 'firma', 'abteilung', 'vorgesetzt', 'aufgabe',
-         'professionell', 'geschäft', 'angestellt', 'branche', 'position'],
     en: ['work', 'job', 'career', 'profession', 'project', 'colleague', 'boss', 'company',
          'office', 'meeting', 'deadline', 'firm', 'department', 'supervisor', 'task',
          'professional', 'business', 'employee', 'industry', 'position']
   },
   relationships: {
-    de: ['beziehung', 'freund', 'familie', 'partner', 'liebe', 'nähe', 'ehe',
-         'eltern', 'kinder', 'geschwister', 'vertrauen', 'trennung', 'zusammen',
-         'bindung', 'zuneigung', 'intimität', 'freundschaft'],
     en: ['relationship', 'friend', 'family', 'partner', 'love', 'closeness', 'marriage',
          'parents', 'children', 'siblings', 'trust', 'separation', 'together',
          'bond', 'affection', 'intimacy', 'friendship']
   },
   values: {
-    de: ['wert', 'prinzip', 'moral', 'ethik', 'glaube', 'überzeugung', 'bedeutung',
-         'sinn', 'zweck', 'gerechtigkeit', 'wahrheit', 'ideal', 'verantwortung',
-         'pflicht', 'gewissen', 'haltung', 'einstellung'],
     en: ['value', 'principle', 'moral', 'ethic', 'belief', 'conviction', 'meaning',
          'purpose', 'justice', 'truth', 'ideal', 'responsibility',
          'duty', 'conscience', 'attitude', 'stance']
   },
   personalGrowth: {
-    de: ['entwicklung', 'wachstum', 'lernen', 'veränderung', 'ziel', 'potential',
-         'stärke', 'schwäche', 'reflexion', 'fortschritt', 'selbst', 'bewusst',
-         'erkenntnis', 'reife', 'persönlichkeit', 'verbessern'],
     en: ['development', 'growth', 'learning', 'change', 'goal', 'potential',
          'strength', 'weakness', 'reflection', 'progress', 'self', 'aware',
          'insight', 'maturity', 'personality', 'improve']
@@ -54,16 +42,8 @@ const TOPIC_PATTERNS = {
 // ============================================
 
 const LINGUISTIC_PATTERNS = {
-  // "ich bin..." → Describes personality trait → Big5 primary
+  // "i am..." → Describes personality trait → Big5 primary
   trait: {
-    de: [
-      /\bich bin\b/i,
-      /\bich fühle mich\b/i,
-      /\bich war schon immer\b/i,
-      /\bvon natur aus\b/i,
-      /\bich neige dazu\b/i,
-      /\bich tendiere\b/i
-    ],
     en: [
       /\bi am\b/i,
       /\bi feel\b/i,
@@ -72,17 +52,8 @@ const LINGUISTIC_PATTERNS = {
       /\bi tend to\b/i
     ]
   },
-  // "ich schätze..." → Describes values → Spiral Dynamics primary
+  // "i value..." → Describes values → Spiral Dynamics primary
   value: {
-    de: [
-      /\bich schätze\b/i,
-      /\bwichtig ist mir\b/i,
-      /\bich glaube an\b/i,
-      /\bmir ist wichtig\b/i,
-      /\bich stehe für\b/i,
-      /\bich vertrete\b/i,
-      /\bfür mich zählt\b/i
-    ],
     en: [
       /\bi value\b/i,
       /\bi appreciate\b/i,
@@ -92,17 +63,8 @@ const LINGUISTIC_PATTERNS = {
       /\bwhat matters to me\b/i
     ]
   },
-  // "ich brauche..." → Describes need → Riemann primary
+  // "i need..." → Describes need → Riemann primary
   need: {
-    de: [
-      /\bich brauche\b/i,
-      /\bich benötige\b/i,
-      /\bes ist wichtig für mich\b/i,
-      /\bmir fehlt\b/i,
-      /\bich sehne mich\b/i,
-      /\bich wünsche mir\b/i,
-      /\bich vermisse\b/i
-    ],
     en: [
       /\bi need\b/i,
       /\bi require\b/i,
@@ -121,12 +83,12 @@ const LINGUISTIC_PATTERNS = {
 /**
  * Detect conversation topic from recent messages.
  * Uses keyword counting across recent history.
- * 
+ *
  * @param {string[]} recentMessages - Last 3-5 user messages
  * @param {string} lang - Language code ('de' or 'en')
  * @returns {{ topic: string|null, confidence: number, scores: object }}
  */
-function detectTopic(recentMessages, lang = 'de') {
+function detectTopic(recentMessages, lang = 'en') {
   if (!recentMessages || recentMessages.length === 0) {
     return { topic: null, confidence: 0, scores: {} };
   }
@@ -135,7 +97,7 @@ function detectTopic(recentMessages, lang = 'de') {
   const scores = {};
 
   for (const [topic, patterns] of Object.entries(TOPIC_PATTERNS)) {
-    const langPatterns = patterns[lang] || patterns.de;
+    const langPatterns = patterns[lang] || patterns.en;
     let score = 0;
 
     for (const keyword of langPatterns) {
@@ -173,18 +135,18 @@ function detectTopic(recentMessages, lang = 'de') {
 
 /**
  * Detect linguistic pattern in a sentence.
- * 
+ *
  * @param {string} sentence - Single sentence to analyze
  * @param {string} lang - Language code
  * @returns {{ pattern: string|null, confidence: number }}
  */
-function detectLinguisticPattern(sentence, lang = 'de') {
+function detectLinguisticPattern(sentence, lang = 'en') {
   if (!sentence) {
     return { pattern: null, confidence: 0 };
   }
 
   for (const [patternName, patterns] of Object.entries(LINGUISTIC_PATTERNS)) {
-    const langPatterns = patterns[lang] || patterns.de;
+    const langPatterns = patterns[lang] || patterns.en;
 
     for (const regex of langPatterns) {
       if (regex.test(sentence)) {
@@ -218,7 +180,7 @@ function splitIntoSentences(message) {
 
 /**
  * Find co-occurring keywords within the same sentence.
- * 
+ *
  * @param {string} sentence - Single sentence
  * @param {string[]} allKeywords - All possible keywords to check
  * @returns {string[]} Keywords found in this sentence
@@ -247,14 +209,14 @@ function findCoKeywords(sentence, allKeywords) {
 
 /**
  * Perform full context analysis on a user message.
- * 
+ *
  * @param {string} message - Current user message
  * @param {string[]} recentMessages - Last 3-5 user messages (for topic detection)
  * @param {string[]} overlappingKeywords - Keywords that appear in multiple frameworks
  * @param {string} lang - Language code
  * @returns {object} Context analysis result
  */
-function analyzeContext(message, recentMessages = [], overlappingKeywords = [], lang = 'de') {
+function analyzeContext(message, recentMessages = [], overlappingKeywords = [], lang = 'en') {
   if (!message) {
     return {
       topic: { topic: null, confidence: 0, scores: {} },

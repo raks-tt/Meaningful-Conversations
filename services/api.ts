@@ -269,7 +269,7 @@ export const submitSessionLog = async (data: {
   
   // Analyze chat history for all three profile types (Riemann, Big5, SD)
   // This extracts delta values (high - low keyword counts) for DPFL refinement
-  const lang = data.language || 'de';
+  const lang = data.language || 'en';
   const frequencies = analyzeSession(data.chatHistory, lang);
   
   // Note: Transcript is NOT stored (GDPR compliance)

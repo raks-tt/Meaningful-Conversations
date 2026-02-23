@@ -36,17 +36,17 @@ export function parseDeadline(deadline: string): Date | null {
     const lowerDeadline = trimmed.toLowerCase();
 
     // Today/tomorrow
-    if (lowerDeadline === 'today' || lowerDeadline === 'heute') {
+    if (lowerDeadline === 'today') {
         return now;
     }
-    if (lowerDeadline === 'tomorrow' || lowerDeadline === 'morgen') {
+    if (lowerDeadline === 'tomorrow') {
         const tomorrow = new Date(now);
         tomorrow.setDate(tomorrow.getDate() + 1);
         return tomorrow;
     }
 
-    // "in X days" / "in X wochen"
-    const inDaysMatch = lowerDeadline.match(/in\s+(\d+)\s+(day|days|tag|tage|tagen)/);
+    // "in X days"
+    const inDaysMatch = lowerDeadline.match(/in\s+(\d+)\s+(day|days)/);
     if (inDaysMatch) {
         const days = parseInt(inDaysMatch[1]);
         const result = new Date(now);
@@ -54,8 +54,8 @@ export function parseDeadline(deadline: string): Date | null {
         return result;
     }
 
-    // "in X weeks" / "in X wochen"
-    const inWeeksMatch = lowerDeadline.match(/in\s+(\d+)\s+(week|weeks|woche|wochen)/);
+    // "in X weeks"
+    const inWeeksMatch = lowerDeadline.match(/in\s+(\d+)\s+(week|weeks)/);
     if (inWeeksMatch) {
         const weeks = parseInt(inWeeksMatch[1]);
         const result = new Date(now);
@@ -65,13 +65,13 @@ export function parseDeadline(deadline: string): Date | null {
 
     // Day of week (next occurrence)
     const dayNames: { [key: string]: number } = {
-        'monday': 1, 'montag': 1,
-        'tuesday': 2, 'dienstag': 2,
-        'wednesday': 3, 'mittwoch': 3,
-        'thursday': 4, 'donnerstag': 4,
-        'friday': 5, 'freitag': 5,
-        'saturday': 6, 'samstag': 6,
-        'sunday': 0, 'sonntag': 0,
+        'monday': 1,
+        'tuesday': 2,
+        'wednesday': 3,
+        'thursday': 4,
+        'friday': 5,
+        'saturday': 6,
+        'sunday': 0,
     };
 
     for (const [dayName, targetDay] of Object.entries(dayNames)) {
@@ -118,8 +118,6 @@ export function isISODateFormat(deadline: string): boolean {
  * @returns Error message string
  */
 export function getDateParseErrorMessage(language: string): string {
-    return language === 'de'
-        ? 'Das Datum konnte nicht automatisch erkannt werden. Bitte wählen Sie ein Datum aus.'
-        : 'Could not automatically recognize the date. Please select a date.';
+    return 'Could not automatically recognize the date. Please select a date.';
 }
 

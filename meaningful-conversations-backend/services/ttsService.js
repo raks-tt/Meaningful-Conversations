@@ -16,10 +16,6 @@ const USE_TTS_CONTAINER = process.env.TTS_SERVICE_URL ? true : false;
  * Maps bot characteristics (gender, personality) to Piper voice models
  */
 const VOICE_MODELS = {
-    de: {
-        female: 'de_DE-mls-medium',  // Piper: MLS with speaker_id=73 (Eva)
-        male: 'de_DE-thorsten-medium',  // Piper: Thorsten medium quality
-    },
     en: {
         female: 'en_US-amy-medium',
         male: 'en_US-ryan-medium',
@@ -53,11 +49,6 @@ function getVoiceForBot(botId, lang) {
             default:
                 gender = 'male';
         }
-    }
-    // For German, check if voice model exists for gender
-    else if (lang === 'de') {
-        const femaleBotsDE = ['gloria-life-context', 'ava-strategic', 'chloe-cbt'];
-        gender = femaleBotsDE.includes(botId) ? 'female' : 'male';
     }
     
     const voiceModel = VOICE_MODELS[lang]?.[gender];
@@ -96,7 +87,7 @@ function getSpeechRate(botId, isMeditation) {
 
 /**
  * Get voice model from voiceId
- * @param {string} voiceId - The voice ID (e.g., 'de-eva', 'en-ryan', 'de_DE-mls-medium')
+ * @param {string} voiceId - The voice ID (e.g., 'en-amy', 'en-ryan')
  * @returns {string|null} - Voice model name or null if not found
  */
 function getVoiceModelFromId(voiceId) {
@@ -104,9 +95,6 @@ function getVoiceModelFromId(voiceId) {
     if (voiceId && voiceId.includes('_')) {
         // Verify it's a valid model name
         const validModels = [
-            'de_DE-mls-medium',
-            'de_DE-thorsten-medium',
-            'de_DE-eva_k-x_low',
             'en_US-amy-medium',
             'en_US-ryan-medium',
         ];
@@ -117,8 +105,6 @@ function getVoiceModelFromId(voiceId) {
     
     // Otherwise, map short IDs to full model names
     const voiceMap = {
-        'de-mls': 'de_DE-mls-medium',
-        'de-thorsten': 'de_DE-thorsten-medium',
         'en-amy': 'en_US-amy-medium',
         'en-ryan': 'en_US-ryan-medium',
     };
@@ -242,7 +228,7 @@ async function synthesizeSpeech(text, botId, lang, isMeditation = false, voiceId
  * @param {string} lang - Language code for phonetic replacements (default: 'de')
  * @returns {string} - Cleaned text ready for TTS
  */
-function cleanTextForSpeech(text, lang = 'de') {
+function cleanTextForSpeech(text, lang = 'en') {
     // Load phonetic replacements from dictionary
     // Dictionary is cached, so this has no I/O overhead
     const phoneticReplacements = getPhoneticReplacements(lang);

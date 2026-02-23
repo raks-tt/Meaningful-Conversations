@@ -195,7 +195,7 @@ interface TranscriptEvaluationPDFProps {
   evaluation: TranscriptEvaluationResult;
   preAnswers: TranscriptPreAnswers;
   userEmail?: string;
-  lang: 'de' | 'en';
+  lang?: 'en';
 }
 
 const BulletList: React.FC<{ items: string[] }> = ({ items }) => {
@@ -216,57 +216,54 @@ const TranscriptEvaluationPDF: React.FC<TranscriptEvaluationPDFProps> = ({
   evaluation,
   preAnswers,
   userEmail,
-  lang,
+  lang = 'en',
 }) => {
   const t = (key: string) => {
-    const translations: Record<string, { de: string; en: string }> = {
-      title: { de: 'Transkript-Auswertung', en: 'Transcript Evaluation' },
-      pre_questions: { de: 'Ihre Reflexion vor dem Gespräch', en: 'Your Pre-Reflection' },
-      goal: { de: 'Ziel', en: 'Goal' },
-      personal_target: { de: 'Persönliches Ziel', en: 'Personal Target' },
-      assumptions: { de: 'Annahmen', en: 'Assumptions' },
-      satisfaction: { de: 'Erwartete Zufriedenheit', en: 'Expected Satisfaction' },
-      difficult: { de: 'Herausforderung', en: 'Challenge' },
-      overall_score: { de: 'Gesamtbewertung', en: 'Overall Score' },
-      goal_alignment: { de: 'Zielerreichung', en: 'Goal Alignment' },
-      achieved: { de: 'Erreicht', en: 'Achieved' },
-      evidence: { de: 'Belege', en: 'Evidence' },
-      behavioral_analysis: { de: 'Verhaltensanalyse', en: 'Behavioral Analysis' },
-      target_behaviors: { de: 'Zielverhalten erkannt', en: 'Target Behaviors Observed' },
-      assumption_check: { de: 'Annahmenprüfung', en: 'Assumption Check' },
-      confirmed: { de: 'Bestätigt', en: 'Confirmed' },
-      rejected: { de: 'Widerlegt', en: 'Rejected' },
-      challenged: { de: 'Hinterfragt', en: 'Challenged' },
-      new_insights: { de: 'Neue Erkenntnisse', en: 'New Insights' },
-      calibration: { de: 'Selbstwahrnehmung vs. Realität', en: 'Self-Rating vs. Evidence' },
-      self_rating: { de: 'Ihre Einschätzung', en: 'Your Rating' },
-      evidence_rating: { de: 'Evidenz-Bewertung', en: 'Evidence' },
-      actual_score: { de: 'Tatsächliche Bewertung', en: 'Actual Score' },
-      gaps: { de: 'Lücken', en: 'Gaps' },
-      score_label: { de: 'Bewertung', en: 'Score' },
-      blindspots: { de: 'Blinde Flecken', en: 'Blindspots' },
-      personality_insights: { de: 'Persönlichkeitsbasierte Erkenntnisse', en: 'Personality Insights' },
-      strengths: { de: 'Stärken', en: 'Strengths' },
-      development: { de: 'Entwicklungsfelder', en: 'Development Areas' },
-      next_steps: { de: 'Nächste Schritte', en: 'Next Steps' },
-      bot_recommendations: { de: 'Empfohlene Coaching-Profile', en: 'Recommended Coaching Profiles' },
-      bot_primary: { de: 'Primär', en: 'Primary' },
-      bot_secondary: { de: 'Alternativ', en: 'Alternative' },
-      bot_conversation_starter: { de: 'Gesprächseinstieg', en: 'Conversation Starter' },
-      bot_tier_guest: { de: 'Stets verfügbar', en: 'Free' },
-      bot_tier_premium: { de: 'Premium', en: 'Premium' },
-      bot_tier_client: { de: 'Exklusiv für Klienten', en: 'Exclusive to clients' },
-      footer_template: {
-        de: 'Erstellt für {user} • Persönlich und Vertraulich • {date}',
-        en: 'Generated for {user} • Personal and Confidential • {date}',
-      },
+    const translations: Record<string, string> = {
+      title: 'Transcript Evaluation',
+      pre_questions: 'Your Pre-Reflection',
+      goal: 'Goal',
+      personal_target: 'Personal Target',
+      assumptions: 'Assumptions',
+      satisfaction: 'Expected Satisfaction',
+      difficult: 'Challenge',
+      overall_score: 'Overall Score',
+      goal_alignment: 'Goal Alignment',
+      achieved: 'Achieved',
+      evidence: 'Evidence',
+      behavioral_analysis: 'Behavioral Analysis',
+      target_behaviors: 'Target Behaviors Observed',
+      assumption_check: 'Assumption Check',
+      confirmed: 'Confirmed',
+      rejected: 'Rejected',
+      challenged: 'Challenged',
+      new_insights: 'New Insights',
+      calibration: 'Self-Rating vs. Evidence',
+      self_rating: 'Your Rating',
+      evidence_rating: 'Evidence',
+      actual_score: 'Actual Score',
+      gaps: 'Gaps',
+      score_label: 'Score',
+      blindspots: 'Blindspots',
+      personality_insights: 'Personality Insights',
+      strengths: 'Strengths',
+      development: 'Development Areas',
+      next_steps: 'Next Steps',
+      bot_recommendations: 'Recommended Coaching Profiles',
+      bot_primary: 'Primary',
+      bot_secondary: 'Alternative',
+      bot_conversation_starter: 'Conversation Starter',
+      bot_tier_guest: 'Free',
+      bot_tier_premium: 'Premium',
+      bot_tier_client: 'Exclusive to clients',
+      footer_template: 'Generated for {user} • Personal and Confidential • {date}',
     };
-    return translations[key]?.[lang] || key;
+    return translations[key] || key;
   };
 
   const formatDate = () => {
     const date = new Date();
-    return date.toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-US', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -534,7 +531,7 @@ const TranscriptEvaluationPDF: React.FC<TranscriptEvaluationPDFProps> = ({
         <View style={styles.footerContainer} fixed>
           <View style={styles.footer}>
             <Text>
-              {t('footer_template').replace('{user}', userEmail || (lang === 'de' ? 'Unbekannt' : 'Unknown')).replace('{date}', formatDate())}
+              {t('footer_template').replace('{user}', userEmail || 'Unknown').replace('{date}', formatDate())}
             </Text>
             <Text style={{ fontSize: 7, color: colors.gray400, marginTop: 2 }}>
               <Text style={styles.footerBold}>Meaningful Conversations</Text> by manualmode.at
@@ -554,7 +551,7 @@ export const exportTranscriptEvaluationPDF = async (
   evaluation: TranscriptEvaluationResult,
   preAnswers: TranscriptPreAnswers,
   userEmail?: string,
-  lang: 'de' | 'en' = 'de'
+  lang: 'en' = 'en'
 ): Promise<void> => {
   const isNative = Capacitor.isNativePlatform();
   const fileName = `transcript_evaluation_${new Date().toISOString().split('T')[0]}.pdf`;
@@ -581,10 +578,10 @@ export const exportTranscriptEvaluationPDF = async (
         });
 
         await Share.share({
-          title: lang === 'de' ? 'Transkript-Auswertung' : 'Transcript Evaluation',
-          text: lang === 'de' ? 'Meine Transkript-Auswertung' : 'My Transcript Evaluation',
+          title: 'Transcript Evaluation',
+          text: 'My Transcript Evaluation',
           url: savedFile.uri,
-          dialogTitle: lang === 'de' ? 'Auswertung teilen' : 'Share Evaluation',
+          dialogTitle: 'Share Evaluation',
         });
       };
       reader.readAsDataURL(blob);

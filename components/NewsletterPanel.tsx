@@ -16,19 +16,19 @@ const NewsletterPanel: React.FC = () => {
   const [translating, setTranslating] = useState(false);
   const [showSubscribers, setShowSubscribers] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  
+
   // Primary language is the current UI language, secondary is the other
   const primaryLang = language;
   const secondaryLang = language === 'de' ? 'en' : 'de';
   const primaryFlag = language === 'de' ? '🇩🇪' : '🇬🇧';
   const secondaryFlag = language === 'de' ? '🇬🇧' : '🇩🇪';
-  
+
   // State for primary and secondary content
   const [subjectPrimary, setSubjectPrimary] = useState('');
   const [subjectSecondary, setSubjectSecondary] = useState('');
   const [textBodyPrimary, setTextBodyPrimary] = useState('');
   const [textBodySecondary, setTextBodySecondary] = useState('');
-  
+
   const [result, setResult] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   useEffect(() => {
@@ -71,14 +71,14 @@ const NewsletterPanel: React.FC = () => {
         textBodyDE: primaryLang === 'de' ? textBodyPrimary : textBodySecondary,
         textBodyEN: primaryLang === 'en' ? textBodyPrimary : textBodySecondary,
       };
-      
+
       const response = await userService.sendNewsletter(content);
 
       let message = t('newsletter_send_success', { sent: response.sent, total: response.total });
       if (response.failed > 0) {
         message += ` (${t('newsletter_send_failed', { failed: response.failed })})`;
       }
-      
+
       setResult({ type: 'success', message });
 
       // Clear fields after successful send
@@ -86,7 +86,7 @@ const NewsletterPanel: React.FC = () => {
       setSubjectSecondary('');
       setTextBodyPrimary('');
       setTextBodySecondary('');
-      
+
       // Reload history
       const historyData = await userService.getNewsletterHistory();
       setHistory(historyData);
@@ -120,7 +120,7 @@ const NewsletterPanel: React.FC = () => {
           targetLang: secondaryLang
         })
       });
-      
+
       if (data.subject) {
         setSubjectSecondary(data.subject);
       }
@@ -173,7 +173,7 @@ const NewsletterPanel: React.FC = () => {
         >
           {showSubscribers ? '▼' : '▶'} {t('newsletter_show_subscribers')} ({subscribers.length})
         </button>
-        
+
         {showSubscribers && (
           <div className="mt-3 space-y-2 max-h-64 overflow-y-auto bg-background-tertiary dark:bg-background-secondary p-3 rounded border border-border-secondary">
             {subscribers.length === 0 ? (
@@ -345,7 +345,7 @@ const NewsletterPanel: React.FC = () => {
           </div>
         </>
       )}
-      
+
       {/* Newsletter History */}
       <div className="mt-6 p-4 bg-background-tertiary dark:bg-background-secondary rounded-lg border border-border-secondary">
         <div className="flex items-center gap-2 mb-3">
@@ -357,7 +357,7 @@ const NewsletterPanel: React.FC = () => {
             {showHistory ? '▼' : '▶'} {t('newsletter_history_title')} ({history.length})
           </button>
         </div>
-        
+
         {showHistory && (
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {history.length === 0 ? (
@@ -386,7 +386,7 @@ const NewsletterPanel: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-4 text-xs mt-2">
                     <span className="text-green-600 dark:text-green-400">
                       ✓ {entry.successCount} {t('newsletter_history_successful')}
@@ -400,7 +400,7 @@ const NewsletterPanel: React.FC = () => {
                       {t('newsletter_history_of_recipients', { count: entry.recipientCount })}
                     </span>
                   </div>
-                  
+
                   {entry.errors && (
                     <details className="mt-2">
                       <summary className="text-xs text-red-600 dark:text-red-400 cursor-pointer">

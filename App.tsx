@@ -99,7 +99,7 @@ const App: React.FC = () => {
     const [sessionAnalysis, setSessionAnalysis] = useState<SessionAnalysis | null>(null);
     const [newGamificationState, setNewGamificationState] = useState<GamificationState | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    
+
     // Transient state for multi-step flows
     const [tempContext, setTempContext] = useState<string>('');
     const [questionnaireAnswers, setQuestionnaireAnswers] = useState<Record<string, string>>({});
@@ -112,7 +112,7 @@ const App: React.FC = () => {
     const [refinementPreview, setRefinementPreview] = useState<api.RefinementPreviewResult | null>(null);
     const [isLoadingRefinementPreview, setIsLoadingRefinementPreview] = useState(false);
     const [refinementPreviewError, setRefinementPreviewError] = useState<string | null>(null);
-    
+
     // Personality Profile States
     const [hasPersonalityProfile, setHasPersonalityProfile] = useState(false);
     const [existingProfileForExtension, setExistingProfileForExtension] = useState<Partial<SurveyResult> | null>(null);
@@ -144,7 +144,7 @@ const App: React.FC = () => {
             const currentSeason = getCurrentSeason();
             const lastAppliedSeason = localStorage.getItem('lastAppliedSeason');
             const storedTheme = localStorage.getItem('colorTheme');
-            
+
             // Check if season has changed since last visit
             if (currentSeason !== lastAppliedSeason) {
                 // New season! Apply seasonal theme once and save
@@ -153,7 +153,7 @@ const App: React.FC = () => {
                 localStorage.setItem('colorTheme', newTheme);
                 return newTheme;
             }
-            
+
             // Same season - use stored preference if valid
             if (storedTheme === 'summer' || storedTheme === 'autumn' || storedTheme === 'winter') {
                 return storedTheme;
@@ -191,7 +191,7 @@ const App: React.FC = () => {
         }
         localStorage.setItem('isDarkMode', isDarkMode);
     }, [isDarkMode]);
-    
+
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', colorTheme);
         localStorage.setItem('colorTheme', colorTheme);
@@ -205,16 +205,16 @@ const App: React.FC = () => {
         const checkTimeAndUpdateTheme = () => {
             const now = new Date();
             const hour = now.getHours();
-            
+
             // Dark mode: 18:00 (6 PM) to 6:00 (6 AM)
             // Light mode: 6:00 (6 AM) to 18:00 (6 PM)
             const shouldBeDark = hour >= 18 || hour < 6;
             const desiredMode = shouldBeDark ? 'dark' : 'light';
-            
+
             if (isDarkMode !== desiredMode) {
                 setIsDarkMode(desiredMode);
             }
-            
+
             // Seasonal color theme switching
             const seasonalTheme = getSeasonalColorTheme() as 'summer' | 'autumn' | 'winter';
             if (colorTheme !== seasonalTheme) {
@@ -237,7 +237,7 @@ const App: React.FC = () => {
         localStorage.setItem('autoThemeEnabled', 'false');
         setIsDarkMode(prev => prev === 'light' ? 'dark' : 'light');
     };
-    
+
     // Cycle through color themes: summer → autumn → winter → summer
     const toggleColorTheme = () => {
         // When user manually toggles color theme, disable auto-theme
@@ -249,7 +249,7 @@ const App: React.FC = () => {
             return 'summer';
         });
     };
-    
+
     // Check for personality profile when user logs in
     useEffect(() => {
         if (currentUser && encryptionKey) {
@@ -263,7 +263,7 @@ const App: React.FC = () => {
             setHasPersonalityProfile(false);
         }
     }, [currentUser, encryptionKey]);
-    
+
     const calculateNewGamificationState = useCallback((
         currentState: GamificationState,
         analysis: SessionAnalysis | null,
@@ -271,7 +271,7 @@ const App: React.FC = () => {
         messageCount: number
     ): GamificationState => {
         let xpGained = (messageCount * 5) + ((analysis?.nextSteps?.length || 0) * 10);
-        
+
         if (analysis?.hasConversationalEnd) {
             xpGained += 50;
         }
@@ -290,7 +290,7 @@ const App: React.FC = () => {
                 yesterday.setDate(now.getDate() - 1);
                 const lastSessionDay = lastSession.toISOString().split('T')[0];
                 const yesterdayDay = yesterday.toISOString().split('T')[0];
-    
+
                 if (lastSessionDay === yesterdayDay) {
                     newStreak += 1; // It was yesterday, streak continues
                 } else if (lastSessionDay !== today) {
@@ -300,12 +300,12 @@ const App: React.FC = () => {
                 newStreak = 1; // First session
             }
         }
-        
+
         const newCoachesUsed = new Set(currentState.coachesUsed);
         if(messageCount >= 5) {
             newCoachesUsed.add(botId);
         }
-        
+
         const newXp = currentState.xp + xpGained;
         const newUnlockedAchievements = new Set(currentState.unlockedAchievements);
 
@@ -322,7 +322,7 @@ const App: React.FC = () => {
             return level;
         };
         const newLevel = calculateLevelFromXp(newXp);
-        
+
         const newState: GamificationState = {
             ...currentState,
             xp: newXp,
@@ -359,7 +359,7 @@ const App: React.FC = () => {
         // The 'load' event is the most reliable point to register a service worker,
         // as it ensures the page is fully parsed and rendered, avoiding "invalid state" errors.
         window.addEventListener('load', registerServiceWorker);
-        
+
         return () => {
             window.removeEventListener('load', registerServiceWorker);
         };
@@ -411,9 +411,9 @@ const App: React.FC = () => {
 
         init();
     }, []);
-    
+
     // --- NAVIGATION & STATE HANDLERS ---
-    
+
     const handleLoginSuccess = async (user: User, key: CryptoKey) => {
         setAndProcessUser(user);
         setEncryptionKey(key);
@@ -465,7 +465,7 @@ const App: React.FC = () => {
                 // Step 2: De-obfuscate by reversing the string before decoding.
                 // This makes the data non-standard and not directly usable by Base64 decoders.
                 const encodedData = rawData.split('').reverse().join('');
-                
+
                 // Step 3: Decode from Base64
                 gamificationJson = atob(encodedData);
             } catch (error) {
@@ -473,7 +473,7 @@ const App: React.FC = () => {
                 // Fallthrough to use the default state by keeping gamificationJson as '{}'
             }
         }
-        
+
         setCameFromContextChoice(true);
         setGamificationState(deserializeGamificationState(gamificationJson));
 
@@ -492,14 +492,14 @@ const App: React.FC = () => {
         // Registered users: Save profile without automatic PDF download
         if (currentUser && encryptionKey) {
             setIsSavingProfile(true); // Show loading spinner
-            
+
             // Determine if we're adding a lens to an existing profile or creating a new one
             const isAddingLens = existingProfileForExtension?.completedLenses && existingProfileForExtension.completedLenses.length > 0;
-            
+
             try {
                 // First, save the profile without signature
                 let encryptedData = await encryptPersonalityProfile(result, encryptionKey);
-                
+
                 await api.savePersonalityProfile({
                     testType: result.path,
                     completedLenses: result.completedLenses,
@@ -508,7 +508,7 @@ const App: React.FC = () => {
                     encryptedData,
                     adaptationMode: result.adaptationMode || 'adaptive'
                 });
-                
+
                 // Only set coaching mode on FIRST profile creation, not when adding lenses
                 // This prevents accidentally changing the coaching mode when extending the profile
                 let newCoachingMode: 'dpfl' | 'dpc' | null = null;
@@ -524,9 +524,9 @@ const App: React.FC = () => {
                         // Non-critical error - profile is saved, coaching mode can be set later
                     }
                 }
-                
+
                 setHasPersonalityProfile(true);
-                
+
                 // Automatically generate signature since narratives are already available
                 // This provides a complete profile experience without requiring an extra manual step
                 let signatureGenerated = false;
@@ -544,11 +544,11 @@ const App: React.FC = () => {
                             narratives: result.narratives,
                             language
                         });
-                        
+
                         if (narrativeResponse.narrativeProfile) {
                             // Update result with generated signature
                             result.narrativeProfile = narrativeResponse.narrativeProfile;
-                            
+
                             // Re-encrypt and save with signature
                             encryptedData = await encryptPersonalityProfile(result, encryptionKey);
                             await api.savePersonalityProfile({
@@ -566,9 +566,9 @@ const App: React.FC = () => {
                         // Non-critical - user can generate signature manually later
                     }
                 }
-                
+
                 setIsSavingProfile(false); // Hide loading spinner
-                
+
                 // Show different success messages based on context
                 if (isAddingLens) {
                     // Adding a lens to existing profile - find the newly added lens
@@ -576,21 +576,21 @@ const App: React.FC = () => {
                     const newLens = result.completedLenses?.find(lens => !previousLenses.includes(lens));
                     const lensNameKey = newLens ? `lens_${newLens}_name` : '';
                     const lensName = lensNameKey ? (t(lensNameKey) || newLens || '') : '';
-                    
-                    alert(t('personality_survey_success_lens_added', { lens: lensName }) || 
-                        `${lensName || 'Test'} wurde zu deinem Profil hinzugefügt! ✨`);
+
+                    alert(t('personality_survey_success_lens_added', { lens: lensName }) ||
+                        `${lensName || 'Test'} has been added to your profile! ✨`);
                 } else {
                     // First profile creation - show coaching mode info
                     const modeLabel = newCoachingMode === 'dpfl' ? 'DPFL' : 'DPC';
                     if (signatureGenerated) {
-                        alert(t('personality_survey_success_with_signature', { mode: modeLabel }) || 
-                            `Profil und Signatur erstellt! ✨ Coaching-Modus „${modeLabel}" wurde aktiviert.`);
+                        alert(t('personality_survey_success_with_signature', { mode: modeLabel }) ||
+                            `Profile and signature created! ✨ Coaching mode "${modeLabel}" has been activated.`);
                     } else {
-                        alert(t('personality_survey_success_with_coaching_mode', { mode: modeLabel }) || 
-                            `Profil gespeichert! Coaching-Modus "${modeLabel}" wurde aktiviert. Du kannst jetzt deine Signatur generieren.`);
+                        alert(t('personality_survey_success_with_coaching_mode', { mode: modeLabel }) ||
+                            `Profile saved! Coaching mode "${modeLabel}" has been activated. You can now generate your signature.`);
                     }
                 }
-                
+
                 // Navigate to profile view where user can view signature and download PDF
                 setView('personalityProfile');
             } catch (error) {
@@ -600,14 +600,14 @@ const App: React.FC = () => {
                 // Still navigate to profile view so user can try again
                 setView('personalityProfile');
             }
-        } 
+        }
         // Guest users: Generate and download PDF automatically (they can't save profile)
         else {
             try {
                 const filename = generateSurveyPdfFilename(result.path, language);
                 await generatePDF(result, filename, language, currentUser?.email);
                 alert(t('personality_survey_success_downloaded'));
-                
+
                 // Navigate back to chat
                 setView('chat');
             } catch (error) {
@@ -623,20 +623,20 @@ const App: React.FC = () => {
         setTempContext('');
         setView('botSelection');
     };
-    
+
     const handleSelectBot = (bot: Bot) => {
         // Stop any ongoing voice output
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
-        
+
         // Stop server audio if playing
         const audioElements = document.querySelectorAll('audio');
         audioElements.forEach(audio => {
             audio.pause();
             audio.currentTime = 0;
         });
-        
+
         setSelectedBot(bot);
         setUserMessageCount(0);
         setChatHistory([]);
@@ -669,7 +669,7 @@ const App: React.FC = () => {
         setCameFromContextChoice(false);
         setView('chat');
     };
-    
+
     const handleStartInterview = () => {
         const interviewBot = BOTS.find(b => b.id === 'gloria-life-context');
         if (interviewBot) {
@@ -683,7 +683,7 @@ const App: React.FC = () => {
 
     const handleEndSession = async () => {
         if (!selectedBot) return;
-        
+
         // --- Special Handling for Gloria Interview Bot ---
         if (selectedBot.id === 'gloria-interview') {
             if (userMessageCount === 0 && !isTestMode) {
@@ -767,7 +767,7 @@ const App: React.FC = () => {
             // Handle "Next Steps" and "Completed Steps" logic.
             const hasNewSteps = analysis.nextSteps && analysis.nextSteps.length > 0;
             const hasCompletedSteps = analysis.completedSteps && analysis.completedSteps.length > 0;
-            
+
             if (hasNewSteps || hasCompletedSteps) {
                 // Determine the correct headline based on the document's language.
                 const docLang = (lifeContext && lifeContext.match(/^#\s*(Mein\s)?Lebenskontext/im)) ? 'de' : 'en';
@@ -778,7 +778,7 @@ const App: React.FC = () => {
                 const existingStepsRegex = /##\s*✅\s*(Achievable Next Steps|Realisierbare nächste Schritte)\s*\n(?:.*?\n)?((?:\* .*(?:\n|$))*)/i;
                 const match = lifeContext?.match(existingStepsRegex);
                 let existingStepsLines: string[] = [];
-                
+
                 if (match && match[2]) {
                     existingStepsLines = match[2]
                         .split('\n')
@@ -789,20 +789,20 @@ const App: React.FC = () => {
                 // Filter out completed steps from existing steps.
                 let remainingSteps = existingStepsLines;
                 if (hasCompletedSteps) {
-                    const completedStepsNormalized = analysis.completedSteps.map((s: string) => 
+                    const completedStepsNormalized = analysis.completedSteps.map((s: string) =>
                         s.trim().replace(/^\*\s*/, '').toLowerCase()
                     );
                     remainingSteps = existingStepsLines.filter(step => {
                         const stepNormalized = step.replace(/^\*\s*/, '').toLowerCase();
-                        return !completedStepsNormalized.some(completed => 
+                        return !completedStepsNormalized.some(completed =>
                             stepNormalized.includes(completed) || completed.includes(stepNormalized)
                         );
                     });
                 }
 
                 // Format new next steps.
-                const newStepsLines = hasNewSteps 
-                    ? analysis.nextSteps.map((step: { action: string; deadline: string }) => 
+                const newStepsLines = hasNewSteps
+                    ? analysis.nextSteps.map((step: { action: string; deadline: string }) =>
                         `* ${step.action} (${deadlineWord}: ${step.deadline})`
                     )
                     : [];
@@ -814,13 +814,13 @@ const App: React.FC = () => {
                     // If there were completed steps OR existing steps, use 'replace_section' to ensure clean update.
                     // Otherwise, use 'append' for first-time creation.
                     const updateType = (hasCompletedSteps || existingStepsLines.length > 0) ? 'replace_section' : 'append';
-                    
+
                     const nextStepsUpdate: ProposedUpdate = {
                         type: updateType,
                         headline: nextStepsHeadline,
                         content: allSteps.join('\n'),
                     };
-                    
+
                     analysis.proposedUpdates.push(nextStepsUpdate);
                 } else if (hasCompletedSteps && existingStepsLines.length > 0) {
                     // All steps were completed. Clear the task list but keep the section structure (headline + subtitle).
@@ -829,7 +829,7 @@ const App: React.FC = () => {
                         headline: nextStepsHeadline,
                         content: '', // Empty content = no tasks, but section structure remains
                     };
-                    
+
                     analysis.proposedUpdates.push(nextStepsUpdate);
                 }
             }
@@ -841,7 +841,7 @@ const App: React.FC = () => {
             setNewGamificationState(newState);
 
             setView('sessionReview');
-            
+
             // For test mode with DPFL/DPC scenarios, calculate refinement preview
             if (isTestMode && testScenarioId) {
                 const isDPFLTest = testScenarioId.startsWith('dpfl_') || testScenarioId.startsWith('dpc_');
@@ -852,10 +852,10 @@ const App: React.FC = () => {
                         if (encryptedProfile && encryptedProfile.encryptedData) {
                             const decryptedData = await decryptPersonalityProfile(encryptedProfile.encryptedData, encryptionKey);
                             const profileType = encryptedProfile.testType === 'BIG5' ? 'BIG5' : 'RIEMANN';
-                            const profileForRefinement = profileType === 'RIEMANN' 
-                                ? decryptedData.riemann 
+                            const profileForRefinement = profileType === 'RIEMANN'
+                                ? decryptedData.riemann
                                 : decryptedData.big5 || decryptedData;
-                            
+
                             if (profileForRefinement) {
                                 const preview = await api.previewProfileRefinement({
                                     chatHistory: chatHistory.map(m => ({ role: m.role, text: m.text })),
@@ -865,17 +865,17 @@ const App: React.FC = () => {
                                 });
                                 setRefinementPreview(preview);
                             } else {
-                                setRefinementPreviewError(t('dpfl_test_no_profile') || 'Kein Persönlichkeitsprofil gefunden.');
+                                setRefinementPreviewError(t('dpfl_test_no_profile') || 'No personality profile found.');
                             }
                         } else {
-                            setRefinementPreviewError(t('dpfl_test_no_profile') || 'Kein Persönlichkeitsprofil gefunden.');
+                            setRefinementPreviewError(t('dpfl_test_no_profile') || 'No personality profile found.');
                         }
                     } catch (previewError) {
                         console.error('Failed to calculate refinement preview:', previewError);
                         setRefinementPreviewError(
-                            previewError instanceof Error 
-                                ? previewError.message 
-                                : t('dpfl_test_preview_error') || 'Fehler bei der Berechnung der Profil-Vorschau.'
+                            previewError instanceof Error
+                                ? previewError.message
+                                : t('dpfl_test_preview_error') || 'Error calculating profile preview.'
                         );
                     } finally {
                         setIsLoadingRefinementPreview(false);
@@ -904,7 +904,7 @@ const App: React.FC = () => {
             setIsAnalyzing(false);
         }
     };
-    
+
     const saveData = async (newContext: string, stateToSave: GamificationState, preventCloudSave: boolean) => {
         if (isTestMode) {
             console.log("--- TEST MODE: SAVE SKIPPED ---");
@@ -922,16 +922,14 @@ const App: React.FC = () => {
                 // Determine which context to save. If the user opted out of saving text changes,
                 // we send the original context back to the server. Otherwise, we send the new one.
                 const contextToSave = preventCloudSave ? lifeContext : newContext;
-                
+
                 // Crucially, we ALWAYS save the new gamification state to ensure progress is never lost.
                 await userService.saveUserData(contextToSave, serializeGamificationState(stateToSave), encryptionKey);
 
             } catch (error) {
                 console.error("Failed to save user data:", error);
                 // Show error notification to user
-                alert(language === 'de' 
-                    ? '⚠️ Speichern fehlgeschlagen. Bitte laden Sie Ihren Lebenskontext manuell herunter, um Datenverlust zu vermeiden.' 
-                    : '⚠️ Save failed. Please manually download your Life Context to prevent data loss.');
+                alert('⚠️ Save failed. Please manually download your Life Context to prevent data loss.');
             }
         }
     };
@@ -941,14 +939,14 @@ const App: React.FC = () => {
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
-        
+
         // Stop server audio if playing
         const audioElements = document.querySelectorAll('audio');
         audioElements.forEach(audio => {
             audio.pause();
             audio.currentTime = 0;
         });
-        
+
         // For test sessions, immediately exit to the admin panel without saving anything.
         // This prevents the test data from polluting the main application state.
         if (isTestMode) {
@@ -960,7 +958,7 @@ const App: React.FC = () => {
         }
 
         await saveData(newContext, newGamificationState || gamificationState, options.preventCloudSave);
-        
+
         if (!currentUser) {
             await new Promise(resolve => setTimeout(resolve, 50));
         }
@@ -977,14 +975,14 @@ const App: React.FC = () => {
         if (window.speechSynthesis) {
             window.speechSynthesis.cancel();
         }
-        
+
         // Stop server audio if playing
         const audioElements = document.querySelectorAll('audio');
         audioElements.forEach(audio => {
             audio.pause();
             audio.currentTime = 0;
         });
-        
+
         // For test sessions, immediately exit to the admin panel without saving anything.
         if (isTestMode) {
             setIsTestMode(false);
@@ -993,13 +991,13 @@ const App: React.FC = () => {
             setView('admin');
             return;
         }
-        
+
         await saveData(newContext, newGamificationState || gamificationState, options.preventCloudSave);
-        
+
         if (!currentUser) {
             await new Promise(resolve => setTimeout(resolve, 50));
         }
-        
+
         setSelectedBot(null);
         setChatHistory([]);
         setView('botSelection');
@@ -1014,7 +1012,7 @@ const App: React.FC = () => {
         setUserMessageCount(0);
         setIsTestMode(false);
         setTestScenarioId(null);
-        
+
         // Close menu
         setIsMenuOpen(false);
         setMenuView(null);
@@ -1036,20 +1034,20 @@ const App: React.FC = () => {
         // Set up test mode state
         setIsTestMode(true);
         setMenuView(null); // Close admin menu
-        
+
         // Reset refinement preview state
         setRefinementPreview(null);
         setRefinementPreviewError(null);
         setIsLoadingRefinementPreview(false);
-        
+
         // Load the scenario's chat history and bot
         setChatHistory(scenario.chatHistory);
         setSelectedBot(scenario.bot);
         setLifeContext(adminLifeContext);
-        
+
         // Store scenario info for later use in handleEndSession
         setTestScenarioId(scenario.id);
-        
+
         // Navigate to ChatView to show the simulated conversation
         // Admin can review the chat, then click "End Session" to trigger analysis
         setView('chat');
@@ -1065,7 +1063,7 @@ const App: React.FC = () => {
         console.log('[COMFORT-TEST] Starting quick test with conversationalEnd:', withConversationalEnd);
         console.log('[COMFORT-TEST] Current user:', currentUser?.email, 'coachingMode:', currentUser?.coachingMode);
         // #endregion
-        
+
         // Ensure user has DPFL mode
         if (currentUser?.coachingMode !== 'dpfl') {
             // #region agent log
@@ -1090,34 +1088,34 @@ const App: React.FC = () => {
 
         // Mock ChatHistory (realistic DPFL session)
         const mockChatHistory: Message[] = [
-            { 
+            {
                 id: `msg-${Date.now()}-1`,
-                role: 'user', 
-                text: 'Ich möchte über meine Karriereziele sprechen',
+                role: 'user',
+                text: 'I want to talk about my career goals',
                 timestamp: new Date(Date.now() - 300000).toISOString()
             },
-            { 
+            {
                 id: `msg-${Date.now()}-2`,
-                role: 'bot', 
-                text: 'Sehr gerne! Was ist dein aktuelles Karriereziel?',
+                role: 'bot',
+                text: 'Great! What is your current career goal?',
                 timestamp: new Date(Date.now() - 240000).toISOString()
             },
-            { 
+            {
                 id: `msg-${Date.now()}-3`,
-                role: 'user', 
-                text: 'Ich möchte in den nächsten 2 Jahren Teamleiter werden',
+                role: 'user',
+                text: 'I want to become a team leader in the next 2 years',
                 timestamp: new Date(Date.now() - 180000).toISOString()
             },
-            { 
+            {
                 id: `msg-${Date.now()}-4`,
-                role: 'bot', 
-                text: 'Ein ambitioniertes Ziel! Was sind deine nächsten Schritte?',
+                role: 'bot',
+                text: 'An ambitious goal! What are your next steps?',
                 timestamp: new Date(Date.now() - 120000).toISOString()
             },
-            { 
+            {
                 id: `msg-${Date.now()}-5`,
-                role: 'user', 
-                text: 'Ich plane, ein Führungskräfte-Seminar zu besuchen',
+                role: 'user',
+                text: 'I plan to attend a leadership seminar',
                 timestamp: new Date(Date.now() - 60000).toISOString()
             },
         ];
@@ -1148,7 +1146,7 @@ const App: React.FC = () => {
         setSelectedBot(alexBot);
         setNewGamificationState(newState);
         setIsTestMode(true); // Mark as test mode
-        
+
         // Set a minimal refinement preview to enable Comfort Check in test mode
         setRefinementPreview({
             success: true,
@@ -1162,13 +1160,13 @@ const App: React.FC = () => {
             profileType: 'RIEMANN', // Dummy value for test mode
             message: "Quick test mode - no actual refinement suggestions"
         });
-        
+
         setMenuView(null); // Close menu
-        
+
         // #region agent log
         console.log('[COMFORT-TEST] Navigating to sessionReview...');
         // #endregion
-        
+
         // Navigate to SessionReview
         setView('sessionReview');
     };
@@ -1199,22 +1197,22 @@ const App: React.FC = () => {
 
 
     // --- RENDER LOGIC ---
-    
+
     const renderView = () => {
         const currentView = menuView || view;
 
         switch (currentView) {
             case 'welcome': return <WelcomeScreen />;
             case 'auth': {
-                return <AuthView 
+                return <AuthView
                     onLogin={() => {
                         setMenuView(null);
                         setView('login');
-                    }} 
+                    }}
                     onRegister={() => {
                         setMenuView(null);
                         setView('register');
-                    }} 
+                    }}
                     onGuest={() => {
                         setMenuView(null);
                         analyticsService.trackGuestLogin();
@@ -1230,16 +1228,16 @@ const App: React.FC = () => {
             case 'questionnaire': return <Questionnaire onSubmit={handleQuestionnaireSubmit} onBack={() => setView('landing')} answers={questionnaireAnswers} onAnswersChange={setQuestionnaireAnswers} />;
             case 'personalitySurvey': {
                 console.log('[App] Rendering PersonalitySurvey with existingProfileForExtension:', existingProfileForExtension, 'preselectedLens:', preselectedLensForSurvey);
-                return <PersonalitySurvey 
-                    onFinish={handlePersonalitySurveyComplete} 
+                return <PersonalitySurvey
+                    onFinish={handlePersonalitySurveyComplete}
                     onCancel={existingProfileForExtension ? () => { setPreselectedLensForSurvey(null); setView('personalityProfile'); } : undefined}
-                    currentUser={currentUser} 
+                    currentUser={currentUser}
                     existingProfile={existingProfileForExtension}
                     preselectedLens={preselectedLensForSurvey}
                 />;
             }
             case 'personalityProfile': return (
-                <PersonalityProfileView 
+                <PersonalityProfileView
                     encryptionKey={encryptionKey}
                     onStartNewTest={(existingProfile?: Partial<SurveyResult>, targetLens?: 'sd' | 'riemann' | 'ocean') => {
                         console.log('[App] onStartNewTest called with:', existingProfile, 'targetLens:', targetLens);
@@ -1273,8 +1271,8 @@ const App: React.FC = () => {
                 />
             );
             case 'botSelection': return (
-                <BotSelection 
-                    onSelect={handleSelectBot} 
+                <BotSelection
+                    onSelect={handleSelectBot}
                     onTranscriptEval={() => {
                         setTeStep('pre');
                         setTePreAnswers(null);
@@ -1288,14 +1286,14 @@ const App: React.FC = () => {
                 />
             );
             case 'chat': return (
-                <ChatView 
-                    bot={selectedBot!} 
-                    lifeContext={lifeContext} 
-                    chatHistory={chatHistory} 
-                    setChatHistory={setChatHistory} 
-                    onEndSession={handleEndSession} 
-                    onMessageSent={() => setUserMessageCount(c => c + 1)} 
-                    currentUser={currentUser} 
+                <ChatView
+                    bot={selectedBot!}
+                    lifeContext={lifeContext}
+                    chatHistory={chatHistory}
+                    setChatHistory={setChatHistory}
+                    onEndSession={handleEndSession}
+                    onMessageSent={() => setUserMessageCount(c => c + 1)}
+                    currentUser={currentUser}
                     isNewSession={!cameFromContextChoice}
                     encryptionKey={encryptionKey}
                     isTestMode={isTestMode}
@@ -1318,7 +1316,7 @@ const App: React.FC = () => {
                                 if (profileData?.encryptedData) {
                                     profile = await decryptPersonalityProfile(profileData.encryptedData, encryptionKey);
                                 }
-                            } catch (err) { 
+                            } catch (err) {
                             }
                         }
                         const result = await geminiService.evaluateTranscript(tePreAnswers, transcript, language, profile);
@@ -1375,7 +1373,7 @@ const App: React.FC = () => {
             default: return <WelcomeScreen />;
         }
     };
-    
+
     const isAnyModalOpen = useIsAnyModalOpen();
     const showGamificationBar = !isAnyModalOpen && !['welcome', 'auth', 'login'].includes(view);
     const minimalBar = ['landing', 'questionnaire', 'piiWarning'].includes(view) && !menuView;
@@ -1486,7 +1484,7 @@ const App: React.FC = () => {
         <div className={`font-sans ${view === 'chat' ? 'h-screen flex flex-col' : 'min-h-screen'}`}>
             {showGamificationBar && !useNativeGamificationBar && (
                 <>
-                    <GamificationBar 
+                    <GamificationBar
                         gamificationState={gamificationState}
                         currentUser={currentUser}
                         onViewAchievements={() => handleNavigateFromMenu('achievements')}
@@ -1514,7 +1512,7 @@ const App: React.FC = () => {
             <main className={`container mx-auto px-4 ${view === 'chat' ? 'flex-1 min-h-0 py-0' : ''}`}>
                 {renderView()}
             </main>
-            <BurgerMenu 
+            <BurgerMenu
                 isOpen={isMenuOpen}
                 onClose={handleCloseAllMenus}
                 currentUser={currentUser}
@@ -1528,15 +1526,15 @@ const App: React.FC = () => {
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center animate-fadeIn text-center">
                     <div className="w-12 h-12 border-4 border-accent-primary border-t-transparent rounded-full animate-spin" />
                     <h1 className="mt-6 text-2xl font-bold text-gray-200">
-                        {t('saving_profile_title') || 'Profil wird erstellt...'}
+                        {t('saving_profile_title') || 'Creating profile...'}
                     </h1>
                     <p className="mt-2 text-lg text-gray-400">
-                        {t('saving_profile_subtitle') || 'Deine Signatur wird generiert. Das kann einen Moment dauern.'}
+                        {t('saving_profile_subtitle') || 'Your signature is being generated. This may take a moment.'}
                     </p>
                 </div>
             )}
-             <DeleteAccountModal 
-                isOpen={isDeleteModalOpen} 
+             <DeleteAccountModal
+                isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onDeleteSuccess={() => { setIsDeleteModalOpen(false); handleLogout(); }}
             />

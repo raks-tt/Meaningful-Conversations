@@ -26,22 +26,13 @@ const removeGamificationKey = (text: string) => {
     return text.replace(/<!-- (gmf-data|do_not_delete): (.*?) -->\s*$/, '').trim();
 };
 
-// This map makes the blockage name translation robust against API variations (e.g., returning German instead of English)
+// This map normalizes blockage names from API to i18n keys
 const blockageApiToKeyMap: Record<string, string> = {
-    // English API names (as they should be)
     'self-reproach': 'self-reproach',
     'blaming others': 'blaming_others',
     'expectational attitudes': 'expectational_attitudes',
     'age regression': 'age_regression',
     'dysfunctional loyalties': 'dysfunctional_loyalties',
-    // German variations that might be returned by the API
-    'selbstvorwürfe': 'self-reproach', // plural
-    'selbstvorwurf': 'self-reproach', // singular
-    'fremdbeschuldigung': 'blaming_others',
-    'erwartungshaltungen': 'expectational_attitudes', // plural
-    'erwartungshaltung': 'expectational_attitudes', // singular
-    'altersregression': 'age_regression',
-    'dysfunktionale loyalitäten': 'dysfunctional_loyalties', // plural
 };
 
 
@@ -170,31 +161,20 @@ function analyzeSessionForRecommendation(
         // Default to SD if no clear signal (most motivating)
         return {
             type: 'sd',
-            reason: language === 'de' 
-                ? 'Verstehe, was dich wirklich antreibt'
-                : 'Understand what truly drives you',
+            reason: 'Understand what truly drives you',
             confidence: 0.3
         };
     }
     
-    const reasons: Record<QuestionnaireType, Record<string, string>> = {
-        riemann: {
-            de: 'Verstehe, warum es in Beziehungen manchmal knirscht',
-            en: 'Understand why relationships sometimes struggle'
-        },
-        sd: {
-            de: 'Verstehe, was dich wirklich antreibt und motiviert',
-            en: 'Understand what truly drives and motivates you'
-        },
-        ocean: {
-            de: 'Entdecke deine stabilen Persönlichkeitszüge',
-            en: 'Discover your stable personality traits'
-        }
+    const reasons: Record<QuestionnaireType, string> = {
+        riemann: 'Understand why relationships sometimes struggle',
+        sd: 'Understand what truly drives and motivates you',
+        ocean: 'Discover your stable personality traits'
     };
-    
+
     return {
         type: topType,
-        reason: reasons[topType][language === 'de' ? 'de' : 'en'],
+        reason: reasons[topType],
         confidence: Math.min(topScore / 10, 1)
     };
 }
@@ -1087,22 +1067,13 @@ const SessionReview: React.FC<SessionReviewProps> = ({
                     const recommendation = analyzeSessionForRecommendation(newFindings, chatHistory, language);
                     if (!recommendation) return null;
                     
-                    const questionnaireLabels: Record<QuestionnaireType, Record<string, string>> = {
-                        riemann: {
-                            de: 'Wie du interagierst',
-                            en: 'How you interact'
-                        },
-                        sd: {
-                            de: 'Was dich antreibt',
-                            en: 'What drives you'
-                        },
-                        ocean: {
-                            de: 'Was dich ausmacht',
-                            en: 'What defines you'
-                        }
+                    const questionnaireLabels: Record<QuestionnaireType, string> = {
+                        riemann: 'How you interact',
+                        sd: 'What drives you',
+                        ocean: 'What defines you'
                     };
-                    
-                    const label = questionnaireLabels[recommendation.type][language === 'de' ? 'de' : 'en'];
+
+                    const label = questionnaireLabels[recommendation.type];
                     
                     return (
                         <div className="py-3 px-4 bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-400 dark:border-purple-600 rounded-lg text-sm">

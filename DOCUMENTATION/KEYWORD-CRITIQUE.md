@@ -1,338 +1,338 @@
-# Keyword-Kritik: Systematische Analyse der DPFL-Keywords
+# Keyword Critique: Systematic Analysis of DPFL Keywords
 
-**Datum**: 2024-02-09  
-**Version**: 1.0  
-**Quelle**: `meaningful-conversations-backend/services/behaviorLogger.js` (Zeilen 12-430)
+**Date**: 2024-02-09
+**Version**: 1.0
+**Source**: `meaningful-conversations-backend/services/behaviorLogger.js` (Lines 12-430)
 
-## Zusammenfassung
+## Summary
 
-Die aktuellen Keywords für die Dynamic Personality Feedback Loop (DPFL) decken drei psychologische Frameworks ab:
-- **Riemann-Thomann** (4 Dimensionen): Nähe, Distanz, Dauer, Wechsel
-- **Big5/OCEAN** (5 Dimensionen): Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism
-- **Spiral Dynamics** (8 Levels): Beige, Purple, Red, Blue, Orange, Green, Yellow, Turquoise
+The current keywords for the Dynamic Personality Feedback Loop (DPFL) cover three psychological frameworks:
+- **Riemann-Thomann** (4 dimensions): Closeness, Distance, Duration, Change
+- **Big5/OCEAN** (5 dimensions): Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism
+- **Spiral Dynamics** (8 levels): Beige, Purple, Red, Blue, Orange, Green, Yellow, Turquoise
 
-Insgesamt existieren **34 Keyword-Sets** (alle bidirektional mit High/Low-Klassifizierung) in zwei Sprachen (DE/EN).
+In total, there are **34 keyword sets** (all bidirectional with High/Low classification) in two languages (DE/EN).
 
-### Hauptprobleme auf einen Blick
+### Main Problems at a Glance
 
-1. ❌ **Ungleichgewicht high vs. low**: Low-Keywords sind 40-60% weniger vorhanden als High-Keywords
-2. ❌ **Akademische Sprache**: Viele Begriffe, die Nutzer im Alltag nicht verwenden
-3. ❌ **Negationen fehlen**: "ich bin nicht spontan" wird als "spontan" gezählt
-4. ❌ **Kontext-Ignoranz**: Sentiment und Satzbedeutung werden nicht berücksichtigt
-5. ❌ **Neuroticism-Bias**: Zu stark auf negative Emotionen fokussiert (stigmatisierend)
-6. ❌ **Überlappungen**: Keywords detektieren mehrere Dimensionen gleichzeitig
-7. ❌ **Fehlende Gewichtung**: Alle Keywords gleich gewichtet ("etwas nervös" = "total gestresst")
-8. ❌ **Kulturelle Bias**: Westlich-konservativ geprägte Begriffe (Blue, Red in Spiral Dynamics)
-
----
-
-## Teil 1: Framework-spezifische Kritik
-
-### 1.1 Riemann-Thomann Keywords (4 Dimensionen)
-
-#### Positive Aspekte ✅
-
-- **Bidirektionale Struktur** konsequent umgesetzt für alle 4 Dimensionen
-- **Gute Abdeckung** pro Dimension (15-20 High-Keywords)
-- **Kulturell angepasst** (DE/EN)
-- **Klare Polarität** zwischen high/low
-
-#### Kritikpunkte ❌
-
-##### 1.1.1 Ungleichgewicht high vs. low
-
-| Dimension | High-Keywords | Low-Keywords | Verhältnis |
-|-----------|---------------|--------------|------------|
-| Nähe      | 19            | 9            | 2.1:1      |
-| Distanz   | 20            | 8            | 2.5:1      |
-| Dauer     | 19            | 9            | 2.1:1      |
-| Wechsel   | 19            | 9            | 2.1:1      |
-
-**Problem**: Negative Ausprägungen werden schlechter erkannt. Ein Nutzer, der "distanziert", "isoliert", "kühl" sagt, wird nicht so gut erfasst wie jemand, der "autonomie", "freiheit", "unabhängigkeit" verwendet.
-
-**Empfehlung**: Low-Keywords auf mindestens 15 pro Dimension erweitern.
-
-**Konkrete Ergänzungsvorschläge für Nähe-Low** (DE):
-```
-Aktuell (9): distanziert, abstand, zurückgezogen, isoliert, einsam, kühl, unpersönlich, gleichgültig, oberflächlich
-
-Ergänzung (+6): "halte distanz", "brauche abstand", "allein sein", "für mich", "unabhängig", "nicht so eng"
-```
-
-##### 1.1.2 Überlappung zwischen Dimensionen
-
-**Beispiele problematischer Überlappungen**:
-
-- `"team"` (Nähe-high) ↔ `"gemeinsam"` (Nähe-high) ↔ `"gemeinschaft"` (Green-high in Spiral Dynamics)
-- `"flexibilität"` (Wechsel-high) ↔ `"adaptiv"` (Yellow-high in Spiral Dynamics)
-- `"struktur"` (Dauer-high) ↔ `"ordnung"` (Blue-high in Spiral Dynamics) ↔ `"organisiert"` (Conscientiousness-high in Big5)
-
-**Problem**: Ein einziges Keyword triggert mehrere Dimensionen gleichzeitig. Dies führt zu:
-- Verzerrter Keyword-Frequency
-- Unklaren Refinement-Vorschlägen ("Warum ändert sich Dauer UND Blue UND Conscientiousness?")
-
-**Empfehlung**: Dimensionsspezifische Keywords verwenden oder Überlappungs-Gewichtung einführen (z.B. ein Keyword zählt primär für eine Dimension, nur 0.3x für andere).
-
-##### 1.1.3 Fehlende Alltagssprache
-
-**Akademische Begriffe** (werden selten verwendet):
-- `"kontinuität"`, `"akribisch"`, `"methodisch"` (Dauer)
-- `"innovativ"`, `"visionär"`, `"unkonventionell"` (Wechsel)
-
-**Nutzer sagen eher**:
-- Dauer: "auf nummer sicher", "wie immer", "bewährt", "verlässlich"
-- Wechsel: "mal schauen", "spontan entscheiden", "was neues", "abwechslungsreich"
-
-**Empfehlung**: Umgangssprache-Synonyme ergänzen. Ratio sollte sein: 60% Alltagssprache, 40% präzise Fachbegriffe.
-
-##### 1.1.4 Kontext-Ignoranz
-
-**Problem**: Keywords berücksichtigen nicht, ob sie in positivem/negativem Kontext verwendet werden.
-
-**Beispiel 1 (Negation)**:
-- User: "Ich bin nicht besonders strukturiert."
-- Aktuell: Detektiert `"strukturiert"` → Dauer-high +1
-- Korrekt: Sollte Dauer-low +1 sein (Negation!)
-
-**Beispiel 2 (Sentiment)**:
-- User: "Ich fühle mich manchmal einsam." (negativ, leidend)
-- User: "Ich genieße es, allein zu sein." (positiv, gewünscht)
-- Beide enthalten `"allein"`/`"einsam"`, aber unterschiedliche Bedeutung!
-
-**Empfehlung**: 
-- Negations-Handling implementieren (siehe Teil 2.2)
-- Satz-basierte Sentiment-Analyse (siehe Teil 2.3)
+1. ❌ **Imbalance high vs. low**: Low keywords are 40-60% less prevalent than high keywords
+2. ❌ **Academic language**: Many terms that users don't use in everyday life
+3. ❌ **Missing negations**: "I am not spontaneous" is counted as "spontaneous"
+4. ❌ **Context ignorance**: Sentiment and sentence meaning are not considered
+5. ❌ **Neuroticism bias**: Too heavily focused on negative emotions (stigmatizing)
+6. ❌ **Overlaps**: Keywords detect multiple dimensions simultaneously
+7. ❌ **Missing weighting**: All keywords equally weighted ("somewhat nervous" = "totally stressed")
+8. ❌ **Cultural bias**: Western-conservative influenced terms (Blue, Red in Spiral Dynamics)
 
 ---
 
-### 1.2 Big5/OCEAN Keywords (5 Dimensionen)
+## Part 1: Framework-Specific Critique
 
-#### Positive Aspekte ✅
+### 1.1 Riemann-Thomann Keywords (4 Dimensions)
 
-- **Wissenschaftlich fundierte** Dimensionen
-- **Bessere Balance** zwischen high/low als Riemann (13-19 Keywords)
-- **Klare Verhaltens-Indikatoren**
+#### Positive Aspects ✅
 
-#### Kritikpunkte ❌
+- **Bidirectional structure** consistently implemented for all 4 dimensions
+- **Good coverage** per dimension (15-20 high keywords)
+- **Culturally adapted** (DE/EN)
+- **Clear polarity** between high/low
 
-##### 1.2.1 Neuroticism-Bias (KRITISCHSTES PROBLEM)
+#### Critical Points ❌
 
-| Dimension    | High-Keywords | Low-Keywords | High-Konnotation | Low-Konnotation |
-|--------------|---------------|--------------|------------------|-----------------|
-| Neuroticism  | 19-20         | 14           | Negativ          | Positiv         |
+##### 1.1.1 Imbalance high vs. low
 
-**High-Keywords** (stark negativ konnotiert):
+| Dimension | High Keywords | Low Keywords | Ratio |
+|-----------|---------------|--------------|-------|
+| Closeness | 19            | 9            | 2.1:1 |
+| Distance  | 20            | 8            | 2.5:1 |
+| Duration  | 19            | 9            | 2.1:1 |
+| Change    | 19            | 9            | 2.1:1 |
+
+**Problem**: Negative manifestations are detected less well. A user who says "distant", "isolated", "cold" is not captured as well as someone who uses "autonomy", "freedom", "independence".
+
+**Recommendation**: Expand low keywords to at least 15 per dimension.
+
+**Concrete Expansion Suggestions for Closeness-Low** (DE):
+```
+Current (9): distanziert, abstand, zurückgezogen, isoliert, einsam, kühl, unpersönlich, gleichgültig, oberflächlich
+
+Extension (+6): "halte distanz", "brauche abstand", "allein sein", "für mich", "unabhängig", "nicht so eng"
+```
+
+##### 1.1.2 Overlap Between Dimensions
+
+**Examples of problematic overlaps**:
+
+- `"team"` (Closeness-high) ↔ `"gemeinsam"` (Closeness-high) ↔ `"gemeinschaft"` (Green-high in Spiral Dynamics)
+- `"flexibilität"` (Change-high) ↔ `"adaptiv"` (Yellow-high in Spiral Dynamics)
+- `"struktur"` (Duration-high) ↔ `"ordnung"` (Blue-high in Spiral Dynamics) ↔ `"organisiert"` (Conscientiousness-high in Big5)
+
+**Problem**: A single keyword triggers multiple dimensions simultaneously. This leads to:
+- Distorted keyword frequency
+- Unclear refinement suggestions ("Why does Duration AND Blue AND Conscientiousness change?")
+
+**Recommendation**: Use dimension-specific keywords or introduce overlap weighting (e.g., a keyword counts primarily for one dimension, only 0.3x for others).
+
+##### 1.1.3 Missing Everyday Language
+
+**Academic terms** (rarely used):
+- `"kontinuität"`, `"akribisch"`, `"methodisch"` (Duration)
+- `"innovativ"`, `"visionär"`, `"unkonventionell"` (Change)
+
+**Users say more often**:
+- Duration: "play it safe", "as always", "proven", "reliable"
+- Change: "let's see", "decide spontaneously", "something new", "varied"
+
+**Recommendation**: Add colloquial synonyms. Ratio should be: 60% everyday language, 40% precise technical terms.
+
+##### 1.1.4 Context Ignorance
+
+**Problem**: Keywords don't consider whether they're used in positive/negative context.
+
+**Example 1 (Negation)**:
+- User: "I'm not particularly structured."
+- Currently: Detects `"structured"` → Duration-high +1
+- Correct: Should be Duration-low +1 (negation!)
+
+**Example 2 (Sentiment)**:
+- User: "I sometimes feel lonely." (negative, suffering)
+- User: "I enjoy being alone." (positive, desired)
+- Both contain `"alone"`/`"lonely"`, but different meanings!
+
+**Recommendation**:
+- Implement negation handling (see Part 2.2)
+- Sentence-based sentiment analysis (see Part 2.3)
+
+---
+
+### 1.2 Big5/OCEAN Keywords (5 Dimensions)
+
+#### Positive Aspects ✅
+
+- **Scientifically grounded** dimensions
+- **Better balance** between high/low than Riemann (13-19 keywords)
+- **Clear behavioral indicators**
+
+#### Critical Points ❌
+
+##### 1.2.1 Neuroticism Bias (MOST CRITICAL PROBLEM)
+
+| Dimension   | High Keywords | Low Keywords | High Connotation | Low Connotation |
+|-------------|---------------|--------------|------------------|-----------------|
+| Neuroticism | 19-20         | 14           | Negative         | Positive        |
+
+**High keywords** (strongly negative connotation):
 - `"ängstlich"`, `"verzweifelt"`, `"panisch"`, `"erschöpft"`, `"frustriert"`
 
-**Low-Keywords** (positiv konnotiert):
+**Low keywords** (positive connotation):
 - `"gelassen"`, `"resilient"`, `"optimistisch"`, `"unerschütterlich"`
 
-**Problem**: Nutzer vermeiden bewusst negative Selbstbeschreibung. Wer gibt schon zu, "verzweifelt" oder "panisch" zu sein? Dies führt zu:
-- **Under-reporting** von Neuroticism-high
-- **False-negative** Profileinschätzungen (Nutzer scheinen emotional stabiler als sie sind)
+**Problem**: Users consciously avoid negative self-description. Who admits to being "desperate" or "panicked"? This leads to:
+- **Under-reporting** of Neuroticism-high
+- **False-negative** profile assessments (users appear more emotionally stable than they are)
 
-**Empfehlung**: Neutrale/positive Formulierungen für Neuroticism-high verwenden:
+**Recommendation**: Use neutral/positive formulations for Neuroticism-high:
 
 ```
-Ersetze stigmatisierende Begriffe durch neutrale:
-- ❌ "ängstlich", "verzweifelt", "panisch"
-- ✅ "sensibel", "vorsichtig", "achtsam", "bedacht", "reflektiert", "grüble", "mache mir gedanken"
+Replace stigmatizing terms with neutral ones:
+- ❌ "anxious", "desperate", "panicked"
+- ✅ "sensitive", "cautious", "mindful", "thoughtful", "reflective", "ponder", "think things over"
 ```
 
-##### 1.2.2 Extraversion: Party-Fokus
+##### 1.2.2 Extraversion: Party Focus
 
-**Aktuell** (zu starker Fokus auf soziale Events):
-- `"party"`, `"ausgehen"`, `"treffen"`, `"gesellig"`
+**Currently** (too strong focus on social events):
+- `"party"`, `"going out"`, `"meeting"`, `"sociable"`
 
-**Problem**: 
-- Ignoriert berufliche Extraversion ("Ich halte gerne Präsentationen", "Ich vernetze mich aktiv")
-- Introvertierte können trotzdem beruflich extravertiert sein
-- Party-Keywords sind kulturell und altersspezifisch
+**Problem**:
+- Ignores professional extraversion ("I enjoy giving presentations", "I actively network")
+- Introverts can still be professionally extroverted
+- Party keywords are culturally and age-specific
 
-**Empfehlung**: Ergänze berufliche/alltägliche Keywords:
+**Recommendation**: Add professional/everyday keywords:
 ```
-+ "präsentieren", "vernetzen", "mitreißen", "moderieren", "rede gerne", "offen auf leute zu"
-```
-
-##### 1.2.3 Conscientiousness: Negativ-Bias
-
-**Low-Keywords** (stigmatisierend):
-- `"schlampig"`, `"zerstreut"`, `"chaotisch"`, `"nachlässig"`, `"unzuverlässig"`
-
-**Problem**: Wer bezeichnet sich selbst als "schlampig" oder "unzuverlässig"? Dies führt zu Under-reporting.
-
-**Empfehlung**: Neutralere Begriffe verwenden:
-```
-Ersetze:
-- ❌ "schlampig", "nachlässig", "unzuverlässig"
-- ✅ "kreativ-chaotisch", "intuitiv", "prozessorientiert", "flexibel", "pragmatisch"
++ "present", "network", "energize", "facilitate", "enjoy talking", "approach people openly"
 ```
 
-##### 1.2.4 Openness: Intellektuell-Bias
+##### 1.2.3 Conscientiousness: Negative Bias
 
-**High-Keywords** (zu intellektuell):
-- `"philosophisch"`, `"abstrakt"`, `"intellektuell"`, `"tiefgründig"`
+**Low keywords** (stigmatizing):
+- `"sloppy"`, `"scattered"`, `"chaotic"`, `"negligent"`, `"unreliable"`
 
-**Problem**: Vernachlässigt emotionale und sensorische Offenheit.
+**Problem**: Who describes themselves as "sloppy" or "unreliable"? This leads to under-reporting.
 
-**Beispiel**: Jemand, der gerne neue Restaurants ausprobiert, experimentell kocht, und spontan Reisen unternimmt, ist offen – verwendet aber keine der o.g. Keywords.
-
-**Empfehlung**: Ergänze alltägliche Keywords:
+**Recommendation**: Use more neutral terms:
 ```
-+ "ausprobieren", "entdecken", "experimentell", "erleben", "erkunden", "mal was anderes"
+Replace:
+- ❌ "sloppy", "negligent", "unreliable"
+- ✅ "creatively chaotic", "intuitive", "process-oriented", "flexible", "pragmatic"
+```
+
+##### 1.2.4 Openness: Intellectual Bias
+
+**High keywords** (too intellectual):
+- `"philosophical"`, `"abstract"`, `"intellectual"`, `"profound"`
+
+**Problem**: Neglects emotional and sensory openness.
+
+**Example**: Someone who enjoys trying new restaurants, experiments with cooking, and takes spontaneous trips is open - but uses none of the above keywords.
+
+**Recommendation**: Add everyday keywords:
+```
++ "try out", "discover", "experimental", "experience", "explore", "something different"
 ```
 
 ---
 
 ### 1.3 Spiral Dynamics Keywords (8 Levels)
 
-#### Positive Aspekte ✅
+#### Positive Aspects ✅
 
-- **Differenzierte Level-Abdeckung** (8 Levels)
-- **Bidirektionale Struktur** konsequent
+- **Differentiated level coverage** (8 levels)
+- **Bidirectional structure** consistent
 
-#### Kritikpunkte ❌
+#### Critical Points ❌
 
-##### 1.3.1 Ungleiche Keyword-Dichte
+##### 1.3.1 Unequal Keyword Density
 
-| Level     | High-Keywords | Low-Keywords | Verhältnis |
-|-----------|---------------|--------------|------------|
-| Turquoise | 16-19         | 5            | 3.6:1      |
-| Yellow    | 17            | 5            | 3.4:1      |
-| Green     | 18            | 6            | 3.0:1      |
-| Orange    | 17-18         | 5            | 3.5:1      |
-| Blue      | 18            | 5            | 3.6:1      |
-| Red       | 18            | 5            | 3.6:1      |
-| Purple    | 17            | 4            | 4.25:1     |
-| Beige     | 15            | 3            | 5.0:1      |
+| Level     | High Keywords | Low Keywords | Ratio  |
+|-----------|---------------|--------------|--------|
+| Turquoise | 16-19         | 5            | 3.6:1  |
+| Yellow    | 17            | 5            | 3.4:1  |
+| Green     | 18            | 6            | 3.0:1  |
+| Orange    | 17-18         | 5            | 3.5:1  |
+| Blue      | 18            | 5            | 3.6:1  |
+| Red       | 18            | 5            | 3.6:1  |
+| Purple    | 17            | 4            | 4.25:1 |
+| Beige     | 15            | 3            | 5.0:1  |
 
-**Problem**: 
-- Höhere Levels (Turquoise, Yellow) werden überrepräsentiert (mehr Keywords)
-- Low-Keywords extrem unterrepräsentiert (3-6 pro Level vs. 15-19 High)
+**Problem**:
+- Higher levels (Turquoise, Yellow) are overrepresented (more keywords)
+- Low keywords extremely underrepresented (3-6 per level vs. 15-19 high)
 
-**Empfehlung**: Low-Keywords auf 10-15 pro Level erhöhen.
+**Recommendation**: Increase low keywords to 10-15 per level.
 
-##### 1.3.2 Akademische Terminologie
+##### 1.3.2 Academic Terminology
 
-**Beispiele** (werden von Normalpersonen nicht verwendet):
-- Turquoise: `"holistisch"`, `"integral"`, `"symbiose"`, `"transzendent"`
-- Yellow: `"emergent"`, `"meta-ebene"`, `"systemisch"`, `"paradox"`
+**Examples** (not used by average people):
+- Turquoise: `"holistic"`, `"integral"`, `"symbiosis"`, `"transcendent"`
+- Yellow: `"emergent"`, `"meta-level"`, `"systemic"`, `"paradox"`
 
-**Problem**: Diese Begriffe verwenden nur akademisch gebildete Nutzer. Alle anderen werden Turquoise/Yellow unter-detektiert, auch wenn sie diese Denkweisen haben.
+**Problem**: Only academically educated users use these terms. Everyone else will have Turquoise/Yellow under-detected, even if they have these mindsets.
 
-**Empfehlung**: Alltagssprache ergänzen:
+**Recommendation**: Add everyday language:
 ```
 Turquoise:
-+ "alles hängt zusammen", "big picture", "ganzheitlich", "vernetzt denken"
++ "everything is connected", "big picture", "holistic", "think in networks"
 
 Yellow:
-+ "kommt drauf an", "sowohl als auch", "situationsabhängig", "flexibel denken", "mehrere perspektiven"
++ "it depends", "both and", "situational", "think flexibly", "multiple perspectives"
 ```
 
-##### 1.3.3 Kulturelle Bias: Blue-Keywords
+##### 1.3.3 Cultural Bias: Blue Keywords
 
-**Aktuell** (westlich-konservativ geprägt):
-- `"ordnung"`, `"pflicht"`, `"autorität"`, `"disziplin"`, `"gesetz"`, `"rechtmäßig"`
+**Currently** (Western-conservative influenced):
+- `"order"`, `"duty"`, `"authority"`, `"discipline"`, `"law"`, `"lawful"`
 
-**Problem**: 
-- Stark auf westliche, autoritäre Blue-Ausprägung fokussiert
-- Ignoriert andere Blue-Manifestationen:
-  - Religiöse Hingabe ohne Autoritätsfokus
-  - Traditionswahrung in kollektivistischen Kulturen
-  - Moralische Prinzipien ohne Gesetzesbezug
+**Problem**:
+- Strongly focused on Western, authoritarian Blue manifestation
+- Ignores other Blue manifestations:
+  - Religious devotion without authority focus
+  - Tradition preservation in collectivist cultures
+  - Moral principles without legal reference
 
-**Empfehlung**: Ergänze vielfältige Blue-Ausdrucksformen:
+**Recommendation**: Add diverse Blue expressions:
 ```
-+ "hingabe", "opferbereitschaft", "gemeinschaftsdienst", "tradition bewahren", "prinzipien treu bleiben"
++ "devotion", "sacrifice", "community service", "preserve tradition", "stay true to principles"
 ```
 
-##### 1.3.4 Red-Keywords: Aggression-Fokus
+##### 1.3.4 Red Keywords: Aggression Focus
 
-**Aktuell** (sehr aggressiv konnotiert):
-- `"macht"`, `"dominanz"`, `"eroberung"`, `"kämpfen"`, `"kontrolle"`
+**Currently** (very aggressively connoted):
+- `"power"`, `"dominance"`, `"conquest"`, `"fight"`, `"control"`
 
-**Problem**: 
-- Gesunde Red-Ausprägungen (Durchsetzungsfähigkeit, Selbstbehauptung, Mut) werden unterrepräsentiert
-- Nutzer vermeiden aggressive Selbstbeschreibung → Under-reporting
+**Problem**:
+- Healthy Red manifestations (assertiveness, self-assertion, courage) are underrepresented
+- Users avoid aggressive self-description → under-reporting
 
-**Empfehlung**: Ergänze konstruktive Red-Keywords:
+**Recommendation**: Add constructive Red keywords:
 ```
-+ "für mich einstehen", "grenzen setzen", "durchsetzen", "entschlossen", "selbstbewusst handeln", "mut zeigen"
++ "stand up for myself", "set boundaries", "assert", "determined", "act confidently", "show courage"
 ```
 
 ---
 
-## Teil 2: Generelle strukturelle Kritik
+## Part 2: General Structural Critique
 
-### 2.1 Fehlende Gewichtung
+### 2.1 Missing Weighting
 
-**Problem**: Alle Keywords haben gleiches Gewicht (Zählwert = 1).
+**Problem**: All keywords have equal weight (count value = 1).
 
-**Beispiele**:
-- "ein bisschen nervös" → Neuroticism-high +1
-- "total gestresst" → Neuroticism-high +1
-- Beide identisch gewichtet, obwohl Intensität stark unterschiedlich!
+**Examples**:
+- "a bit nervous" → Neuroticism-high +1
+- "totally stressed" → Neuroticism-high +1
+- Both weighted identically, even though intensity is very different!
 
-**Empfehlung**: Intensitäts-Modifier implementieren
+**Recommendation**: Implement intensity modifiers
 
-#### Implementierungsvorschlag
+#### Implementation Suggestion
 
 ```javascript
-// Intensitäts-Modifier (vor Keyword)
+// Intensity modifiers (before keyword)
 const intensityModifiers = {
-  high: ['sehr', 'extrem', 'total', 'komplett', 'absolut', 'wahnsinnig'],
-  medium: ['ziemlich', 'recht', 'eher', 'relativ'],
-  low: ['ein bisschen', 'etwas', 'manchmal', 'gelegentlich', 'leicht']
+  high: ['very', 'extremely', 'totally', 'completely', 'absolutely', 'insanely'],
+  medium: ['quite', 'fairly', 'rather', 'relatively'],
+  low: ['a bit', 'somewhat', 'sometimes', 'occasionally', 'slightly']
 };
 
-// Gewichtung
+// Weighting
 const weights = {
   high: 1.5,
   medium: 1.0,
   low: 0.5
 };
 
-// Beispiel-Analyse
-"Ich bin sehr nervös" → Neuroticism-high +1.5
-"Ich bin etwas nervös" → Neuroticism-high +0.5
+// Example analysis
+"I am very nervous" → Neuroticism-high +1.5
+"I am somewhat nervous" → Neuroticism-high +0.5
 ```
 
-**Vorteil**: Nuancierteres Profil, weniger Noise durch leichte Erwähnungen.
+**Advantage**: More nuanced profile, less noise from slight mentions.
 
 ---
 
-### 2.2 Fehlende Negations-Erkennung
+### 2.2 Missing Negation Detection
 
-**Problem**: Negationen werden nicht erkannt.
+**Problem**: Negations are not detected.
 
-**Beispiele**:
+**Examples**:
 
-| User-Input                          | Aktuelles Verhalten              | Korrektes Verhalten        |
-|-------------------------------------|----------------------------------|----------------------------|
-| "Ich bin nicht besonders spontan"  | Wechsel-high +1 (`spontan`)      | Wechsel-low +1             |
-| "Ich fühle mich kaum gestresst"    | Neuroticism-high +1 (`gestresst`)| Neuroticism-low +1         |
-| "Ich bin wenig organisiert"        | Conscientiousness-high +1        | Conscientiousness-low +1   |
+| User Input                           | Current Behavior                   | Correct Behavior        |
+|--------------------------------------|------------------------------------|-------------------------|
+| "I'm not particularly spontaneous"   | Change-high +1 (`spontaneous`)     | Change-low +1           |
+| "I barely feel stressed"             | Neuroticism-high +1 (`stressed`)   | Neuroticism-low +1      |
+| "I'm not very organized"             | Conscientiousness-high +1          | Conscientiousness-low +1|
 
-**Empfehlung**: Negations-Pattern vor Keywords prüfen
+**Recommendation**: Check for negation patterns before keywords
 
-#### Implementierungsvorschlag
+#### Implementation Suggestion
 
 ```javascript
-// Negations-Pattern (Deutsch)
+// Negation patterns (German)
 const negationPatterns = [
   /\b(nicht|kein|keine|keinen|wenig|kaum|selten)\b\s+\w*\s*{KEYWORD}/i,
   /{KEYWORD}\s+\w*\s*\b(nicht|kein|keine|keinen)\b/i
 ];
 
-// Negations-Pattern (Englisch)
+// Negation patterns (English)
 const negationPatternsEN = [
   /\b(not|no|hardly|barely|rarely|seldom)\b\s+\w*\s*{KEYWORD}/i,
   /{KEYWORD}\s+\w*\s*\b(not|no)\b/i
 ];
 
-// Analyse-Logik
+// Analysis logic
 if (negationDetected) {
-  // Invertiere High ↔ Low
+  // Invert High ↔ Low
   if (keywordType === 'high') {
     low++;
   } else {
@@ -341,57 +341,57 @@ if (negationDetected) {
 }
 ```
 
-**Vorteil**: 30-40% genauere Keyword-Erkennung (geschätzt, basierend auf Negations-Häufigkeit in natürlicher Sprache).
+**Advantage**: 30-40% more accurate keyword detection (estimated, based on negation frequency in natural language).
 
 ---
 
-### 2.3 Fehlende Kontext-Fenster (Sentiment-Analyse)
+### 2.3 Missing Context Windows (Sentiment Analysis)
 
-**Problem**: Keywords werden isoliert gezählt, ohne Kontext.
+**Problem**: Keywords are counted in isolation, without context.
 
-**Beispiel**:
+**Example**:
 
-| User-Input                                  | Enthält    | Bedeutung                     | Korrekte Klassifizierung |
-|---------------------------------------------|------------|-------------------------------|--------------------------|
-| "Ich fühle mich manchmal einsam."          | `"einsam"` | Negativ, leidend              | Nähe-low + Neuroticism-high |
-| "Ich genieße es, allein zu sein."          | `"allein"` | Positiv, gewünscht            | Distanz-high + Neuroticism-low |
+| User Input                               | Contains   | Meaning                | Correct Classification        |
+|------------------------------------------|------------|------------------------|-------------------------------|
+| "I sometimes feel lonely."               | `"lonely"` | Negative, suffering    | Closeness-low + Neuroticism-high |
+| "I enjoy being alone."                   | `"alone"`  | Positive, desired      | Distance-high + Neuroticism-low  |
 
-Beide enthalten ähnliche Keywords, aber völlig unterschiedliche Sentiment!
+Both contain similar keywords, but completely different sentiment!
 
-**Empfehlung**: Satz-basierte Sentiment-Analyse
+**Recommendation**: Sentence-based sentiment analysis
 
-#### Implementierungsvorschlag (Phase 1: Einfache Heuristik)
+#### Implementation Suggestion (Phase 1: Simple Heuristic)
 
 ```javascript
-// Sentiment-Indikatoren
+// Sentiment indicators
 const positiveIndicators = [
-  'genieße', 'liebe', 'schätze', 'mag', 'freue mich', 'erfüllt mich'
+  'enjoy', 'love', 'appreciate', 'like', 'look forward to', 'fulfills me'
 ];
 
 const negativeIndicators = [
-  'fühle mich', 'belastet', 'nervt', 'stört', 'macht mir sorgen', 'frustriert'
+  'feel', 'burdened', 'annoys', 'bothers', 'worries me', 'frustrated'
 ];
 
-// Analyse im Satz-Kontext
+// Analysis in sentence context
 function analyzeKeywordInContext(sentence, keyword) {
   const sentimentScore = calculateSentiment(sentence);
-  
+
   if (sentimentScore < -0.3) {
-    // Negativer Kontext: Verstärke negative Dimension
+    // Negative context: Strengthen negative dimension
     return { dimension: 'low', weight: 1.2 };
   } else if (sentimentScore > 0.3) {
-    // Positiver Kontext: Verstärke positive Dimension
+    // Positive context: Strengthen positive dimension
     return { dimension: 'high', weight: 1.2 };
   }
   return { dimension: 'neutral', weight: 1.0 };
 }
 ```
 
-#### Implementierungsvorschlag (Phase 2: NLP-basiert)
+#### Implementation Suggestion (Phase 2: NLP-based)
 
 ```javascript
-// Integration eines Sentiment-Analysis-Modells
-// z.B. using Hugging Face Transformers
+// Integration of a sentiment analysis model
+// e.g. using Hugging Face Transformers
 import { pipeline } from '@xenova/transformers';
 
 const sentimentPipeline = await pipeline(
@@ -405,48 +405,48 @@ async function analyzeSentiment(sentence) {
 }
 ```
 
-**Vorteil**: 50-70% genauere Keyword-Interpretation (geschätzt).
+**Advantage**: 50-70% more accurate keyword interpretation (estimated).
 
 ---
 
-### 2.4 Sprachliche Vielfalt fehlt
+### 2.4 Linguistic Diversity Missing
 
-**Problem**: Nur DE/EN, keine anderen Sprachen.
+**Problem**: Only DE/EN, no other languages.
 
-**Aktuell unterstützt**:
-- 🇩🇪 Deutsch
-- 🇬🇧 Englisch
+**Currently supported**:
+- 🇩🇪 German
+- 🇬🇧 English
 
-**Fehlende EU-Hauptsprachen**:
-- 🇫🇷 Französisch
-- 🇪🇸 Spanisch
-- 🇮🇹 Italienisch
-- 🇳🇱 Niederländisch
+**Missing major EU languages**:
+- 🇫🇷 French
+- 🇪🇸 Spanish
+- 🇮🇹 Italian
+- 🇳🇱 Dutch
 
-**Empfehlung**: Mindestens FR, ES, IT ergänzen für EU-Nutzer.
+**Recommendation**: Add at least FR, ES, IT for EU users.
 
-**Aufwand-Schätzung**:
-- Pro Sprache: ~40 Stunden (Übersetzung + Validierung)
-- Gesamt (FR, ES, IT): ~120 Stunden
+**Effort estimate**:
+- Per language: ~40 hours (translation + validation)
+- Total (FR, ES, IT): ~120 hours
 
 ---
 
-### 2.5 Keyword-Updates sind schwierig
+### 2.5 Keyword Updates Are Difficult
 
-**Problem**: Keywords sind hardcodiert in `behaviorLogger.js`, keine dynamische Erweiterung möglich.
+**Problem**: Keywords are hardcoded in `behaviorLogger.js`, no dynamic extension possible.
 
-**Aktuelle Nachteile**:
-- Neue Keywords erfordern Code-Deployment
-- Kein A/B-Testing möglich
-- Keine Versions-Historie
-- Keine Nutzer-spezifische Anpassung
+**Current disadvantages**:
+- New keywords require code deployment
+- No A/B testing possible
+- No version history
+- No user-specific customization
 
-**Empfehlung**: Keywords in Datenbank auslagern
+**Recommendation**: Move keywords to database
 
-#### Vorgeschlagene Architektur
+#### Proposed Architecture
 
 ```sql
--- Keyword-Tabelle
+-- Keyword table
 CREATE TABLE keywords (
   id INT PRIMARY KEY AUTO_INCREMENT,
   framework ENUM('RIEMANN', 'BIG5', 'SPIRAL_DYNAMICS'),
@@ -461,7 +461,7 @@ CREATE TABLE keywords (
   updated_at TIMESTAMP
 );
 
--- Versions-Historie
+-- Version history
 CREATE TABLE keyword_versions (
   id INT PRIMARY KEY AUTO_INCREMENT,
   keyword_id INT,
@@ -474,142 +474,142 @@ CREATE TABLE keyword_versions (
 );
 ```
 
-**Vorteile**:
-- ✅ Admin-UI zur Verwaltung
-- ✅ A/B-Testing möglich (siehe Teil 3)
-- ✅ Rollback bei Problemen
-- ✅ Nutzer-spezifische Keyword-Sets
+**Advantages**:
+- ✅ Admin UI for management
+- ✅ A/B testing possible (see Part 3)
+- ✅ Rollback on problems
+- ✅ User-specific keyword sets
 
 ---
 
-## Teil 3: Spezifische Verbesserungsvorschläge
+## Part 3: Specific Improvement Suggestions
 
-### 3.1 Riemann: Nähe Low-Keywords erweitern
+### 3.1 Riemann: Expand Closeness Low Keywords
 
-**Aktuell** (9 Keywords):
+**Currently** (9 keywords):
 ```
-distanziert, abstand, zurückgezogen, isoliert, einsam, 
+distanziert, abstand, zurückgezogen, isoliert, einsam,
 kühl, unpersönlich, gleichgültig, oberflächlich
 ```
 
-**Ergänzung** (6 neue):
+**Extension** (6 new):
 ```
-+ "halte distanz", "brauche abstand", "allein sein", 
++ "halte distanz", "brauche abstand", "allein sein",
   "für mich", "unabhängig", "nicht so eng"
 ```
 
-**Neue Gesamt-Anzahl**: 15 Keywords ✅
+**New total count**: 15 keywords ✅
 
 ---
 
-### 3.2 Big5: Neuroticism High-Keywords neutralisieren
+### 3.2 Big5: Neutralize Neuroticism High Keywords
 
-**Aktuell problematisch** (stigmatisierend):
+**Currently problematic** (stigmatizing):
 ```
 ängstlich, nervös, verzweifelt, panisch
 ```
 
-**Neutraler ersetzen durch**:
+**Replace with more neutral**:
 ```
-- "sensibel", "vorsichtig", "achtsam", "bedacht", "reflektiert", 
-  "grüble", "mache mir gedanken", "nachdenklich", "besorgt um"
+- "sensitive", "cautious", "mindful", "thoughtful", "reflective",
+  "ponder", "think things over", "contemplative", "concerned about"
 ```
 
-**Vorteil**: Nutzer verwenden eher neutrale Selbstbeschreibungen → höhere Detection-Rate
+**Advantage**: Users are more likely to use neutral self-descriptions → higher detection rate
 
 ---
 
-### 3.3 Spiral Dynamics: Alltagssprache ergänzen
+### 3.3 Spiral Dynamics: Add Everyday Language
 
-#### Yellow (Aktuell zu akademisch)
+#### Yellow (Currently too academic)
 
-**Aktuell**:
+**Currently**:
 ```
-systemisch, komplex, integriert, adaptiv, paradox, emergent, meta-ebene
-```
-
-**Alltagssprache**:
-```
-+ "kommt drauf an", "sowohl als auch", "situationsabhängig", 
-  "flexibel denken", "mehrere perspektiven", "je nachdem"
+systemic, complex, integrated, adaptive, paradox, emergent, meta-level
 ```
 
-#### Turquoise (Aktuell zu esoterisch)
+**Everyday language**:
+```
++ "it depends", "both and", "situational",
+  "think flexibly", "multiple perspectives", "depending on"
+```
 
-**Aktuell**:
+#### Turquoise (Currently too esoteric)
+
+**Currently**:
 ```
-holistisch, transzendent, integral, symbiose
+holistic, transcendent, integral, symbiosis
 ```
 
-**Alltagssprache**:
+**Everyday language**:
 ```
-+ "alles hängt zusammen", "big picture", "ganzheitlich", 
-  "vernetzt denken", "im großen ganzen"
++ "everything is connected", "big picture", "holistic",
+  "think in networks", "in the grand scheme"
 ```
 
 ---
 
-## Teil 4: Priorisierte Umsetzungs-Roadmap
+## Part 4: Prioritized Implementation Roadmap
 
-### Phase 1: Kurzfristig (1-2 Monate)
+### Phase 1: Short-term (1-2 months)
 
-**Ziel**: Schnelle Wins, größter Impact mit minimalem Aufwand
+**Goal**: Quick wins, biggest impact with minimal effort
 
-| Nr. | Maßnahme | Aufwand | Impact | Priorität |
-|-----|----------|---------|--------|-----------|
-| 1.1 | Low-Keywords auf 15 pro Dimension erweitern | 20h | Hoch | ⭐⭐⭐ |
-| 1.2 | Alltagssprache-Synonyme ergänzen (50+ neue Keywords) | 30h | Hoch | ⭐⭐⭐ |
-| 1.3 | Neuroticism-Keywords neutralisieren | 10h | Hoch | ⭐⭐⭐ |
+| No. | Measure | Effort | Impact | Priority |
+|-----|---------|--------|--------|----------|
+| 1.1 | Expand low keywords to 15 per dimension | 20h | High | ⭐⭐⭐ |
+| 1.2 | Add everyday language synonyms (50+ new keywords) | 30h | High | ⭐⭐⭐ |
+| 1.3 | Neutralize Neuroticism keywords | 10h | High | ⭐⭐⭐ |
 
-**Gesamt-Aufwand Phase 1**: 60 Stunden
+**Total effort Phase 1**: 60 hours
 
-**Erwarteter Verbesserung**: +30% Keyword-Detection-Rate
-
----
-
-### Phase 2: Mittelfristig (3-4 Monate)
-
-**Ziel**: Technische Verbesserungen der Analyse-Qualität
-
-| Nr. | Maßnahme | Aufwand | Impact | Priorität |
-|-----|----------|---------|--------|-----------|
-| 2.1 | Negations-Erkennung implementieren | 40h | Hoch | ⭐⭐⭐ |
-| 2.2 | Intensitäts-Modifier einführen | 30h | Mittel | ⭐⭐ |
-| 2.3 | Überlappungen bereinigen (Dimensionsspezifische Keywords) | 50h | Mittel | ⭐⭐ |
-
-**Gesamt-Aufwand Phase 2**: 120 Stunden
-
-**Erwarteter Verbesserung**: +25% Analyse-Genauigkeit
+**Expected improvement**: +30% keyword detection rate
 
 ---
 
-### Phase 3: Langfristig (5-6 Monate)
+### Phase 2: Medium-term (3-4 months)
 
-**Ziel**: Infrastruktur für kontinuierliche Verbesserung
+**Goal**: Technical improvements in analysis quality
 
-| Nr. | Maßnahme | Aufwand | Impact | Priorität |
-|-----|----------|---------|--------|-----------|
-| 3.1 | Sentiment-Analyse für Kontext-Verständnis | 80h | Hoch | ⭐⭐⭐ |
-| 3.2 | Keywords in Datenbank auslagern | 60h | Mittel | ⭐⭐ |
-| 3.3 | A/B-Testing-Infrastruktur (siehe Teil 5) | 120h | Hoch | ⭐⭐⭐ |
-| 3.4 | Admin-UI zur Keyword-Verwaltung | 40h | Mittel | ⭐⭐ |
+| No. | Measure | Effort | Impact | Priority |
+|-----|---------|--------|--------|----------|
+| 2.1 | Implement negation detection | 40h | High | ⭐⭐⭐ |
+| 2.2 | Introduce intensity modifiers | 30h | Medium | ⭐⭐ |
+| 2.3 | Clean up overlaps (dimension-specific keywords) | 50h | Medium | ⭐⭐ |
 
-**Gesamt-Aufwand Phase 3**: 300 Stunden
+**Total effort Phase 2**: 120 hours
 
-**Erwarteter Verbesserung**: +40% Langzeit-Optimierung durch kontinuierliches A/B-Testing
+**Expected improvement**: +25% analysis accuracy
 
 ---
 
-## Teil 5: A/B-Testing-Konzept für Keywords
+### Phase 3: Long-term (5-6 months)
 
-### 5.1 Grundarchitektur
+**Goal**: Infrastructure for continuous improvement
 
-**Ziel**: Systematisches, datengetriebenes Testen neuer Keywords
+| No. | Measure | Effort | Impact | Priority |
+|-----|---------|--------|--------|----------|
+| 3.1 | Sentiment analysis for context understanding | 80h | High | ⭐⭐⭐ |
+| 3.2 | Move keywords to database | 60h | Medium | ⭐⭐ |
+| 3.3 | A/B testing infrastructure (see Part 5) | 120h | High | ⭐⭐⭐ |
+| 3.4 | Admin UI for keyword management | 40h | Medium | ⭐⭐ |
 
-#### 5.1.1 Datenbank-Schema Erweiterung
+**Total effort Phase 3**: 300 hours
+
+**Expected improvement**: +40% long-term optimization through continuous A/B testing
+
+---
+
+## Part 5: A/B Testing Concept for Keywords
+
+### 5.1 Basic Architecture
+
+**Goal**: Systematic, data-driven testing of new keywords
+
+#### 5.1.1 Database Schema Extension
 
 ```sql
--- Keyword-Varianten
+-- Keyword variants
 CREATE TABLE keyword_variants (
   id INT PRIMARY KEY AUTO_INCREMENT,
   framework ENUM('RIEMANN', 'BIG5', 'SPIRAL_DYNAMICS'),
@@ -623,7 +623,7 @@ CREATE TABLE keyword_variants (
   notes TEXT
 );
 
--- Performance-Tracking
+-- Performance tracking
 CREATE TABLE keyword_performance (
   id INT PRIMARY KEY AUTO_INCREMENT,
   keyword_variant_id INT,
@@ -637,7 +637,7 @@ CREATE TABLE keyword_performance (
   FOREIGN KEY (keyword_variant_id) REFERENCES keyword_variants(id)
 );
 
--- A/B-Test Konfiguration
+-- A/B test configuration
 CREATE TABLE keyword_ab_tests (
   id INT PRIMARY KEY AUTO_INCREMENT,
   test_name VARCHAR(100),
@@ -654,82 +654,82 @@ CREATE TABLE keyword_ab_tests (
 );
 ```
 
-#### 5.1.2 User-Zuweisung zu Test-Gruppen
+#### 5.1.2 User Assignment to Test Groups
 
-**Strategie**: Konsistentes Hashing (deterministisch)
+**Strategy**: Consistent hashing (deterministic)
 
 ```typescript
 function assignUserToTestGroup(userId: string, testId: string): string {
-  // Hash User-ID + Test-ID für deterministische Zuweisung
+  // Hash User-ID + Test-ID for deterministic assignment
   const hash = crypto
     .createHash('sha256')
     .update(`${userId}-${testId}`)
     .digest('hex');
-  
+
   const hashValue = parseInt(hash.substring(0, 8), 16);
   const groups = ['control', 'variant_a', 'variant_b'];
-  
+
   return groups[hashValue % groups.length];
 }
 ```
 
-**Vorteil**: Gleicher User bekommt immer gleiche Gruppe (keine Kontamination).
+**Advantage**: Same user always gets same group (no contamination).
 
-#### 5.1.3 Keyword-Loading zur Laufzeit
+#### 5.1.3 Keyword Loading at Runtime
 
 ```typescript
 async function getKeywordsForUser(userId: string, framework: string) {
-  // Prüfe aktive A/B-Tests
+  // Check active A/B tests
   const activeTests = await db.query(`
-    SELECT * FROM keyword_ab_tests 
-    WHERE framework = ? 
-    AND status = 'running' 
+    SELECT * FROM keyword_ab_tests
+    WHERE framework = ?
+    AND status = 'running'
     AND NOW() BETWEEN start_date AND end_date
   `, [framework]);
-  
+
   let keywords = BASELINE_KEYWORDS[framework]; // Default
-  
+
   for (const test of activeTests) {
     const userGroup = assignUserToTestGroup(userId, test.id);
-    
+
     if (userGroup !== 'control') {
-      // Lade Keyword-Varianten für Test-Gruppe
+      // Load keyword variants for test group
       const variants = await db.query(`
         SELECT dimension, direction, keyword, weight
         FROM keyword_variants
         WHERE framework = ? AND variant_group = ? AND is_active = true
       `, [framework, userGroup]);
-      
-      // Merge mit Baseline
+
+      // Merge with baseline
       keywords = mergeKeywords(keywords, variants);
     }
   }
-  
+
   return keywords;
 }
 ```
 
-### 5.2 Success-Metriken
+### 5.2 Success Metrics
 
-**Was macht ein Keyword erfolgreich?**
+**What makes a keyword successful?**
 
-#### 5.2.1 Primäre Metriken
+#### 5.2.1 Primary Metrics
 
-| Metrik | Beschreibung | Zielwert |
-|--------|--------------|----------|
-| **Detection Rate** | Wie oft wird es erkannt? | 5-15% der Sessions |
-| **False Positive Rate** | Wie oft in falschem Kontext? | < 10% |
-| **Refinement Acceptance Rate** | Führt zu akzeptierten Refinements? | > 60% |
+| Metric | Description | Target Value |
+|--------|-------------|--------------|
+| **Detection Rate** | How often is it detected? | 5-15% of sessions |
+| **False Positive Rate** | How often in wrong context? | < 10% |
+| **Refinement Acceptance Rate** | Leads to accepted refinements? | > 60% |
 
-#### 5.2.2 Sekundäre Metriken
+#### 5.2.2 Secondary Metrics
 
-| Metrik | Beschreibung |
-|--------|--------------|
-| **User Satisfaction** | Comfort Scores der Sessions (Authentizität) |
-| **Profile Stability** | Weniger Wild-Swings = besser (Delta-Varianz) |
-| **Coverage Diversity** | Verschiedene User-Typen erreicht? |
+| Metric | Description |
+|--------|-------------|
+| **User Satisfaction** | Comfort scores of sessions (authenticity) |
+| **Profile Stability** | Fewer wild swings = better (delta variance) |
+| **Coverage Diversity** | Different user types reached? |
 
-#### 5.2.3 Statistische Signifikanz
+#### 5.2.3 Statistical Significance
 
 ```typescript
 interface KeywordSuccessMetrics {
@@ -739,105 +739,105 @@ interface KeywordSuccessMetrics {
   userSatisfaction: number;
   profileStability: number;
   coverageDiversity: number;
-  
-  // Statistik
+
+  // Statistics
   sampleSize: number;
   confidenceInterval: [number, number];
   pValue: number;
 }
 ```
 
-### 5.3 Test-Beispiel: "Nähe"-Keywords
+### 5.3 Test Example: "Closeness" Keywords
 
-#### Hypothese
+#### Hypothesis
 
-> "Alltagssprache-Keywords erhöhen Detection-Rate um 20% ohne False-Positive-Erhöhung."
+> "Everyday language keywords increase detection rate by 20% without increasing false positives."
 
-#### Test-Setup
+#### Test Setup
 
 **Baseline (Control)**:
 ```
-team, vertrauen, gemeinsam, empathie, fürsorge
-(5 Keywords)
+team, trust, together, empathy, care
+(5 keywords)
 ```
 
-**Variant A (Alltagssprache)**:
+**Variant A (Everyday language)**:
 ```
-Baseline + "zusammen", "für einander", "wir"
-(8 Keywords)
-```
-
-**Variant B (Emotional intensiv)**:
-```
-Baseline + "herzlich", "liebevoll", "innig"
-(8 Keywords)
+Baseline + "together", "for each other", "we"
+(8 keywords)
 ```
 
-**Konfiguration**:
+**Variant B (Emotionally intensive)**:
+```
+Baseline + "warm", "loving", "intimate"
+(8 keywords)
+```
+
+**Configuration**:
 ```typescript
 const test = {
-  test_name: "Naehe_Keywords_Alltagssprache_vs_Emotional",
+  test_name: "Closeness_Keywords_Everyday_vs_Emotional",
   framework: "RIEMANN",
-  dimension: "naehe",
+  dimension: "closeness",
   control_group: "baseline",
   treatment_groups: ["variant_a", "variant_b"],
   start_date: "2024-02-09",
-  end_date: "2024-03-09", // 1 Monat
-  target_sample_size: 300, // 100 pro Gruppe
-  hypothesis: "Variant A erhöht Detection-Rate um 20%"
+  end_date: "2024-03-09", // 1 month
+  target_sample_size: 300, // 100 per group
+  hypothesis: "Variant A increases detection rate by 20%"
 };
 ```
 
-#### Erwartete Ergebnisse
+#### Expected Results
 
-| Gruppe | Detection Rate | Refinement Acceptance | Winner? |
-|--------|----------------|----------------------|---------|
+| Group | Detection Rate | Refinement Acceptance | Winner? |
+|-------|----------------|----------------------|---------|
 | Control | 8% | 55% | - |
 | Variant A | 10.5% (+31%) | 62% (+7pp) | ✅ |
 | Variant B | 7% (-13%) | 58% (+3pp) | ❌ |
 
 **Interpretation**:
-- Variant A gewinnt → Alltagssprache wird neues Baseline
-- Variant B verliert → Emotional-Keywords zu spezifisch
+- Variant A wins → Everyday language becomes new baseline
+- Variant B loses → Emotional keywords too specific
 
-### 5.4 Automatisierte Auswertung
+### 5.4 Automated Evaluation
 
 ```typescript
 async function analyzeABTestResults(testId: string) {
   const results = await db.query(`
-    SELECT 
+    SELECT
       kv.variant_group,
       COUNT(DISTINCT kp.session_id) as sessions,
       COUNT(kp.id) as total_detections,
       AVG(kp.comfort_score) as avg_comfort,
-      SUM(CASE WHEN kp.refinement_accepted THEN 1 ELSE 0 END) / 
+      SUM(CASE WHEN kp.refinement_accepted THEN 1 ELSE 0 END) /
         COUNT(DISTINCT kp.session_id) as refinement_acceptance_rate
     FROM keyword_performance kp
     JOIN keyword_variants kv ON kp.keyword_variant_id = kv.id
     WHERE kv.variant_group IN (...)
     GROUP BY kv.variant_group
   `, [testId]);
-  
-  // Chi-Square-Test für statistische Signifikanz
+
+  // Chi-square test for statistical significance
   const statisticalSignificance = performChiSquareTest(results);
-  
-  // Gewinner ermitteln
-  const winner = results.reduce((best, current) => 
-    current.refinement_acceptance_rate > best.refinement_acceptance_rate 
-      ? current 
+
+  // Determine winner
+  const winner = results.reduce((best, current) =>
+    current.refinement_acceptance_rate > best.refinement_acceptance_rate
+      ? current
       : best
   );
-  
+
   return {
     results,
     statisticalSignificance,
     recommendation: winner.variant_group,
-    reasoning: `${winner.variant_group} hat die höchste Refinement-Acceptance-Rate`
+    reasoning: `${winner.variant_group} has the highest refinement acceptance rate`
   };
 }
 ```
 
-### 5.5 Dashboard für Admins
+### 5.5 Dashboard for Admins
 
 **UI in Admin Console**:
 
@@ -845,18 +845,18 @@ async function analyzeABTestResults(testId: string) {
 function KeywordABTestDashboard() {
   return (
     <div>
-      <h2>Aktive A/B-Tests</h2>
-      
+      <h2>Active A/B Tests</h2>
+
       {activeTests.map(test => (
         <div key={test.id}>
           <h3>{test.test_name}</h3>
           <p>{test.hypothesis}</p>
-          
-          <ProgressBar 
-            current={test.current_sample_size} 
-            target={test.target_sample_size} 
+
+          <ProgressBar
+            current={test.current_sample_size}
+            target={test.target_sample_size}
           />
-          
+
           <div className="live-metrics">
             {test.groups.map(group => (
               <div key={group.name}>
@@ -869,10 +869,10 @@ function KeywordABTestDashboard() {
               </div>
             ))}
           </div>
-          
+
           {test.current_sample_size >= test.target_sample_size && (
             <button onClick={() => finalizeTest(test.id)}>
-              Test beenden & Analyse anzeigen
+              End test & show analysis
             </button>
           )}
         </div>
@@ -882,45 +882,45 @@ function KeywordABTestDashboard() {
 }
 ```
 
-### 5.6 Graduelle Rollout-Strategie
+### 5.6 Gradual Rollout Strategy
 
-Nach erfolgreichem Test:
+After successful test:
 
 ```typescript
-// Phase 1: Winner wird zu "beta" (10% aller User)
-updateVariantGroup('variant_a', { 
+// Phase 1: Winner becomes "beta" (10% of all users)
+updateVariantGroup('variant_a', {
   variant_group: 'beta',
-  rollout_percentage: 10 
+  rollout_percentage: 10
 });
 
-// Phase 2: Nach 2 Wochen → 50%
+// Phase 2: After 2 weeks → 50%
 updateVariantGroup('beta', { rollout_percentage: 50 });
 
-// Phase 3: Nach 4 Wochen → 100% (wird zu neuem Baseline)
+// Phase 3: After 4 weeks → 100% (becomes new baseline)
 promoteToBaseline('beta');
 ```
 
-**Vorteil**: Schrittweiser Rollout minimiert Risiko bei Problemen.
+**Advantage**: Gradual rollout minimizes risk in case of problems.
 
-### 5.7 Qualitäts-Checks
+### 5.7 Quality Checks
 
-**Manuelle Review von Stichproben**:
+**Manual review of samples**:
 
 ```tsx
 function KeywordQualityReview({ testId }) {
   const samples = useRandomSamples(testId, 50);
-  
+
   return (
     <div>
-      <h3>Qualitäts-Review</h3>
+      <h3>Quality Review</h3>
       {samples.map(sample => (
         <div key={sample.id}>
           <p><strong>Context:</strong> "{sample.contextSnippet}"</p>
           <p><strong>Keyword:</strong> {sample.keyword}</p>
           <p><strong>Dimension:</strong> {sample.dimension} ({sample.direction})</p>
-          
+
           <button onClick={() => markAsCorrect(sample.id)}>
-            ✅ Korrekt
+            ✅ Correct
           </button>
           <button onClick={() => markAsFalsePositive(sample.id)}>
             ❌ False Positive
@@ -932,182 +932,182 @@ function KeywordQualityReview({ testId }) {
 }
 ```
 
-### 5.8 Zusammenfassung A/B-Testing
+### 5.8 A/B Testing Summary
 
-**A/B-Testing würde ermöglichen**:
+**A/B testing would enable**:
 
-1. ✅ Objektive Bewertung neuer Keywords
-2. ✅ Kontinuierliche Verbesserung der Erkennung
-3. ✅ Risikominimierung (graduelle Rollouts)
-4. ✅ Datengetriebene Entscheidungen statt Bauchgefühl
-5. ✅ Qualitäts-Sicherung durch Performance-Tracking
+1. ✅ Objective evaluation of new keywords
+2. ✅ Continuous improvement of detection
+3. ✅ Risk minimization (gradual rollouts)
+4. ✅ Data-driven decisions instead of gut feeling
+5. ✅ Quality assurance through performance tracking
 
-**Aufwand**: ca. 120 Stunden Entwicklung (Teil von Phase 3)
+**Effort**: approx. 120 hours of development (part of Phase 3)
 
 ---
 
-## Teil 6: Quantitative Zusammenfassung
+## Part 6: Quantitative Summary
 
-### 6.1 Aktuelle Keyword-Statistiken
+### 6.1 Current Keyword Statistics
 
-| Framework | Dimensionen | Gesamt-Keywords | Ø High/Dimension | Ø Low/Dimension | High:Low-Ratio |
-|-----------|-------------|-----------------|------------------|-----------------|----------------|
+| Framework | Dimensions | Total Keywords | Avg High/Dimension | Avg Low/Dimension | High:Low Ratio |
+|-----------|------------|----------------|-------------------|-------------------|----------------|
 | Riemann-Thomann | 4 | 224 (DE+EN) | 19.25 | 8.75 | 2.2:1 |
 | Big5/OCEAN | 5 | 320 (DE+EN) | 18.4 | 13.2 | 1.4:1 |
 | Spiral Dynamics | 8 | 536 (DE+EN) | 16.875 | 4.625 | 3.65:1 |
-| **GESAMT** | **17** | **1080** | **18.18** | **8.86** | **2.05:1** |
+| **TOTAL** | **17** | **1080** | **18.18** | **8.86** | **2.05:1** |
 
-### 6.2 Empfohlene Erweiterungen
+### 6.2 Recommended Expansions
 
-| Framework | Neue Low-Keywords | Neue High-Keywords (Alltagssprache) | Gesamt neu |
-|-----------|-------------------|-------------------------------------|------------|
-| Riemann-Thomann | +24 (6 pro Dimension) | +16 | +40 |
+| Framework | New Low Keywords | New High Keywords (Everyday language) | Total New |
+|-----------|------------------|--------------------------------------|-----------|
+| Riemann-Thomann | +24 (6 per dimension) | +16 | +40 |
 | Big5/OCEAN | +15 | +20 | +35 |
-| Spiral Dynamics | +40 (5 pro Level) | +32 | +72 |
-| **GESAMT** | **+79** | **+68** | **+147** |
+| Spiral Dynamics | +40 (5 per level) | +32 | +72 |
+| **TOTAL** | **+79** | **+68** | **+147** |
 
-**Neue Gesamt-Anzahl**: 1227 Keywords (+13.6%)
+**New total count**: 1227 keywords (+13.6%)
 
-### 6.3 Erwartete Verbesserungen
+### 6.3 Expected Improvements
 
-| Maßnahme | Detection Rate | Analyse-Genauigkeit | Profile Stability |
-|----------|----------------|---------------------|-------------------|
-| Baseline (aktuell) | 100% | 100% | 100% |
-| + Phase 1 (Low-Keywords, Alltagssprache, Neuroticism-Fix) | +30% | +10% | +5% |
-| + Phase 2 (Negationen, Intensität, Überlappungen) | +15% | +25% | +15% |
-| + Phase 3 (Sentiment, A/B-Testing) | +20% | +40% | +30% |
-| **GESAMT** | **+65%** | **+75%** | **+50%** |
+| Measure | Detection Rate | Analysis Accuracy | Profile Stability |
+|---------|----------------|-------------------|-------------------|
+| Baseline (current) | 100% | 100% | 100% |
+| + Phase 1 (Low keywords, everyday language, Neuroticism fix) | +30% | +10% | +5% |
+| + Phase 2 (Negations, intensity, overlaps) | +15% | +25% | +15% |
+| + Phase 3 (Sentiment, A/B testing) | +20% | +40% | +30% |
+| **TOTAL** | **+65%** | **+75%** | **+50%** |
 
 ---
 
-## Teil 7: Fazit und Empfehlungen
+## Part 7: Conclusions and Recommendations
 
-### 7.1 Haupterkenntnisse
+### 7.1 Main Findings
 
-1. **Ungleichgewicht High/Low ist das größte strukturelle Problem**: Low-Keywords sind systematisch unterrepräsentiert (2-5x weniger als High). Dies führt zu verzerrten Profilen, da negative Ausprägungen schlechter erkannt werden.
+1. **High/Low imbalance is the biggest structural problem**: Low keywords are systematically underrepresented (2-5x less than high). This leads to distorted profiles, as negative manifestations are detected less well.
 
-2. **Neuroticism-Bias ist kritisch für User-Akzeptanz**: Stigmatisierende Keywords ("verzweifelt", "panisch") führen zu Under-reporting. Nutzer vermeiden negative Selbstbeschreibung.
+2. **Neuroticism bias is critical for user acceptance**: Stigmatizing keywords ("desperate", "panicked") lead to under-reporting. Users avoid negative self-description.
 
-3. **Akademische Sprache limitiert Reichweite**: Viele Keywords (v.a. Spiral Dynamics Turquoise/Yellow) werden nur von akademisch gebildeten Nutzern verwendet. Alltagssprache fehlt.
+3. **Academic language limits reach**: Many keywords (especially Spiral Dynamics Turquoise/Yellow) are only used by academically educated users. Everyday language is missing.
 
-4. **Fehlende technische Features reduzieren Genauigkeit**: Negations-Erkennung und Sentiment-Analyse sind essentiell für kontextuelle Keyword-Interpretation.
+4. **Missing technical features reduce accuracy**: Negation detection and sentiment analysis are essential for contextual keyword interpretation.
 
-5. **A/B-Testing-Infrastruktur fehlt**: Keine Möglichkeit, neue Keywords systematisch zu testen und zu optimieren.
+5. **A/B testing infrastructure is missing**: No way to systematically test and optimize new keywords.
 
-### 7.2 Top-Prioritäten
+### 7.2 Top Priorities
 
-#### Sofort umsetzen (Phase 1, Aufwand: 60h)
+#### Implement Immediately (Phase 1, Effort: 60h)
 
-1. ⭐⭐⭐ **Low-Keywords auf 15 pro Dimension erweitern** (20h)
-   - Größter Impact für Genauigkeit
-   - Einfach umsetzbar (reine Keyword-Addition)
-   
-2. ⭐⭐⭐ **Alltagssprache-Synonyme ergänzen** (30h)
-   - Erhöht Detection-Rate um geschätzt 30%
-   - Erreichbar ohne Code-Änderungen
-   
-3. ⭐⭐⭐ **Neuroticism-Keywords neutralisieren** (10h)
-   - Kritisch für User-Akzeptanz
-   - Verhindert Under-reporting
+1. ⭐⭐⭐ **Expand low keywords to 15 per dimension** (20h)
+   - Biggest impact on accuracy
+   - Easy to implement (pure keyword addition)
 
-#### Mittelfristig (Phase 2, Aufwand: 120h)
+2. ⭐⭐⭐ **Add everyday language synonyms** (30h)
+   - Increases detection rate by estimated 30%
+   - Achievable without code changes
 
-4. ⭐⭐⭐ **Negations-Erkennung implementieren** (40h)
-   - 30-40% genauere Keyword-Interpretation
-   - Relativ einfach umsetzbar (Regex-basiert)
-   
-5. ⭐⭐ **Intensitäts-Modifier einführen** (30h)
-   - Nuanciertere Profile
-   - Reduziert Noise durch leichte Erwähnungen
+3. ⭐⭐⭐ **Neutralize Neuroticism keywords** (10h)
+   - Critical for user acceptance
+   - Prevents under-reporting
 
-#### Langfristig (Phase 3, Aufwand: 300h)
+#### Medium-term (Phase 2, Effort: 120h)
 
-6. ⭐⭐⭐ **Sentiment-Analyse für Kontext** (80h)
-   - 50-70% genauere Interpretation
-   - Unterscheidet "Ich genieße Alleinsein" vs. "Ich fühle mich einsam"
-   
-7. ⭐⭐⭐ **A/B-Testing-Infrastruktur** (120h)
-   - Ermöglicht kontinuierliche Optimierung
-   - Datengetriebene Entscheidungen
+4. ⭐⭐⭐ **Implement negation detection** (40h)
+   - 30-40% more accurate keyword interpretation
+   - Relatively easy to implement (regex-based)
 
-### 7.3 ROI-Abschätzung
+5. ⭐⭐ **Introduce intensity modifiers** (30h)
+   - More nuanced profiles
+   - Reduces noise from slight mentions
 
-| Phase | Aufwand (h) | Kosten (€)* | Verbesserung | ROI |
-|-------|-------------|-------------|--------------|-----|
-| Phase 1 | 60 | 6.000 | +30% Detection Rate | 5:1 |
-| Phase 2 | 120 | 12.000 | +25% Genauigkeit | 3:1 |
-| Phase 3 | 300 | 30.000 | +40% Langzeit-Optimierung | 4:1 |
-| **GESAMT** | **480** | **48.000** | **+75% Gesamt** | **4:1** |
+#### Long-term (Phase 3, Effort: 300h)
 
-*Annahme: 100 €/h Entwicklerkosten
+6. ⭐⭐⭐ **Sentiment analysis for context** (80h)
+   - 50-70% more accurate interpretation
+   - Distinguishes "I enjoy being alone" vs. "I feel lonely"
 
-**Interpretation**: Phase 1 hat den höchsten ROI (5:1) und sollte priorisiert werden.
+7. ⭐⭐⭐ **A/B testing infrastructure** (120h)
+   - Enables continuous optimization
+   - Data-driven decisions
 
-### 7.4 Nächste Schritte
+### 7.3 ROI Estimate
 
-1. **Stakeholder-Meeting** (2h): Präsentation dieser Kritik, Diskussion der Prioritäten
-2. **Keyword-Erweiterung starten** (Phase 1): Team-Mitglieder weisen Keywords zu (20h verteilt auf 3 Personen)
-3. **Negations-Feature scopen** (8h): Technisches Design für Negations-Erkennung
-4. **A/B-Testing-Roadmap** (16h): Detaillierte Planung für Phase 3
+| Phase | Effort (h) | Cost (€)* | Improvement | ROI |
+|-------|------------|-----------|-------------|-----|
+| Phase 1 | 60 | 6,000 | +30% Detection Rate | 5:1 |
+| Phase 2 | 120 | 12,000 | +25% Accuracy | 3:1 |
+| Phase 3 | 300 | 30,000 | +40% Long-term Optimization | 4:1 |
+| **TOTAL** | **480** | **48,000** | **+75% Overall** | **4:1** |
+
+*Assumption: 100 €/h developer costs
+
+**Interpretation**: Phase 1 has the highest ROI (5:1) and should be prioritized.
+
+### 7.4 Next Steps
+
+1. **Stakeholder meeting** (2h): Present this critique, discuss priorities
+2. **Start keyword expansion** (Phase 1): Team members assign keywords (20h distributed across 3 people)
+3. **Scope negation feature** (8h): Technical design for negation detection
+4. **A/B testing roadmap** (16h): Detailed planning for Phase 3
 
 **Timeline**:
-- Phase 1: Woche 1-2 (sofort starten)
-- Phase 2: Woche 3-6
-- Phase 3: Woche 7-12
+- Phase 1: Week 1-2 (start immediately)
+- Phase 2: Week 3-6
+- Phase 3: Week 7-12
 
 ---
 
-## Anhang A: Vollständige Keyword-Listen
+## Appendix A: Complete Keyword Lists
 
-### A.1 Riemann-Thomann: Nähe
+### A.1 Riemann-Thomann: Closeness
 
 #### High (DE, 19 Keywords)
 
 ```
-verbundenheit, beziehung, harmonie, zusammenhalt, geborgenheit, 
-wärme, vertrauen, nähe, intimität, gemeinsam, team, empathie, 
-fürsorge, zugehörigkeit, miteinander, emotional, gefühl, 
+verbundenheit, beziehung, harmonie, zusammenhalt, geborgenheit,
+wärme, vertrauen, nähe, intimität, gemeinsam, team, empathie,
+fürsorge, zugehörigkeit, miteinander, emotional, gefühl,
 persönlich, herzlich, liebevoll
 ```
 
 #### Low (DE, 9 Keywords)
 
 ```
-distanziert, abstand, zurückgezogen, isoliert, einsam, 
+distanziert, abstand, zurückgezogen, isoliert, einsam,
 kühl, unpersönlich, gleichgültig, oberflächlich
 ```
 
-#### Empfohlene Ergänzungen Low (+6)
+#### Recommended Low Extensions (+6)
 
 ```
-"halte distanz", "brauche abstand", "allein sein", 
+"halte distanz", "brauche abstand", "allein sein",
 "für mich", "unabhängig", "nicht so eng"
 ```
 
 ---
 
-## Anhang B: Referenzen und weiterführende Literatur
+## Appendix B: References and Further Reading
 
-1. **Big5-Forschung**:
+1. **Big5 Research**:
    - Costa, P. T., & McCrae, R. R. (1992). *NEO PI-R Professional Manual*. Psychological Assessment Resources.
-   
-2. **Riemann-Thomann-Modell**:
+
+2. **Riemann-Thomann Model**:
    - Riemann, F. (1961). *Grundformen der Angst*. Ernst Reinhardt Verlag.
    - Thomann, C., & Schulz von Thun, F. (1988). *Klärungshilfe*. Rowohlt.
-   
+
 3. **Spiral Dynamics**:
    - Beck, D. E., & Cowan, C. C. (1996). *Spiral Dynamics: Mastering Values, Leadership, and Change*. Blackwell Publishing.
-   
+
 4. **Sentiment Analysis**:
    - Liu, B. (2015). *Sentiment Analysis: Mining Opinions, Sentiments, and Emotions*. Cambridge University Press.
-   
-5. **A/B-Testing Best Practices**:
+
+5. **A/B Testing Best Practices**:
    - Kohavi, R., Tang, D., & Xu, Y. (2020). *Trustworthy Online Controlled Experiments: A Practical Guide to A/B Testing*. Cambridge University Press.
 
 ---
 
-**Dokument-Ende**
+**Document End**
 
-*Erstellt von: AI Assistant*  
-*Letzte Aktualisierung: 2024-02-09*  
-*Kontakt für Fragen: [siehe DOCUMENTATION/README.md]*
+*Created by: AI Assistant*
+*Last updated: 2024-02-09*
+*Contact for questions: [see DOCUMENTATION/README.md]*

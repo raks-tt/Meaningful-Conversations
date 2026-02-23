@@ -13,24 +13,12 @@ interface AuthViewProps {
 }
 
 const AuthView: React.FC<AuthViewProps> = ({ onLogin, onGuest, redirectReason }) => {
-  const { t, language, setLanguage } = useLocalization();
+  const { t } = useLocalization();
   const [isLoading, setIsLoading] = useState(false);
-
-  const getButtonClass = (lang: 'en' | 'de') => {
-    const baseClass = "px-4 py-2 text-sm font-bold uppercase transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-background-primary rounded-md shadow-sm";
-    if (language === lang) {
-        return `${baseClass} bg-accent-tertiary text-accent-tertiary-foreground focus:ring-accent-tertiary`;
-    }
-    return `${baseClass} bg-border-primary dark:bg-border-primary text-content-secondary hover:bg-border-secondary dark:hover:bg-border-secondary focus:ring-border-secondary`;
-  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-center animate-fadeIn">
       <div className="w-full max-w-md p-8 space-y-6 bg-background-secondary dark:bg-transparent border border-border-secondary dark:border-border-primary rounded-lg shadow-lg">
-        <div className="flex justify-center gap-4">
-            <button onClick={() => setLanguage('en')} className={getButtonClass('en')}>English</button>
-            <button onClick={() => setLanguage('de')} className={getButtonClass('de')}>Deutsch</button>
-        </div>
         
         {redirectReason && (
             <div className="p-4 bg-status-info-background dark:bg-status-info-background border border-status-info-border dark:border-status-info-border/30 text-status-info-foreground dark:text-status-info-foreground flex items-start gap-3">

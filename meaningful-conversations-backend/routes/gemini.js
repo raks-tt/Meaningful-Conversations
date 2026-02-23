@@ -46,99 +46,16 @@ const withTimeout = (promise, timeoutMs, label = 'Operation') => {
     ]);
 };
 
-// POST /api/gemini/translate
-router.post('/translate', optionalAuthMiddleware, async (req, res) => {
-    const { subject, body, sourceLang = 'de', targetLang = 'en' } = req.body;
-    const userId = req.userId; // Admin-only access check
-
-    // Only admins can translate
-    if (!userId) {
-        return res.status(401).json({ error: 'Authentication required' });
-    }
-
-    try {
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user || !user.isAdmin) {
-            return res.status(403).json({ error: 'Admin access required' });
-        }
-
-        if (!subject && !body) {
-            return res.status(400).json({ error: 'At least subject or body must be provided' });
-        }
-
-        // Language names for system instruction
-        const langNames = { de: 'German', en: 'English' };
-        const sourceLanguage = langNames[sourceLang] || 'German';
-        const targetLanguage = langNames[targetLang] || 'English';
-
-        const modelName = 'gemini-2.5-flash'; // Gemini 2.5 Flash for fast, high-quality translations
-        const systemInstruction = `You are a professional translator. Translate the following ${sourceLanguage} text to ${targetLanguage}. Preserve all Markdown formatting (e.g., **bold**, *italic*, # headings, - lists). Return ONLY the translated text without any additional explanation or commentary.`;
-
-        const translationResults = {};
-
-        // Timeout helper
-        const withTimeout = (promise, timeoutMs = 25000) => {
-            return Promise.race([
-                promise,
-                new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Translation timeout - text might be too long')), timeoutMs)
-                )
-            ]);
-        };
-
-        if (subject) {
-            const subjectResult = await withTimeout(
-                aiProviderService.generateContent({
-                model: modelName,
-                contents: subject,
-                config: {
-                    systemInstruction: systemInstruction,
-                },
-                context: 'chat' // Translation uses chat context
-                })
-            );
-            translationResults.subject = subjectResult.text;
-        }
-
-        if (body) {
-            const bodyResult = await withTimeout(
-                aiProviderService.generateContent({
-                model: modelName,
-                contents: body,
-                config: {
-                    systemInstruction: systemInstruction,
-                },
-                context: 'chat' // Translation uses chat context
-                })
-            );
-            translationResults.body = bodyResult.text;
-        }
-
-        return res.json(translationResults);
-
-    } catch (error) {
-        console.error('Translation error:', error);
-        if (error.message.includes('timeout')) {
-            return res.status(504).json({ 
-                error: 'Translation timeout', 
-                message: 'The text is too long. Please try with shorter content.',
-                details: error.message 
-            });
-        }
-        return res.status(500).json({ error: 'Translation failed', details: error.message });
-    }
-});
-
 // POST /api/gemini/chat/send-message
 router.post('/chat/send-message', optionalAuthMiddleware, async (req, res) => {
-    const { 
+    const {
         botId, context, history, lang, isNewSession, coachingMode, decryptedPersonalityProfile,
         // Test mode support
         testProfileOverride, includeTestTelemetry, userMessage: testUserMessage
     } = req.body;
     const userId = req.userId; // This will be undefined for guests
     const isTestMode = req.headers['x-test-mode'] === 'true';
-    
+
     // Telemetry collection for test mode
     const testTelemetry = {
         dpcInjectionPresent: false,
@@ -178,12 +95,12 @@ router.post('/chat/send-message', optionalAuthMiddleware, async (req, res) => {
         return res.status(403).json({ error: 'You do not have permission to access this coach.' });
     }
 
-    let systemInstruction = lang === 'de' ? (bot.systemPrompt_de || bot.systemPrompt) : bot.systemPrompt;
-    
-    // Get and format the current date based on the request language.
+    let systemInstruction = bot.systemPrompt;
+
+    // Get and format the current date in English
     const today = new Date();
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const locale = lang === 'de' ? 'de-DE' : 'en-US';
+    const locale = 'en-US';
     const formattedDate = new Intl.DateTimeFormat(locale, options).format(today);
 
     // Replace the date placeholder in the system instruction.
@@ -192,29 +109,10 @@ router.post('/chat/send-message', optionalAuthMiddleware, async (req, res) => {
     const isInitialMessage = history.length === 0;
 
     if (isInitialMessage && isNewSession) {
-        if (lang === 'de') {
-            systemInstruction += "\n\n## Besondere Anweisung für diese erste Nachricht:\nDies ist die allererste Interaktion des Benutzers in dieser Sitzung. Sie MÜSSEN alle Regeln der 'Priorität bei der ersten Interaktion' bezüglich der Überprüfung von 'Nächsten Schritten' ignorieren. Ihre erste Nachricht MUSS Ihre standardmäßige, herzliche Begrüßung sein, in der Sie fragen, was den Benutzer beschäftigt. Erwähnen Sie nichts von 'willkommen zurück' oder früheren Schritten.";
-        } else {
-            systemInstruction += "\n\n## Special Instruction for this First Message:\nThis is the user's very first interaction in this session. You MUST ignore any 'Initial Interaction Priority' rules about checking 'Next Steps'. Your first message MUST be your standard, warm welcome, asking what is on their mind. Do not mention anything about 'welcome back' or previous steps.";
-        }
+        systemInstruction += "\n\n## Special Instruction for this First Message:\nThis is the user's very first interaction in this session. You MUST ignore any 'Initial Interaction Priority' rules about checking 'Next Steps'. Your first message MUST be your standard, warm welcome, asking what is on their mind. Do not mention anything about 'welcome back' or previous steps.";
     } else if (isInitialMessage && !isNewSession) {
         // Returning user - enforce strict first-message rules for Next Steps check-in
-        if (lang === 'de') {
-            systemInstruction += `\n\n## ⚠️ STRIKTE REGELN FÜR DIESE ERSTE NACHRICHT (ÜBERSCHREIBT ALLES ANDERE):
-Wenn du nach "Next Steps" oder früheren Vorhaben fragst:
-1. Kurze Begrüßung
-2. Du darfst die Ziele/Vorhaben erwähnen
-3. Stelle NUR EINE einzige Frage (z.B. "Wie lief es damit?")
-4. STOPP. Warte auf die Antwort.
-
-STRIKT VERBOTEN in dieser ersten Nachricht:
-- KEIN LOB für Fortschritte die du noch nicht gehört hast
-- KEINE mehrfachen Fragen
-- KEINE detaillierten Nachfragen zu spezifischen Aspekten
-- KEINE Alternativen anbieten ("falls Sie lieber...", "oder gibt es etwas anderes...")
-- KEIN "Ich bin gespannt..." oder "Was können Sie mir berichten?"`;
-        } else {
-            systemInstruction += `\n\n## ⚠️ STRICT RULES FOR THIS FIRST MESSAGE (OVERRIDES EVERYTHING ELSE):
+        systemInstruction += `\n\n## ⚠️ STRICT RULES FOR THIS FIRST MESSAGE (OVERRIDES EVERYTHING ELSE):
 If you're asking about "Next Steps" or previous intentions:
 1. Brief greeting
 2. You MAY mention the goals/intentions
@@ -227,15 +125,14 @@ STRICTLY FORBIDDEN in this first message:
 - NO detailed follow-up questions about specific aspects
 - NO offering alternatives ("if you'd rather...", "or is there something else...")
 - NO "I'm curious to hear..." or "What can you tell me?"`;
-        }
     }
 
     let finalSystemInstruction = systemInstruction;
-    
+
     // DPC/DPFL: Dynamic Personality Coaching - inject profile context into prompt
     // In test mode, use testProfileOverride if provided
     const profileToUse = (isTestMode && testProfileOverride) ? testProfileOverride : decryptedPersonalityProfile;
-    
+
     if (coachingMode === 'dpc' || coachingMode === 'dpfl' || isTestMode) {
         if (profileToUse) {
             try {
@@ -245,10 +142,10 @@ STRICTLY FORBIDDEN in this first message:
                     lang, // Pass language to DPC
                     botId // Pass botId for bot-specific adaptations (e.g., AVA's enhanced challenge logic)
                 );
-                
+
                 if (dpcResult?.prompt) {
                     finalSystemInstruction += dpcResult.prompt;
-                    
+
                     // Collect telemetry for test mode
                     if (isTestMode) {
                         testTelemetry.dpcInjectionPresent = true;
@@ -265,97 +162,77 @@ STRICTLY FORBIDDEN in this first message:
             console.warn(`[DPC] Coaching mode ${coachingMode} active but no profile provided`);
         }
     }
-    
+
     // Option A+: Conversation History Summary for AVA (pseudo-state tracking)
     if (botId === 'ava-strategic' && (coachingMode === 'dpc' || coachingMode === 'dpfl') && profileToUse) {
         const recentHistory = history.slice(-6); // Last 6 messages (3 turns)
-        
+
         // Extract bot's challenge questions from history
         const botChallenges = recentHistory
             .filter(msg => msg.role === 'bot')
             .map(msg => {
                 // Simple heuristic: Contains challenge keywords + question mark
                 const text = msg.text.toLowerCase();
-                const hasChallengeKeyword = 
-                    text.includes('blindspot') || 
-                    text.includes('entwickeln') ||
+                const hasChallengeKeyword =
+                    text.includes('blindspot') ||
                     text.includes('develop') ||
-                    text.includes('schritt weiter') ||
                     text.includes('one step further') ||
                     text.includes('experiment') ||
-                    text.includes('herausforderung') ||
                     text.includes('challenge');
                 const hasQuestion = text.includes('?');
                 return hasChallengeKeyword && hasQuestion ? msg.text : null;
             })
             .filter(Boolean);
-        
+
         // Extract resource exploration questions
         const resourceQuestions = recentHistory
             .filter(msg => msg.role === 'bot')
             .map(msg => {
                 const text = msg.text.toLowerCase();
                 const hasResourceKeyword =
-                    text.includes('gemeistert') ||
                     text.includes('mastered') ||
-                    text.includes('erfolg') ||
                     text.includes('success') ||
-                    text.includes('stärke') ||
                     text.includes('strength') ||
-                    text.includes('unterstützen') ||
                     text.includes('support') ||
-                    text.includes('ressource') ||
                     text.includes('resource');
                 const hasQuestion = text.includes('?');
                 return hasResourceKeyword && hasQuestion ? msg.text : null;
             })
             .filter(Boolean);
-        
+
         // Build history summary for LLM
         let historySummary = '\n\n**CONVERSATION-STATE-KONTEXT (für deine State-Awareness):**\n\n';
-        
+
         if (botChallenges.length > 0) {
-            historySummary += lang === 'de'
-                ? `Du hast bereits ${botChallenges.length} Blindspot-Challenge(s) gestellt:\n`
-                : `You have already posed ${botChallenges.length} blindspot challenge(s):\n`;
+            historySummary += `You have already posed ${botChallenges.length} blindspot challenge(s):\n`;
             botChallenges.slice(-2).forEach((q, idx) => {
                 historySummary += `${idx + 1}. "${q.substring(0, 80)}..."\n`;
             });
             historySummary += '\n';
         } else {
-            historySummary += lang === 'de'
-                ? 'Du hast noch KEINE Blindspot-Challenges gestellt.\n\n'
-                : 'You have NOT posed any blindspot challenges yet.\n\n';
+            historySummary += 'You have NOT posed any blindspot challenges yet.\n\n';
         }
-        
+
         if (resourceQuestions.length > 0) {
-            historySummary += lang === 'de'
-                ? `Du hast bereits nach RESSOURCEN gefragt (${resourceQuestions.length}× in den letzten Nachrichten):\n`
-                : `You have already asked about RESOURCES (${resourceQuestions.length}× in recent messages):\n`;
+            historySummary += `You have already asked about RESOURCES (${resourceQuestions.length}× in recent messages):\n`;
             resourceQuestions.slice(-1).forEach(q => {
                 historySummary += `"${q.substring(0, 80)}..."\n`;
             });
-            historySummary += lang === 'de'
-                ? '→ Du bist vermutlich in **PHASE 2** (Ressourcen aktiviert, bereit für Blindspot-Brücke)\n\n'
-                : '→ You are likely in **PHASE 2** (Resources activated, ready for blindspot bridge)\n\n';
+            historySummary += '→ You are likely in **PHASE 2** (Resources activated, ready for blindspot bridge)\n\n';
         } else {
-            historySummary += lang === 'de'
-                ? 'Du hast noch NICHT nach Ressourcen gefragt.\n→ Wenn User "festgefahren" signalisiert: Starte mit **PHASE 1** (Ressourcen-Exploration)\n\n'
-                : 'You have NOT asked about resources yet.\n→ If user signals "stuck": Start with **PHASE 1** (Resource exploration)\n\n';
+            historySummary += 'You have NOT asked about resources yet.\n→ If user signals "stuck": Start with **PHASE 1** (Resource exploration)\n\n';
         }
-        
+
         const userLastMessage = recentHistory.filter(msg => msg.role === 'user').slice(-1)[0]?.text || '';
         const userRespondedToChallenge = botChallenges.length > 0 && userLastMessage.length > 30;
-        
+
         if (botChallenges.length > 0 && !userRespondedToChallenge) {
-            historySummary += lang === 'de'
-                ? '⚠️ User hat auf letzte Challenge NICHT geantwortet (Ausweichen?) → Wähle anderen Blindspot oder warte ab\n\n'
-                : '⚠️ User did NOT respond to last challenge (Avoidance?) → Choose different blindspot or wait\n\n';
+            historySummary += '⚠️ User did NOT respond to last challenge (Avoidance?) → Choose different blindspot or wait\n\n';
         }
-        
+
         finalSystemInstruction += historySummary;
     }
-    
+
     // Exclude context injection for bots that don't need it:
     // - gloria-life-context: creates the context, doesn't read one
     // - gloria-interview: conducts topic-based interviews independent of life context
@@ -370,7 +247,7 @@ STRICTLY FORBIDDEN in this first message:
 
     const startTime = Date.now();
     const modelName = 'gemini-2.5-flash';
-    
+
     // Explicit prompt caching disabled — Google Gemini 2.5 Flash has automatic
     // implicit caching (since May 2025) which handles repeated system instructions
     // without needing explicit cache creation. The previous explicit caching via
@@ -380,13 +257,13 @@ STRICTLY FORBIDDEN in this first message:
     // Implicit caching provides the same cost savings automatically.
     let cacheUsed = false;
     const activeProvider = await aiProviderService.getActiveProvider();
-    
+
     try {
         const config = {
             temperature: 0.7,
             systemInstruction: finalSystemInstruction,
         };
-        
+
         const response = await withTimeout(
             aiProviderService.generateContent({
                 model: modelName,
@@ -400,14 +277,14 @@ STRICTLY FORBIDDEN in this first message:
             30000,
             'Chat AI response'
         );
-        
+
         const durationMs = Date.now() - startTime;
         const text = response.text;
-        
+
         // Track API usage with actual model and provider used
         const actualModel = response.model || modelName;
         const tokenUsage = response.usage || { inputTokens: 0, outputTokens: 0 };
-        
+
         await trackApiUsage({
             userId: userId || null,
             isGuest: !userId,
@@ -418,17 +295,17 @@ STRICTLY FORBIDDEN in this first message:
             outputTokens: tokenUsage.outputTokens,
             durationMs,
             success: true,
-            metadata: { 
+            metadata: {
                 provider: response.provider,
                 cacheUsed: cacheUsed || undefined,
             },
         });
-        
+
         // DPFL: Behavior logging
         // In test mode, we do this synchronously to collect telemetry
         // Otherwise, async (does not block response)
         const messageToAnalyze = testUserMessage || req.body.userMessage || '';
-        
+
         if (isTestMode && messageToAnalyze) {
             try {
                 // Phase 2a: Use enhanced analysis with adaptive weighting + sentiment
@@ -436,11 +313,11 @@ STRICTLY FORBIDDEN in this first message:
                     .filter(m => m.role === 'user')
                     .slice(-5)
                     .map(m => m.text || m.content || '');
-                
+
                 const enhancedResult = behaviorLogger.analyzeMessageEnhanced(
                     messageToAnalyze, lang, recentUserMessages
                 );
-                
+
                 // Helper: extract keywords from framework analysis result
                 const extractKeywords = (frameworkResult, prefix) => {
                     const keywords = [];
@@ -456,14 +333,14 @@ STRICTLY FORBIDDEN in this first message:
                     }
                     return keywords;
                 };
-                
+
                 // Collect detected keywords for ALL frameworks
                 const allDetectedKeywords = {
                     riemann: extractKeywords(enhancedResult.riemann, 'riemann'),
                     big5: extractKeywords(enhancedResult.big5, 'big5'),
                     spiralDynamics: extractKeywords(enhancedResult.spiralDynamics, 'sd')
                 };
-                
+
                 // Legacy format (Riemann-only, without prefix) for backward compatibility
                 const detectedKeywords = [];
                 for (const [dimension, data] of Object.entries(enhancedResult.riemann)) {
@@ -478,7 +355,7 @@ STRICTLY FORBIDDEN in this first message:
                 }
                 testTelemetry.dpflKeywordsDetected = detectedKeywords;
                 testTelemetry.allFrameworkKeywords = allDetectedKeywords;
-                
+
                 // Phase 2a: Include adaptive weighting metadata in telemetry
                 if (enhancedResult.adaptive) {
                     testTelemetry.adaptiveWeighting = {
@@ -488,16 +365,12 @@ STRICTLY FORBIDDEN in this first message:
                         weightingDetails: enhancedResult.adaptive.weightingDetails
                     };
                 }
-                
+
                 // Test-only: Track if message contains stress keywords for telemetry
                 // Note: Comfort Check is shown after EVERY DPFL session, not just when keywords are found
                 const stressKeywords = [
-                    // German keywords (15)
-                    'stress', 'überfordert', 'angst', 'traurig', 'hoffnungslos', 
-                    'verzweifelt', 'erschöpft', 'deprimiert', 'ausgebrannt', 'hilflos',
-                    'panik', 'einsam', 'mutlos', 'leer', 'verloren',
                     // English keywords (15)
-                    'overwhelmed', 'anxious', 'sad', 'hopeless', 'depressed',
+                    'stress', 'overwhelmed', 'anxious', 'sad', 'hopeless', 'depressed',
                     'desperate', 'exhausted', 'burnt out', 'burnout', 'helpless',
                     'panic', 'lonely', 'discouraged', 'empty', 'lost'
                 ];
@@ -512,7 +385,7 @@ STRICTLY FORBIDDEN in this first message:
                 try {
                     // Analyze current user message
                     const frequencies = behaviorLogger.analyzeMessage(messageToAnalyze, lang);
-                    
+
                     // Note: Full conversation logging will be done at session end
                     // This is just real-time analysis for debugging/monitoring
                 } catch (error) {
@@ -521,10 +394,10 @@ STRICTLY FORBIDDEN in this first message:
                 }
             });
         }
-        
+
         // Build response
         const responseData = { text };
-        
+
         // Add LLM metadata in test mode for comparison purposes
         if (isTestMode) {
             responseData.llmMetadata = {
@@ -539,20 +412,20 @@ STRICTLY FORBIDDEN in this first message:
                 cacheUsed: cacheUsed || false,
                 timestamp: new Date().toISOString()
             };
-            
+
             // Include telemetry in test mode
             if (includeTestTelemetry) {
                 responseData.testTelemetry = testTelemetry;
             }
         }
-        
+
         res.json(responseData);
     } catch (error) {
         console.error('AI API error in /chat/send-message:', error);
-        
+
         const durationMs = Date.now() - startTime;
         const isTimeout = error.message && error.message.includes('timeout');
-        
+
         // Track failed API call
         await trackApiUsage({
             userId: userId || null,
@@ -566,7 +439,7 @@ STRICTLY FORBIDDEN in this first message:
             success: false,
             errorMessage: error.message,
         });
-        
+
         if (isTimeout) {
             res.status(504).json({ error: 'The AI model took too long to respond. Please try again.' });
         } else {
@@ -594,26 +467,26 @@ function normalizeForComparison(text) {
 function isSimilarText(text1, text2, threshold = 0.85) {
     // Strip deadline patterns like "(Deadline: 2026-01-11)" or "(bis: 2026-01-11)"
     const stripDeadline = (t) => t.replace(/\s*\((?:Deadline|bis):\s*\d{4}-\d{2}-\d{2}\)/gi, '');
-    
+
     const norm1 = normalizeForComparison(stripDeadline(text1));
     const norm2 = normalizeForComparison(stripDeadline(text2));
-    
+
     // Exact match after normalization
     if (norm1 === norm2) return true;
-    
+
     // Check if one contains the other (for slight variations)
     if (norm1.includes(norm2) || norm2.includes(norm1)) return true;
-    
+
     // Simple similarity check: compare word overlap
     const words1 = new Set(norm1.split(' ').filter(w => w.length > 3));
     const words2 = new Set(norm2.split(' ').filter(w => w.length > 3));
-    
+
     if (words1.size === 0 || words2.size === 0) return false;
-    
+
     const intersection = [...words1].filter(w => words2.has(w)).length;
     const union = new Set([...words1, ...words2]).size;
     const jaccardSimilarity = intersection / union;
-    
+
     return jaccardSimilarity >= threshold;
 }
 
@@ -622,25 +495,25 @@ function isSimilarText(text1, text2, threshold = 0.85) {
  */
 function extractExistingItems(context, sectionPattern) {
     if (!context) return [];
-    
+
     const regex = new RegExp(sectionPattern + '[\\s\\S]*?(?=##|$)', 'i');
     const match = context.match(regex);
     if (!match) return [];
-    
+
     // Extract bullet points, but filter out description lines and metadata
     const items = [];
     const bulletRegex = /^\s*[*\-•]\s*(.+)$/gm;
     let bulletMatch;
     while ((bulletMatch = bulletRegex.exec(match[0])) !== null) {
         const item = bulletMatch[1].trim();
-        
+
         // Skip description/metadata lines (italic text, short generic phrases)
         if (item.startsWith('*') && item.endsWith('*')) continue; // Italic markdown
         if (item.toLowerCase().includes('specific, actionable')) continue;
         if (item.toLowerCase().includes('tasks i have committed')) continue;
         if (item.toLowerCase().includes('aufgaben, zu denen ich mich')) continue;
         if (item.length < 20) continue; // Too short to be a real action item
-        
+
         items.push(item);
     }
     return items;
@@ -651,30 +524,30 @@ function extractExistingItems(context, sectionPattern) {
  */
 function deduplicateAnalysisResponse(jsonResponse, context) {
     console.log('🔍 Starting deduplication check...');
-    
+
     if (!context || !jsonResponse) {
         console.log('⚠️ No context or response to deduplicate');
         return jsonResponse;
     }
-    
+
     // Log raw nextSteps section from context for debugging
     const nextStepsMatch = context.match(/(?:✅\s*)?(?:Achievable Next Steps|Realisierbare nächste Schritte)[\s\S]*?(?=##|$)/i);
     if (nextStepsMatch) {
         console.log('📄 Raw Next Steps section from context:');
         console.log(nextStepsMatch[0].substring(0, 500));
     }
-    
+
     // Extract existing next steps from context
     const existingNextSteps = extractExistingItems(
-        context, 
+        context,
         '(?:✅\\s*)?(?:Achievable Next Steps|Realisierbare nächste Schritte)'
     );
-    
+
     console.log(`📋 Found ${existingNextSteps.length} existing next steps in context`);
     if (existingNextSteps.length > 0) {
         console.log('   Existing steps (full):', JSON.stringify(existingNextSteps, null, 2));
     }
-    
+
     // Deduplicate nextSteps
     if (jsonResponse.nextSteps && Array.isArray(jsonResponse.nextSteps)) {
         console.log(`📝 AI proposed ${jsonResponse.nextSteps.length} next steps:`);
@@ -682,7 +555,7 @@ function deduplicateAnalysisResponse(jsonResponse, context) {
             console.log(`   ${i+1}. "${step.action}" (Deadline: ${step.deadline})`);
         });
         const originalCount = jsonResponse.nextSteps.length;
-        
+
         // First: Remove internal duplicates (AI proposing same step twice)
         const seenActions = new Set();
         jsonResponse.nextSteps = jsonResponse.nextSteps.filter(step => {
@@ -694,7 +567,7 @@ function deduplicateAnalysisResponse(jsonResponse, context) {
             seenActions.add(normalized);
             return true;
         });
-        
+
         // Second: Remove duplicates against existing context
         jsonResponse.nextSteps = jsonResponse.nextSteps.filter(step => {
             console.log(`   Checking: "${step.action.substring(0, 60)}..."`);
@@ -710,29 +583,29 @@ function deduplicateAnalysisResponse(jsonResponse, context) {
             }
             return !isDuplicate;
         });
-        
+
         if (originalCount !== jsonResponse.nextSteps.length) {
             console.log(`✓ Deduplicated nextSteps: ${originalCount} → ${jsonResponse.nextSteps.length}`);
         } else {
             console.log(`✓ No duplicates found in nextSteps`);
         }
     }
-    
+
     // Deduplicate append updates
     if (jsonResponse.updates && Array.isArray(jsonResponse.updates)) {
         const originalCount = jsonResponse.updates.length;
         jsonResponse.updates = jsonResponse.updates.filter(update => {
             if (update.type !== 'append') return true;
-            
+
             // Extract existing items from the target section
             const existingInSection = extractExistingItems(context, update.headline.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-            
+
             // Check if the new content is a duplicate
             const newContent = update.content.replace(/^\s*[*\-•]\s*/, '').trim();
-            const isDuplicate = existingInSection.some(existing => 
+            const isDuplicate = existingInSection.some(existing =>
                 isSimilarText(newContent, existing)
             );
-            
+
             if (isDuplicate) {
                 console.log(`🔄 Filtered duplicate append to "${update.headline}": "${newContent.substring(0, 50)}..."`);
             }
@@ -742,20 +615,20 @@ function deduplicateAnalysisResponse(jsonResponse, context) {
             console.log(`✓ Deduplicated updates: ${originalCount} → ${jsonResponse.updates.length}`);
         }
     }
-    
+
     return jsonResponse;
 }
 
 // POST /api/gemini/session/analyze
 router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
     const { history, context, lang } = req.body;
-    
+
     // Detect the language of the context file. Default to 'en'.
     const docLang = (context && context.match(/^#\s*(Mein\s)?Lebenskontext/im)) ? 'de' : 'en';
 
-    const analysisPromptConfig = lang === 'de' ? analysisPrompts.de : analysisPrompts.en;
+    const analysisPromptConfig = analysisPrompts.en;
     const conversation = history.map(msg => `${msg.role === 'user' ? 'User' : 'Coach'}: ${msg.text}`).join('\n\n');
-    
+
     // Get current date in ISO format for deadline generation
     const currentDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
@@ -763,7 +636,7 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
     const startTime = Date.now();
     const modelName = 'gemini-2.5-pro'; // Using Gemini 2.5 Pro for improved reasoning
     const userId = req.userId;
-    
+
     try {
         const response = await aiProviderService.generateContent({
             model: modelName, // Use a more powerful model for structured analysis
@@ -777,17 +650,17 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
         });
 
         const durationMs = Date.now() - startTime;
-        
+
         // Clean response text: Remove markdown code blocks (common with Mistral)
         let cleanedText = response.text.trim();
-        
+
         // Remove ```json ... ``` or ``` ... ``` wrappers
         const codeBlockRegex = /^```(?:json)?\s*\n?([\s\S]*?)\n?```$/;
         const match = cleanedText.match(codeBlockRegex);
         if (match && match[1]) {
             cleanedText = match[1].trim();
         }
-        
+
         // Parse JSON response with improved error handling
         let jsonResponse;
         try {
@@ -797,7 +670,7 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
             // Mistral sometimes outputs malformed escape sequences like: "quote": \"text\"
             // instead of: "quote": "text"
             console.log('⚠️ First JSON parse failed, attempting Mistral sanitization...');
-            
+
             try {
                 // Fix malformed escaped quotes outside of strings
                 // Pattern: ": \" at the start of a value should be ": "
@@ -811,7 +684,7 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
                     .replace(/\\"(\s*[}\]])/g, '"$1')
                     // Fix \"\n (escaped quote before newline) -> "\n
                     .replace(/\\"\s*\n/g, '"\n');
-                
+
                 jsonResponse = JSON.parse(sanitizedText);
                 console.log('✓ Mistral sanitization successful');
             } catch (secondParseError) {
@@ -820,11 +693,11 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
                 console.error('   Provider:', response.provider);
                 console.error('   Raw response (first 500 chars):', response.text.substring(0, 500));
                 console.error('   Cleaned text (first 500 chars):', cleanedText.substring(0, 500));
-            
+
                 // Track API usage with actual model and provider used
                 const actualModel = response.model || modelName;
                 const tokenUsage = response.usage || { inputTokens: 0, outputTokens: 0 };
-                
+
                 await trackApiUsage({
                     userId: userId || null,
                     isGuest: !userId,
@@ -836,20 +709,20 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
                     durationMs,
                     success: false,
                     errorMessage: `JSON parse error: ${parseError.message}`,
-                    metadata: { 
+                    metadata: {
                         provider: response.provider,
                         rawResponsePreview: response.text.substring(0, 200)
                     },
                 });
-                
+
                 throw new Error(`AI returned invalid JSON format: ${parseError.message}`);
             }
         }
-        
+
         // Track API usage with actual model and provider used
         const actualModel = response.model || modelName;
         const tokenUsage = response.usage || { inputTokens: 0, outputTokens: 0 };
-        
+
         await trackApiUsage({
             userId: userId || null,
             isGuest: !userId,
@@ -862,10 +735,10 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
             success: true,
             metadata: { provider: response.provider },
         });
-        
+
         // Deduplicate response against existing context before sending
         const deduplicatedResponse = deduplicateAnalysisResponse(jsonResponse, context);
-        
+
         // Strip solutionBlockages for users without Client or Admin access (PEP is client/admin/developer feature)
         if (deduplicatedResponse.solutionBlockages) {
             let hasPepAccess = false;
@@ -877,13 +750,13 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
                 deduplicatedResponse.solutionBlockages = [];
             }
         }
-        
+
         res.json(deduplicatedResponse);
     } catch (error) {
         console.error('AI API error in /session/analyze:', error);
-        
+
         const durationMs = Date.now() - startTime;
-        
+
         // Track failed API call
         await trackApiUsage({
             userId: userId || null,
@@ -897,7 +770,7 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
             success: false,
             errorMessage: error.message,
         });
-        
+
         res.status(500).json({ error: 'Failed to analyze session.' });
     }
 });
@@ -906,7 +779,7 @@ router.post('/session/analyze', optionalAuthMiddleware, async (req, res) => {
 router.post('/session/format-interview', optionalAuthMiddleware, async (req, res) => {
     const { history, lang } = req.body;
 
-    const formattingPromptConfig = lang === 'de' ? interviewFormattingPrompts.de : interviewFormattingPrompts.en;
+    const formattingPromptConfig = interviewFormattingPrompts.en;
     const conversation = history.map(msg => `${msg.role === 'user' ? 'User' : 'Guide'}: ${msg.text}`).join('\n\n');
     const template = getInterviewTemplate(lang);
 
@@ -921,7 +794,7 @@ router.post('/session/format-interview', optionalAuthMiddleware, async (req, res
             contents: fullPrompt,
             context: 'analysis' // Formatting uses analysis context
         });
-        
+
         const durationMs = Date.now() - startTime;
         let markdown = response.text.trim();
 
@@ -936,7 +809,7 @@ router.post('/session/format-interview', optionalAuthMiddleware, async (req, res
         // Track API usage with actual model and provider used
         const actualModel = response.model || modelName;
         const tokenUsage = response.usage || { inputTokens: 0, outputTokens: 0 };
-        
+
         await trackApiUsage({
             userId: userId || null,
             isGuest: !userId,
@@ -953,9 +826,9 @@ router.post('/session/format-interview', optionalAuthMiddleware, async (req, res
         res.json({ markdown });
     } catch (error) {
         console.error('AI API error in /session/format-interview:', error);
-        
+
         const durationMs = Date.now() - startTime;
-        
+
         // Track failed API call
         await trackApiUsage({
             userId: userId || null,
@@ -969,7 +842,7 @@ router.post('/session/format-interview', optionalAuthMiddleware, async (req, res
             success: false,
             errorMessage: error.message,
         });
-        
+
         res.status(500).json({ error: 'Failed to format interview.' });
     }
 });
@@ -981,39 +854,10 @@ router.post('/interview/transcript', optionalAuthMiddleware, async (req, res) =>
         return res.status(400).json({ error: 'history is required and must be a non-empty array' });
     }
 
-    const userLabel = userName || (lang === 'de' ? 'Befragter' : 'Interviewee');
+    const userLabel = userName || 'Interviewee';
     const conversation = history.map(msg => `${msg.role === 'user' ? userLabel : 'Interviewer'}: ${msg.text}`).join('\n\n');
-    
-    const prompt = lang === 'de'
-        ? `Du bist ein Redakteur. Dir wird ein Interview-Transkript zwischen einem Interviewer und ${userName ? userName : 'einem Befragten'} übergeben.
 
-Das Gespräch besteht aus zwei Phasen: Zuerst einer kurzen **Auftragsklärung** (Thema, Dauer, Perspektive), dann dem eigentlichen **Interview**. Trenne diese Phasen in der Ausgabe.
-
-Erstelle DREI Abschnitte, getrennt durch die exakte Zeile "---TRENNER---":
-
-**ABSCHNITT 1 — Zusammenfassung:**
-Erstelle eine prägnante Zusammenfassung des Interviews (5-10 Sätze). Erfasse die wichtigsten Themen, Erkenntnisse und Schlussfolgerungen des Gesprächs. Beziehe dich nur auf den inhaltlichen Teil des Interviews, nicht auf die Auftragsklärung.
-
-**ABSCHNITT 2 — Interview Setup:**
-Fasse die Auftragsklärung als kompakte Übersicht zusammen:
-- Thema
-- Vereinbarte Dauer
-- Gewählte Perspektive/Rolle des Interviewers
-- Ggf. besondere Wünsche
-Formatiere dies als kurze, übersichtliche Auflistung (kein Dialog).
-
-**ABSCHNITT 3 — Geglättetes Interview:**
-Erstelle eine bereinigte, lesbare Version des eigentlichen Interviews (ohne die Auftragsklärung):
-- Korrigiere Grammatik, Rechtschreibung und Zeichensetzung
-- Entferne Füllwörter und Wiederholungen
-- Bewahre den Inhalt, die Bedeutung und den Ton des Gesagten exakt
-- Formatiere als klaren Dialog mit "Interviewer:" und "${userLabel}:" Kennzeichnungen
-- Füge NICHTS hinzu, was nicht gesagt wurde
-
-Das Interview-Transkript:
-
-${conversation}`
-        : `You are an editor. You are given an interview transcript between an interviewer and ${userName ? userName : 'an interviewee'}.
+    const prompt = `You are an editor. You are given an interview transcript between an interviewer and ${userName ? userName : 'an interviewee'}.
 
 The conversation consists of two phases: first a brief **setup** (topic, duration, perspective), then the actual **interview**. Separate these phases in your output.
 
@@ -1056,7 +900,7 @@ ${conversation}`;
         const durationMs = Date.now() - startTime;
         const text = response.text.trim();
 
-        const separator = lang === 'de' ? '---TRENNER---' : '---SEPARATOR---';
+        const separator = '---SEPARATOR---';
         const parts = text.split(separator);
         const summary = (parts[0] || '').trim();
         const setup = (parts[1] || '').trim();
@@ -1104,17 +948,17 @@ ${conversation}`;
 // GET /api/gemini/cache/stats - Admin endpoint for cache statistics
 router.get('/cache/stats', optionalAuthMiddleware, async (req, res) => {
     const userId = req.userId;
-    
+
     // Only allow admins to view cache stats
     if (!userId) {
         return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.isAdmin) {
         return res.status(403).json({ error: 'Admin access required' });
     }
-    
+
     const stats = getCacheStats();
     res.json(stats);
 });
@@ -1123,23 +967,23 @@ router.get('/cache/stats', optionalAuthMiddleware, async (req, res) => {
 // This endpoint is specifically designed for the TestRunner to simulate user responses
 router.post('/test/simulate-coachee', optionalAuthMiddleware, async (req, res) => {
     const userId = req.userId;
-    
+
     // Only allow developers to use this endpoint (Test Runner is developer-only)
     if (!userId) {
         return res.status(401).json({ error: 'Authentication required' });
     }
-    
+
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.isDeveloper) {
         return res.status(403).json({ error: 'Developer access required' });
     }
 
-    const { 
-        lastBotMessage, 
-        lastUserMessage, 
-        scenarioDescription, 
+    const {
+        lastBotMessage,
+        lastUserMessage,
+        scenarioDescription,
         personalityContext,
-        lang = 'de'
+        lang = 'en'
     } = req.body;
 
     if (!lastBotMessage) {
@@ -1150,24 +994,7 @@ router.post('/test/simulate-coachee', optionalAuthMiddleware, async (req, res) =
 
     try {
         // Build system prompt for coachee simulation
-        const systemPrompt = lang === 'de' 
-            ? `Du bist ein Coachee (Klient) in einem Coaching-Gespräch. Du hast ein Problem und suchst Hilfe.
-
-WICHTIG: Du bist NICHT der Coach! Du bist der Klient, der Unterstützung sucht.
-
-${personalityContext ? `DEINE PERSÖNLICHKEIT:\n${personalityContext}\n` : ''}
-${scenarioDescription ? `DEIN THEMA: ${scenarioDescription}\n` : ''}
-
-REGELN für deine Antwort:
-1. Beantworte die Frage des Coaches direkt und konkret
-2. Teile deine Gefühle, Sorgen und Gedanken authentisch
-3. Sei verletzlich - du bist jemand, der Hilfe sucht
-4. Antworte in 1-3 kurzen Sätzen
-5. KEINE Coaching-Phrasen wie "Lass uns...", "Ich verstehe...", "Was denkst du..."
-6. KEINE Fragen zurück an den Coach (außer Verständnisfragen)
-7. KEINE Verhaltenshinweise mit Sternchen (wie *seufzt*, *nickt*, *schaut weg*)
-8. Antworte so, wie ein echter Mensch mit diesem Problem antworten würde - in normalem Text ohne Rollenspiel-Formatierung`
-            : `You are a coachee (client) in a coaching conversation. You have a problem and are seeking help.
+        const systemPrompt = `You are a coachee (client) in a coaching conversation. You have a problem and are seeking help.
 
 IMPORTANT: You are NOT the coach! You are the client seeking support.
 
@@ -1184,13 +1011,7 @@ RULES for your response:
 7. NO action descriptions with asterisks (like *sighs*, *nods*, *looks away*)
 8. Respond like a real person with this problem would respond - in plain text without roleplay formatting`;
 
-        const userPrompt = lang === 'de'
-            ? `Der Coach hat gerade gesagt:
-"${lastBotMessage}"
-
-${lastUserMessage ? `Du hattest vorher gesagt:\n"${lastUserMessage}"\n` : ''}
-Deine Antwort als Coachee (beantworte die Frage des Coaches direkt):`
-            : `The coach just said:
+        const userPrompt = `The coach just said:
 "${lastBotMessage}"
 
 ${lastUserMessage ? `You had previously said:\n"${lastUserMessage}"\n` : ''}
@@ -1209,7 +1030,7 @@ Your response as coachee (answer the coach's question directly):`;
         });
 
         const generatedText = result.text || '';
-        
+
         // Log for debugging truncation issues
         console.log(`[Coachee Simulation] Response length: ${generatedText.length} chars, finishReason: ${result.rawResponse?.candidates?.[0]?.finishReason || 'unknown'}`);
         const durationMs = Date.now() - startTime;
@@ -1225,15 +1046,15 @@ Your response as coachee (answer the coach's question directly):`;
             success: true,
         });
 
-        res.json({ 
+        res.json({
             text: generatedText.trim(),
-            durationMs 
+            durationMs
         });
 
     } catch (error) {
         console.error('Coachee simulation error:', error);
         const durationMs = Date.now() - startTime;
-        
+
         await trackApiUsage({
             userId,
             endpoint: '/api/gemini/test/simulate-coachee',
@@ -1244,7 +1065,7 @@ Your response as coachee (answer the coach's question directly):`;
             success: false,
             errorMessage: error.message,
         });
-        
+
         res.status(500).json({ error: 'Failed to generate coachee response' });
     }
 });
@@ -1254,7 +1075,7 @@ Your response as coachee (answer the coach's question directly):`;
 router.post('/transcript/evaluate', authMiddleware, async (req, res) => {
     const startTime = Date.now();
     const userId = req.userId;
-    const { preAnswers, transcript, lang = 'de', decryptedPersonalityProfile } = req.body;
+    const { preAnswers, transcript, lang = 'en', decryptedPersonalityProfile } = req.body;
 
     try {
         // Validate required fields
@@ -1287,7 +1108,7 @@ router.post('/transcript/evaluate', authMiddleware, async (req, res) => {
 
         // Build personality profile summary for prompt (if provided)
         // #region agent log
-        console.log('[TE DEBUG] Profile check:', { 
+        console.log('[TE DEBUG] Profile check:', {
             hasDecryptedProfile: !!decryptedPersonalityProfile,
             profileKeys: decryptedPersonalityProfile ? Object.keys(decryptedPersonalityProfile) : null,
             hasRiemann: !!decryptedPersonalityProfile?.riemann,
@@ -1322,7 +1143,7 @@ router.post('/transcript/evaluate', authMiddleware, async (req, res) => {
             }
             personalityProfileSummary = parts.join('\n');
             // #region agent log
-            console.log('[TE DEBUG] Profile summary built:', { 
+            console.log('[TE DEBUG] Profile summary built:', {
                 summaryLength: personalityProfileSummary.length,
                 partsCount: parts.length,
                 preview: personalityProfileSummary.substring(0, 100)
@@ -1573,16 +1394,14 @@ router.post('/transcript/transcribe-audio', authMiddleware, audioTranscribeLimit
             return res.status(400).json({ error: 'No audio file provided.' });
         }
 
-        const { lang = 'de', speakerHint } = req.body;
+        const { lang = 'en', speakerHint } = req.body;
 
         // Reject extremely small files — they contain no meaningful audio and
         // cause Gemini to hallucinate entire transcripts from nothing.
         const MIN_AUDIO_BYTES = 10000; // ~10 KB
         if (req.file.size < MIN_AUDIO_BYTES) {
             return res.status(400).json({
-                error: lang === 'de'
-                    ? 'Die Audiodatei ist zu kurz oder leer. Bitte nimm mindestens einige Sekunden Audio auf.'
-                    : 'The audio file is too short or empty. Please record at least a few seconds of audio.'
+                error: 'The audio file is too short or empty. Please record at least a few seconds of audio.'
             });
         }
 
@@ -1603,33 +1422,10 @@ router.post('/transcript/transcribe-audio', authMiddleware, audioTranscribeLimit
         // Build diarization prompt
         const speakerHintNum = speakerHint ? parseInt(speakerHint, 10) : null;
         const speakerInstruction = speakerHintNum && speakerHintNum >= 2 && speakerHintNum <= 4
-            ? (lang === 'de'
-                ? `Es sind genau ${speakerHintNum} Sprecher im Gespräch.`
-                : `There are exactly ${speakerHintNum} speakers in this conversation.`)
+            ? `There are exactly ${speakerHintNum} speakers in this conversation.`
             : '';
 
-        const diarizationPrompt = lang === 'de'
-            ? `Transkribiere die folgende Audiodatei vollständig und wortgetreu.
-
-SPRECHERIDENTIFIKATION:
-- Identifiziere die verschiedenen Sprecher anhand ihrer Stimmen.
-- Verwende die Labels [Sprecher 1], [Sprecher 2], [Sprecher 3] usw.
-${speakerInstruction}
-
-FORMAT:
-- Beginne mit einer kurzen Sprecherzuordnung im Format:
-  ---SPRECHER---
-  Sprecher 1: [kurze Stimmbeschreibung, z.B. "männliche Stimme, tiefer Tonfall"]
-  Sprecher 2: [kurze Stimmbeschreibung]
-  ---SPRECHER---
-- Danach folgt das vollständige Transkript.
-- Jeder Sprecherwechsel beginnt in einer neuen Zeile mit dem Sprecher-Label.
-- Format: [Sprecher N]: Text des Sprechers
-- Füge Absätze bei thematischen Wechseln ein.
-- Behalte Füllwörter und natürliche Sprachmuster bei, aber korrigiere offensichtliche Grammatikfehler leicht.
-
-WICHTIG: Gib NUR die Sprecherzuordnung und das Transkript aus, keine zusätzlichen Kommentare oder Zusammenfassungen.`
-            : `Transcribe the following audio file completely and verbatim.
+        const diarizationPrompt = `Transcribe the following audio file completely and verbatim.
 
 SPEAKER IDENTIFICATION:
 - Identify the different speakers based on their voices.
@@ -1687,14 +1483,12 @@ IMPORTANT: Output ONLY the speaker identification and transcript, no additional 
         if (audioTokens < 50 && outputTokens > 100) {
             console.warn(`[Audio Transcription] Hallucination suspected: audioTokens=${audioTokens}, outputTokens=${outputTokens}`);
             return res.status(400).json({
-                error: lang === 'de'
-                    ? 'Die Audiodatei enthält keine erkennbare Sprache. Bitte stelle sicher, dass die Aufnahme Gesprächsinhalte enthält.'
-                    : 'The audio file does not contain recognizable speech. Please make sure the recording contains conversation content.'
+                error: 'The audio file does not contain recognizable speech. Please make sure the recording contains conversation content.'
             });
         }
 
         // Count speakers from the transcript
-        const speakerPattern = lang === 'de' ? /\[Sprecher (\d+)\]/g : /\[Speaker (\d+)\]/g;
+        const speakerPattern = /\[Speaker (\d+)\]/g;
         const speakerNumbers = new Set();
         let match;
         while ((match = speakerPattern.exec(transcript)) !== null) {

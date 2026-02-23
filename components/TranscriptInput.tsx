@@ -130,21 +130,19 @@ const TranscriptInput: React.FC<TranscriptInputProps> = ({ onSubmit, onBack, isL
 
     // Parse speakers from transcript for the mapping UI
     const parseSpeakersFromTranscript = useCallback((transcript: string) => {
-        const speakerSectionMatch = transcript.match(/---SPRECHER---|---SPEAKERS---/);
+        const speakerSectionMatch = transcript.match(/---SPEAKERS---/);
         const speakers: { label: string; description: string }[] = [];
 
         if (speakerSectionMatch) {
-            const sectionEnd = transcript.indexOf('---SPRECHER---', speakerSectionMatch.index! + 10);
-            const sectionEnd2 = transcript.indexOf('---SPEAKERS---', speakerSectionMatch.index! + 10);
-            const endIdx = Math.max(sectionEnd, sectionEnd2);
-            if (endIdx > -1) {
-                const section = transcript.substring(speakerSectionMatch.index! + speakerSectionMatch[0].length, endIdx);
+            const sectionEnd = transcript.indexOf('---SPEAKERS---', speakerSectionMatch.index! + 10);
+            if (sectionEnd > -1) {
+                const section = transcript.substring(speakerSectionMatch.index! + speakerSectionMatch[0].length, sectionEnd);
                 const lines = section.trim().split('\n');
                 for (const line of lines) {
-                    const match = line.match(/^\s*(Sprecher|Speaker)\s+(\d+)\s*:\s*(.+)/i);
+                    const match = line.match(/^\s*Speaker\s+(\d+)\s*:\s*(.+)/i);
                     if (match) {
-                        const label = language === 'de' ? `[Sprecher ${match[2]}]` : `[Speaker ${match[2]}]`;
-                        speakers.push({ label, description: match[3].trim() });
+                        const label = `[Speaker ${match[1]}]`;
+                        speakers.push({ label, description: match[2].trim() });
                     }
                 }
             }
@@ -152,21 +150,21 @@ const TranscriptInput: React.FC<TranscriptInputProps> = ({ onSubmit, onBack, isL
 
         // Fallback: parse from transcript body
         if (speakers.length === 0) {
-            const pattern = language === 'de' ? /\[Sprecher (\d+)\]/g : /\[Speaker (\d+)\]/g;
+            const pattern = /\[Speaker (\d+)\]/g;
             const found = new Set<string>();
             let m;
             while ((m = pattern.exec(transcript)) !== null) {
                 const num = m[1];
                 if (!found.has(num)) {
                     found.add(num);
-                    const label = language === 'de' ? `[Sprecher ${num}]` : `[Speaker ${num}]`;
+                    const label = `[Speaker ${num}]`;
                     speakers.push({ label, description: '' });
                 }
             }
         }
 
         return speakers;
-    }, [language]);
+    }, []);
 
     const handleTranscribe = useCallback(async () => {
         if (!audioSource) return;

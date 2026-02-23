@@ -287,12 +287,12 @@ router.get('/newsletter-history', async (req, res) => {
 
 // POST /api/admin/send-newsletter
 router.post('/send-newsletter', async (req, res) => {
-    const { subjectDE, subjectEN, textBodyDE, textBodyEN, htmlBodyDE, htmlBodyEN } = req.body;
+    const { subject, textBody } = req.body;
     const adminId = req.userId;
-    
+
     // Validation
-    if (!subjectDE || !subjectEN || !textBodyDE || !textBodyEN) {
-        return res.status(400).json({ error: 'All subject and text body fields are required.' });
+    if (!subject || !textBody) {
+        return res.status(400).json({ error: 'Subject and text body fields are required.' });
     }
     
     try {
@@ -318,11 +318,10 @@ router.post('/send-newsletter', async (req, res) => {
             `;
         };
         
-        // Generate HTML versions from Markdown text bodies
-        const generatedHtmlDE = convertMarkdownToEmailHtml(textBodyDE);
-        const generatedHtmlEN = convertMarkdownToEmailHtml(textBodyEN);
-        
-        // Fetch all newsletter subscribers with language preference and unsubscribe token
+        // Generate HTML version from Markdown text body
+        const generatedHtml = convertMarkdownToEmailHtml(textBody);
+
+        // Fetch all newsletter subscribers with unsubscribe token
         const subscribers = await prisma.user.findMany({
             where: {
                 newsletterConsent: true,
@@ -330,7 +329,6 @@ router.post('/send-newsletter', async (req, res) => {
             },
             select: {
                 email: true,
-                preferredLanguage: true,
                 unsubscribeToken: true
             }
         });
@@ -354,17 +352,13 @@ router.post('/send-newsletter', async (req, res) => {
         // Send emails (sequentially to respect rate limits)
         for (const subscriber of subscribers) {
             try {
-                // Use user's preferred language
-                const lang = subscriber.preferredLanguage || 'de';
-                
-                const subject = lang === 'de' ? subjectDE : subjectEN;
                 const content = {
-                    textBody: lang === 'de' ? textBodyDE : textBodyEN,
-                    htmlBody: lang === 'de' ? generatedHtmlDE : generatedHtmlEN,
+                    textBody: textBody,
+                    htmlBody: generatedHtml,
                     unsubscribeToken: subscriber.unsubscribeToken
                 };
-                
-                await sendNewsletterEmail(subscriber.email, subject, content, lang);
+
+                await sendNewsletterEmail(subscriber.email, subject, content, 'en');
                 results.success++;
                 
                 // Small delay between emails to avoid rate limiting
@@ -383,12 +377,12 @@ router.post('/send-newsletter', async (req, res) => {
         // Log newsletter send to database
         await prisma.newsletterLog.create({
             data: {
-                subjectDE,
-                subjectEN,
-                textBodyDE,
-                textBodyEN,
-                htmlBodyDE: generatedHtmlDE,
-                htmlBodyEN: generatedHtmlEN,
+                subjectDE: subject,
+                subjectEN: subject,
+                textBodyDE: textBody,
+                textBodyEN: textBody,
+                htmlBodyDE: generatedHtml,
+                htmlBodyEN: generatedHtml,
                 sentBy: adminId,
                 sentByEmail: adminUser.email,
                 recipientCount: subscribers.length,

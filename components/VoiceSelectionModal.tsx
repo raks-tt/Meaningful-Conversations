@@ -151,20 +151,9 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
         
         // --- Whitelist First Pass ---
         // Extended whitelist to include more iOS voice names
-        let allowedNames: string[] = [];
-        if (botLanguage === 'de') {
-            // iOS German female voices: Anna, Helena, Petra, Katja, plus potential variations
-            // Also include "premium" and "enhanced" variants
-            allowedNames = botGender === 'female' 
-                ? ['petra', 'anna', 'helena', 'katja', 'marlene', 'vicki', 'marie'] 
-                : ['markus', 'viktor', 'victor', 'martin', 'hans', 'yannick', 'conrad'];
-        } else if (botLanguage === 'en') {
-            if (botGender === 'female') {
-                allowedNames = ['samantha', 'susan', 'serena', 'karen', 'moira', 'tessa', 'siri', 'nicky', 'allison', 'ava'];
-            } else {
-                allowedNames = ['daniel', 'jamie', 'alex', 'tom', 'aaron', 'arthur', 'fred'];
-            }
-        }
+        const allowedNames: string[] = botGender === 'female'
+            ? ['samantha', 'susan', 'serena', 'karen', 'moira', 'tessa', 'siri', 'nicky', 'allison', 'ava']
+            : ['daniel', 'jamie', 'alex', 'tom', 'aaron', 'arthur', 'fred'];
         
         const whitelistedVoices = voices.filter(v => {
             // On iOS, enhanced/premium voices may have localService: false
@@ -375,7 +364,7 @@ const VoiceSelectionModal: React.FC<VoiceSelectionModalProps> = ({
                                         <span className="ml-3 flex-1">
                                             <span className={`font-semibold ${isVoiceEnabled(voice) ? 'text-content-primary' : 'text-content-secondary'}`}>{voice.name} {isServerVoiceChecked && <span className="text-accent-primary">✓</span>}</span>
                                             <span className="block text-sm text-content-secondary">
-                                                {voice.language === 'de' ? 'Deutsch' : 'English'}
+                                                English
                                             </span>
                                         </span>
                                         <button

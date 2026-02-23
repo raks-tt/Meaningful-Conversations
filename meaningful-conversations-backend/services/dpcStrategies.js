@@ -4,11 +4,6 @@
 const RIEMANN_STRATEGIES = {
   dauer: {
     high: {
-      de: {
-        language: 'strukturiert, schrittweise, mit klaren Deadlines',
-        tone: 'beruhigend, bestätigend, zuverlässig',
-        approach: 'Biete konkrete To-Do-Listen, Zeitpläne und Sicherheit an.'
-      },
       en: {
         language: 'structured, step-by-step, with clear deadlines',
         tone: 'reassuring, affirming, reliable',
@@ -16,10 +11,6 @@ const RIEMANN_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Flexibilität, spontane Anpassung, Risiko-Toleranz',
-        challenge: 'Fordere gezielt auf, etwas Unstrukturiertes oder Ungewisses auszuprobieren.'
-      },
       en: {
         blindspot: 'Flexibility, spontaneous adaptation, risk tolerance',
         challenge: 'Specifically challenge them to try something unstructured or uncertain.'
@@ -28,11 +19,6 @@ const RIEMANN_STRATEGIES = {
   },
   wechsel: {
     high: {
-      de: {
-        language: 'dynamisch, inspirierend, abwechslungsreich',
-        tone: 'begeisternd, energiegeladen, ermutigend',
-        approach: 'Nutze Metaphern, springe zwischen Perspektiven, sei spontan.'
-      },
       en: {
         language: 'dynamic, inspiring, varied',
         tone: 'enthusiastic, energetic, encouraging',
@@ -40,10 +26,6 @@ const RIEMANN_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Routine, langfristige Planung, Disziplin',
-        challenge: 'Fordere auf, einen langfristigen, strukturierten Plan zu entwickeln.'
-      },
       en: {
         blindspot: 'Routine, long-term planning, discipline',
         challenge: 'Challenge them to develop a long-term, structured plan.'
@@ -52,11 +34,6 @@ const RIEMANN_STRATEGIES = {
   },
   naehe: {
     high: {
-      de: {
-        language: 'empathisch, warm, persönlich',
-        tone: 'fürsorglich, unterstützend, verbindlich',
-        approach: 'Nutze "Wir"-Sprache, erkundige dich nach Gefühlen, zeige Mitgefühl.'
-      },
       en: {
         language: 'empathetic, warm, personal',
         tone: 'caring, supportive, committed',
@@ -64,10 +41,6 @@ const RIEMANN_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Emotionale Abgrenzung, Konfliktfähigkeit, sachliche Kritik',
-        challenge: 'Fordere auf, ein klares "Nein" zu sagen oder sachliche Distanz einzunehmen.'
-      },
       en: {
         blindspot: 'Emotional boundaries, conflict capability, objective criticism',
         challenge: 'Challenge them to say a clear "no" or maintain objective distance.'
@@ -76,11 +49,6 @@ const RIEMANN_STRATEGIES = {
   },
   distanz: {
     high: {
-      de: {
-        language: 'rational, kurz, prägnant',
-        tone: 'objektiv, sachlich, direkt',
-        approach: 'Nutze Daten, Fakten, logische Argumente. Vermeide übermäßige Emotion.'
-      },
       en: {
         language: 'rational, brief, concise',
         tone: 'objective, factual, direct',
@@ -88,10 +56,6 @@ const RIEMANN_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Unabhängigkeit, Objektivität, emotionale Selbstregulation',
-        challenge: 'Fordere auf, eine rein rationale Analyse zu machen, ohne Emotionen.'
-      },
       en: {
         blindspot: 'Independence, objectivity, emotional self-regulation',
         challenge: 'Challenge them to make a purely rational analysis without emotions.'
@@ -103,11 +67,6 @@ const RIEMANN_STRATEGIES = {
 const BIG5_STRATEGIES = {
   openness: {
     high: {
-      de: {
-        language: 'abstrakt, theoretisch, visionär',
-        tone: 'neugierig, explorativ, philosophisch',
-        approach: 'Nutze Gedankenexperimente, neue Perspektiven, unkonventionelle Lösungen.'
-      },
       en: {
         language: 'abstract, theoretical, visionary',
         tone: 'curious, explorative, philosophical',
@@ -115,13 +74,6 @@ const BIG5_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        language: 'konkret, bewährt, pragmatisch',
-        tone: 'bodenständig, verlässlich, bewahrt',
-        approach: 'Nutze bekannte Methoden, vermeide zu viel Abstraktion.',
-        blindspot: 'Kreativität, Experimentierfreude, neue Perspektiven',
-        challenge: 'Fordere auf, eine völlig unkonventionelle Lösung zu erkunden oder etwas Neues auszuprobieren.'
-      },
       en: {
         language: 'concrete, proven, pragmatic',
         tone: 'grounded, reliable, conservative',
@@ -133,11 +85,6 @@ const BIG5_STRATEGIES = {
   },
   conscientiousness: {
     high: {
-      de: {
-        language: 'detailliert, strukturiert, geplant',
-        tone: 'gewissenhaft, präzise, zuverlässig',
-        approach: 'Nutze Checklisten, klare Fristen, messbare Ziele.'
-      },
       en: {
         language: 'detailed, structured, planned',
         tone: 'conscientious, precise, reliable',
@@ -145,13 +92,6 @@ const BIG5_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        language: 'flexibel, spontan, experimentell',
-        tone: 'locker, adaptiv, improvisierend',
-        approach: 'Erlaube Unordnung, akzeptiere Prokrastination, betone Flexibilität.',
-        blindspot: 'Struktur, Selbstdisziplin, Durchhaltevermögen',
-        challenge: 'Fordere auf, einen konkreten Plan mit Meilensteinen zu erstellen und sich daran zu halten.'
-      },
       en: {
         language: 'flexible, spontaneous, experimental',
         tone: 'relaxed, adaptive, improvising',
@@ -163,11 +103,6 @@ const BIG5_STRATEGIES = {
   },
   extraversion: {
     high: {
-      de: {
-        language: 'gesellig, energiegeladen, expressiv',
-        tone: 'enthusiastisch, motivierend, aktivierend',
-        approach: 'Schlage soziale Aktivitäten vor, nutze "Du" oder "Wir"-Sprache.'
-      },
       en: {
         language: 'sociable, energetic, expressive',
         tone: 'enthusiastic, motivating, activating',
@@ -175,13 +110,6 @@ const BIG5_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        language: 'zurückhaltend, reflektiert, ruhig',
-        tone: 'bedacht, nachdenklich, introspektiv',
-        approach: 'Respektiere Stille, schlage Einzel-Reflexionen vor.',
-        blindspot: 'Sichtbarkeit, aktive Vernetzung, Selbstpräsentation',
-        challenge: 'Fordere auf, proaktiv auf jemanden zuzugehen, sich zu zeigen oder Feedback einzuholen.'
-      },
       en: {
         language: 'reserved, reflective, quiet',
         tone: 'thoughtful, contemplative, introspective',
@@ -193,13 +121,6 @@ const BIG5_STRATEGIES = {
   },
   agreeableness: {
     high: {
-      de: {
-        language: 'kooperativ, harmonisch, unterstützend',
-        tone: 'freundlich, rücksichtsvoll, einfühlsam',
-        approach: 'Betone Teamwork, Konsens, gemeinsame Lösungen.',
-        blindspot: 'Eigene Bedürfnisse durchsetzen, Konflikte aushalten, Nein sagen',
-        challenge: 'Fordere auf, die eigenen Interessen klar zu vertreten, auch wenn es unbequem ist.'
-      },
       en: {
         language: 'cooperative, harmonious, supportive',
         tone: 'friendly, considerate, empathetic',
@@ -209,13 +130,6 @@ const BIG5_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        language: 'direkt, wettbewerbsorientiert, kritisch',
-        tone: 'herausfordernd, konfrontativ, durchsetzungsstark',
-        approach: 'Nutze sachliche Kritik, erlaube Wettbewerb.',
-        blindspot: 'Empathie, Kompromissbereitschaft, Teamorientierung',
-        challenge: 'Fordere auf, eine Win-Win-Lösung zu suchen oder aktiv Feedback einzuholen.'
-      },
       en: {
         language: 'direct, competitive, critical',
         tone: 'challenging, confrontational, assertive',
@@ -227,13 +141,6 @@ const BIG5_STRATEGIES = {
   },
   neuroticism: {
     low: {
-      de: {
-        language: 'gelassen, optimistisch, risikobereit',
-        tone: 'entspannt, zuversichtlich, ermütigend',
-        approach: 'Ermutige zu mutigen Entscheidungen, minimiere Risiko-Warnungen.',
-        blindspot: 'Emotionale Tiefe, Sensibilität für Risiken, Vorsicht',
-        challenge: 'Fordere auf, auch die emotionale und riskante Seite einer Entscheidung zu reflektieren.'
-      },
       en: {
         language: 'calm, optimistic, risk-taking',
         tone: 'relaxed, confident, encouraging',
@@ -243,13 +150,6 @@ const BIG5_STRATEGIES = {
       }
     },
     high: {
-      de: {
-        language: 'beruhigend, strukturiert, sicherheitsgebend',
-        tone: 'empathisch, geduldig, verständnisvoll',
-        approach: 'Biete Sicherheit, erkenne Sorgen an, gehe schrittweise vor.',
-        blindspot: 'Gelassenheit, Risiko-Toleranz, Loslassen von Sorgen',
-        challenge: 'Fordere auf, trotz Unsicherheit einen mutigen Schritt zu wagen.'
-      },
       en: {
         language: 'reassuring, structured, security-giving',
         tone: 'empathetic, patient, understanding',
@@ -266,11 +166,6 @@ const BIG5_STRATEGIES = {
 const SD_STRATEGIES = {
   beige: {
     high: {
-      de: {
-        language: 'einfach, direkt, auf Grundbedürfnisse fokussiert',
-        tone: 'beruhigend, sicherheitsgebend, präsent',
-        approach: 'Fokussiere auf unmittelbare, praktische Lösungen. Biete Stabilität und Sicherheit.'
-      },
       en: {
         language: 'simple, direct, focused on basic needs',
         tone: 'calming, security-providing, present',
@@ -278,10 +173,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Körperliche Bedürfnisse, Selbstfürsorge, Instinkte',
-        challenge: 'Achte auf deine körperlichen Signale. Was braucht dein Körper gerade?'
-      },
       en: {
         blindspot: 'Physical needs, self-care, instincts',
         challenge: 'Pay attention to your physical signals. What does your body need right now?'
@@ -290,11 +181,6 @@ const SD_STRATEGIES = {
   },
   purple: {
     high: {
-      de: {
-        language: 'gemeinschaftlich, traditionsverbunden, symbolisch',
-        tone: 'warm, zugehörigkeitsbetonend, ritualisiert',
-        approach: 'Betone Verbindungen zu Familie und Gemeinschaft. Nutze Geschichten und Rituale.'
-      },
       en: {
         language: 'communal, tradition-connected, symbolic',
         tone: 'warm, belonging-emphasizing, ritualized',
@@ -302,10 +188,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Zugehörigkeit, Traditionen, emotionale Bindungen',
-        challenge: 'Welche Traditionen oder Gemeinschaften könnten dir Halt geben?'
-      },
       en: {
         blindspot: 'Belonging, traditions, emotional bonds',
         challenge: 'Which traditions or communities could provide you support?'
@@ -314,11 +196,6 @@ const SD_STRATEGIES = {
   },
   red: {
     high: {
-      de: {
-        language: 'direkt, kraftvoll, herausfordernd',
-        tone: 'respektvoll-konfrontativ, anerkennend von Stärke',
-        approach: 'Sprich Macht und Durchsetzung direkt an. Biete schnelle, aktionsorientierte Optionen.'
-      },
       en: {
         language: 'direct, powerful, challenging',
         tone: 'respectfully-confrontational, acknowledging strength',
@@ -326,10 +203,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Durchsetzungskraft, Selbstbehauptung, Grenzen setzen',
-        challenge: 'Wann hast du zuletzt klar Nein gesagt oder dich durchgesetzt?'
-      },
       en: {
         blindspot: 'Assertiveness, self-advocacy, setting boundaries',
         challenge: 'When did you last clearly say no or stand up for yourself?'
@@ -338,11 +211,6 @@ const SD_STRATEGIES = {
   },
   blue: {
     high: {
-      de: {
-        language: 'strukturiert, prinzipientreu, ordnungsbetont',
-        tone: 'zuverlässig, regelkonform, ethisch',
-        approach: 'Biete klare Strukturen, Regeln und Sinn. Betone Pflicht und Verantwortung.'
-      },
       en: {
         language: 'structured, principled, order-emphasizing',
         tone: 'reliable, rule-following, ethical',
@@ -350,10 +218,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Struktur, Disziplin, langfristige Planung',
-        challenge: 'Welche Regeln oder Prinzipien könnten dir Orientierung geben?'
-      },
       en: {
         blindspot: 'Structure, discipline, long-term planning',
         challenge: 'Which rules or principles could give you guidance?'
@@ -362,11 +226,6 @@ const SD_STRATEGIES = {
   },
   orange: {
     high: {
-      de: {
-        language: 'erfolgsorientiert, strategisch, ergebnisorientiert',
-        tone: 'motivierend, wettbewerbsorientiert, anerkennend',
-        approach: 'Fokussiere auf messbare Ergebnisse und Effizienz. Biete Strategien zur Zielerreichung.'
-      },
       en: {
         language: 'success-oriented, strategic, results-focused',
         tone: 'motivating, competitive, acknowledging',
@@ -374,10 +233,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Ehrgeiz, Leistung, strategisches Denken',
-        challenge: 'Welches Ziel würdest du gerne erreichen? Was hält dich davon ab?'
-      },
       en: {
         blindspot: 'Ambition, achievement, strategic thinking',
         challenge: 'What goal would you like to achieve? What holds you back?'
@@ -386,11 +241,6 @@ const SD_STRATEGIES = {
   },
   green: {
     high: {
-      de: {
-        language: 'empathisch, inklusiv, konsenssuchend',
-        tone: 'verständnisvoll, verbindend, egalitär',
-        approach: 'Betone Gefühle und Beziehungen. Suche nach gemeinsamen Lösungen und Harmonie.'
-      },
       en: {
         language: 'empathetic, inclusive, consensus-seeking',
         tone: 'understanding, connecting, egalitarian',
@@ -398,10 +248,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Empathie, Teamarbeit, emotionale Intelligenz',
-        challenge: 'Wie fühlen sich andere in dieser Situation? Was brauchen sie?'
-      },
       en: {
         blindspot: 'Empathy, teamwork, emotional intelligence',
         challenge: 'How do others feel in this situation? What do they need?'
@@ -410,11 +256,6 @@ const SD_STRATEGIES = {
   },
   yellow: {
     high: {
-      de: {
-        language: 'systemisch, integrativ, perspektivenreich',
-        tone: 'neugierig, flexibel, komplexitätsbejahend',
-        approach: 'Biete multiple Perspektiven an. Ermutige systemisches Denken und Komplexität.'
-      },
       en: {
         language: 'systemic, integrative, perspective-rich',
         tone: 'curious, flexible, complexity-affirming',
@@ -422,10 +263,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Systemdenken, Perspektivenwechsel, Komplexitätstoleranz',
-        challenge: 'Welche anderen Sichtweisen könnten auf diese Situation zutreffen?'
-      },
       en: {
         blindspot: 'Systems thinking, perspective-taking, complexity tolerance',
         challenge: 'What other viewpoints might apply to this situation?'
@@ -434,11 +271,6 @@ const SD_STRATEGIES = {
   },
   turquoise: {
     high: {
-      de: {
-        language: 'ganzheitlich, verbindend, transpersonal',
-        tone: 'spirituell, achtsam, global denkend',
-        approach: 'Verbinde persönliche Ziele mit größeren Zusammenhängen. Betone Verbundenheit mit allem.'
-      },
       en: {
         language: 'holistic, connecting, transpersonal',
         tone: 'spiritual, mindful, globally thinking',
@@ -446,10 +278,6 @@ const SD_STRATEGIES = {
       }
     },
     low: {
-      de: {
-        blindspot: 'Ganzheitliches Bewusstsein, globale Perspektive, Spiritualität',
-        challenge: 'Wie passt diese Situation in das größere Ganze deines Lebens?'
-      },
       en: {
         blindspot: 'Holistic awareness, global perspective, spirituality',
         challenge: 'How does this situation fit into the bigger picture of your life?'
@@ -463,11 +291,6 @@ const SD_STRATEGIES = {
 const CHALLENGE_EXAMPLES = {
   // Riemann blindspots
   dauer: {
-    de: [
-      'Was wäre, wenn du diese Woche einen Tag komplett ohne Plan verbringst?',
-      'Wie fühlt es sich an, wenn ich sage: "Lass uns das spontan entscheiden"?',
-      'Welche Chance könnte in dieser Ungewissheit stecken?'
-    ],
     en: [
       'What if you spent a day this week completely without a plan?',
       'How does it feel when I say: "Let\'s decide this spontaneously"?',
@@ -475,11 +298,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   wechsel: {
-    de: [
-      'Was wäre, wenn du dir für dieses Ziel einen 90-Tage-Plan erstellst?',
-      'Welche Routine könnte dir hier Stabilität geben?',
-      'Was würde passieren, wenn du dich 3 Monate nur auf EINE Sache fokussierst?'
-    ],
     en: [
       'What if you created a 90-day plan for this goal?',
       'What routine could give you stability here?',
@@ -487,11 +305,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   naehe: {
-    de: [
-      'Wann hast du zuletzt ein klares "Nein" gesagt, obwohl es unangenehm war?',
-      'Was brauchst DU in dieser Situation - unabhängig von den anderen?',
-      'Wie würde es sich anfühlen, hier mal sachlich statt emotional zu reagieren?'
-    ],
     en: [
       'When did you last say a clear "no" even though it was uncomfortable?',
       'What do YOU need in this situation - independent of others?',
@@ -499,11 +312,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   distanz: {
-    de: [
-      'Was fühlst du gerade, wenn du darüber sprichst?',
-      'Wann hast du dich zuletzt jemandem wirklich geöffnet?',
-      'Was würde passieren, wenn du hier mal aus dem Kopf ins Herz gehst?'
-    ],
     en: [
       'What are you feeling right now as you talk about this?',
       'When did you last truly open up to someone?',
@@ -512,11 +320,6 @@ const CHALLENGE_EXAMPLES = {
   },
   // Big5 blindspots (using trait names)
   openness_low: {
-    de: [
-      'Was wäre die verrückteste Lösung für dieses Problem?',
-      'Welche völlig andere Perspektive könnte hier hilfreich sein?',
-      'Was würde jemand tun, der keine Angst vor dem Unbekannten hat?'
-    ],
     en: [
       'What would be the craziest solution to this problem?',
       'What completely different perspective might be helpful here?',
@@ -524,11 +327,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   conscientiousness_low: {
-    de: [
-      'Was wäre ein erster kleiner Schritt, den du HEUTE noch machen könntest?',
-      'Wie würde ein konkreter Wochenplan für dieses Ziel aussehen?',
-      'Was hält dich davon ab, diese Sache endlich abzuschließen?'
-    ],
     en: [
       'What would be a small first step you could take TODAY?',
       'What would a concrete weekly plan for this goal look like?',
@@ -536,11 +334,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   extraversion_low: {
-    de: [
-      'Wen könntest du diese Woche proaktiv um Feedback bitten?',
-      'Wie könntest du deine Ideen sichtbarer machen?',
-      'Was würde passieren, wenn du dich bei diesem Thema mehr zeigst?'
-    ],
     en: [
       'Who could you proactively ask for feedback this week?',
       'How could you make your ideas more visible?',
@@ -548,11 +341,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   agreeableness_high: {
-    de: [
-      'Was ist DEIN Interesse in dieser Situation - ganz ehrlich?',
-      'Wann hast du zuletzt einen Konflikt ausgehalten, statt nachzugeben?',
-      'Was würdest du sagen, wenn du keine Angst hättest, andere zu enttäuschen?'
-    ],
     en: [
       'What is YOUR interest in this situation - honestly?',
       'When did you last endure a conflict instead of giving in?',
@@ -560,11 +348,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   agreeableness_low: {
-    de: [
-      'Wie fühlt sich die andere Person in dieser Situation wohl?',
-      'Was wäre eine Lösung, von der alle profitieren?',
-      'Wann hast du zuletzt wirklich zugehört, ohne zu urteilen?'
-    ],
     en: [
       'How might the other person feel in this situation?',
       'What would be a solution that benefits everyone?',
@@ -572,11 +355,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   neuroticism_high: {
-    de: [
-      'Was ist das Schlimmste, das passieren könnte - und wie wahrscheinlich ist das wirklich?',
-      'Was würdest du tun, wenn du wüsstest, dass du nicht scheitern kannst?',
-      'Welchen mutigen Schritt könntest du trotz deiner Bedenken wagen?'
-    ],
     en: [
       'What\'s the worst that could happen - and how likely is that really?',
       'What would you do if you knew you couldn\'t fail?',
@@ -584,11 +362,6 @@ const CHALLENGE_EXAMPLES = {
     ]
   },
   neuroticism_low: {
-    de: [
-      'Welche Risiken übersehen du möglicherweise?',
-      'Was könnte schiefgehen, das du nicht bedacht hast?',
-      'Wie würde sich jemand fühlen, der sich in deiner Situation Sorgen macht?'
-    ],
     en: [
       'What risks might you be overlooking?',
       'What could go wrong that you haven\'t considered?',
@@ -603,4 +376,3 @@ module.exports = {
   SD_STRATEGIES,
   CHALLENGE_EXAMPLES
 };
-
